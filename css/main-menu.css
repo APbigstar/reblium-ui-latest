@@ -1092,16 +1092,19 @@ input[type="range"]:focus {
   padding-left: 7px;
   grid-gap: 10px;
   align-items: center;
-  justify-content: flex-start; /* Align images to the left */
+  justify-content: space-evenly;
+  /* Align images to the left */
 }
 
 .image-cell {
-  width: 60px; 
-  height: 60px; 
+  width: 60px;
+  height: 60px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background: transparent !important;
+  gap: 7px;
+  color: white;
 }
 
 .image-cell img {
@@ -3124,3 +3127,21 @@ loader::after,
   object-fit: cover; /* Cover the area completely, allowing for cropping */
 }
 
+.bg-blue-starndard {
+  background-color: var(--secondary-color);
+}
+
+.text-blue-starndard {
+  color: var(--secondary-color);
+}
+
+.selected-credit {
+  background-color: #2563eb;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+
+table td,
+table th {
+  text-align: center;
+}

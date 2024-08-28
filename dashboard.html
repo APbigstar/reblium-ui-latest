@@ -28,7 +28,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"/>
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 
     <title>Reblium Avatar System</title>
 <!-- Hotjar Tracking Code for https://reblium.netlify.app/ -->
@@ -186,17 +187,14 @@
             Early Access
           </div>
           <div id="tier" style="color: #00cdff; margin-right: 10px; cursor: pointer;"></div>
-
-          <div style="padding-right: 10px; display: none;" >
+  
+          <div style="padding-right: 10px;">
             <a class="credits">
-              <span id="exportCredits" ></span>
+              <span id="exportCredits"></span>
               credits
-              <button class="add-credits-btn" id="openPopupBtn">
-                <i class="fas fa-plus"></i>
-              </button>
             </a>
           </div>
-          <div>          
+          <div>
             <a><span style="display: none;" id="userEmail"></span></a>
             <img id="userImage">
           </div>
@@ -594,12 +592,208 @@
 
 
       <!-- PRICING SECTION -->
-      <div id="avatar-Pricing" style="display: none;">
-        <div class="avatar-section" id="toggleAvatarSection">
+      <div id="avatar-Pricing" class="bg-black text-white" style="display: none;">
+        <div class="avatar-section premium-selection-part" id="toggleAvatarSection">
           <div class="avatar-header" id="avatarSection">
-            <h2>Pricing</h2>
-            <img src="src/pricing.png" alt="Pricing Tag" id="image1" style="display: block; width: 100%;" onclick="toggleImages()">
-            <img src="src/pricing.png" alt="Alternate Pricing Tag" id="image2" style="display: none; width: 100%;" onclick="toggleImages()">
+            <h2 class="text-5xl font-bold mb-8 text-blue-400">Pricing</h2>
+            <div class="flex justify-center mb-8 w-full">
+              <button id="monthlyBtn" class="bg-blue-starndard text-white px-6 py-2 rounded-l-full">MONTHLY</button>
+              <button id="annuallyBtn" class="bg-gray-800 text-white px-6 py-2 rounded-r-full">ANNUALLY</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
+              <!-- Free Plan -->
+              <div class="bg-gray-900 p-6 rounded-lg">
+                <h3 class="text-2xl font-bold mb-2">Free</h3>
+                <p class="text-blue-400 mb-4"><span id="freeCredits">10</span> credits</p>
+                <p class="text-3xl font-bold mb-4">€0
+                  <span class="text-sm font-normal">/month</span>
+                </p>
+                <button class="bg-gray-800 text-white px-4 py-2 rounded-full w-full mb-4">Downgrade</button>
+                <ul class="space-y-2 text-gray-400">
+                  <li>• Cancel anytime</li>
+                  <li>• Watermarks</li>
+                  <li>• Standard avatars</li>
+                  <li class="font-bold">• Max 5 mins per session</li>
+                </ul>
+              </div>
+              <!-- Premium Plan -->
+              <div class="bg-gray-900 p-6 rounded-lg" style="position: relative;">
+                <div id="premium-plan-selected" class="text-blue-starndard premium-selected"
+                  style="position: absolute; top: 10px; right: 20px; display: none;"><i class="fas fa-star"></i><span>
+                    Current</span>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Premium</h3>
+                <p class="text-blue-400 mb-4"><span id="premiumCredits">100</span> credits</p>
+                <p class="text-3xl font-bold mb-4">€<span id="premiumPrice">15</span>
+                  <span class="text-sm font-normal">/month</span>
+                </p>
+                <button
+                  class="bg-blue-starndard text-white px-4 py-2 rounded-full w-full mb-4 premium-selection-start-button"
+                  id="premium-subscription-start-button">Start
+                  now</button>
+                <ul class="space-y-2 text-gray-400">
+                  <li>• Cancel anytime</li>
+                  <li class="font-bold upgrade_plan">• No Watermarks</li>
+                  <li class="font-bold upgrade_plan">• Premium avatars</li>
+                  <li class="font-bold upgrade_plan">• 120 mins streaming </li>
+                </ul>
+              </div>
+              <!-- Pro Plan -->
+              <div class="bg-gray-900 p-6 rounded-lg opacity-50" style="position: relative;">
+                <div class="text-blue-starndard premium-selected"
+                  style="position: absolute; top: 10px; right: 20px; display: none;"><i class="fas fa-star"></i><span>
+                    Current</span>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                <p class="text-blue-400 mb-4"><span id="proCredits">400</span> credits</p>
+                <p class="text-3xl font-bold mb-4">€<span id="proPrice">120</span>
+                  <span class="text-sm font-normal">/month</span>
+                </p>
+                <button
+                  class="bg-gray-800 text-white px-4 py-2 rounded-full w-full mb-4 premium-selection-start-button">Start
+                  now</button>
+                <ul class="space-y-2 text-gray-400">
+                  <li>• Cancel anytime</li>
+                  <li class="font-bold">• Custom branding</li>
+                  <li class="font-bold">• Custom avatars</li>
+                  <li class="font-bold">• 500 mins streaming</li>
+                  <li class="font-bold">• Website embedding</li>
+                </ul>
+              </div>
+              <!-- Enterprise Plan -->
+              <div class="bg-gray-900 p-6 rounded-lg opacity-50" style="position: relative;">
+                <div class="text-blue-starndard premium-selected"
+                  style="position: absolute; top: 10px; right: 20px; display: none;"><i class="fas fa-star"></i><span>
+                    Current</span>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
+                <p class="text-blue-400 mb-4">Custom</p>
+                <p class="text-3xl font-bold mb-4">Let's talk</p>
+                <button
+                  class="bg-gray-800 text-white px-4 py-2 rounded-full w-full mb-4 premium-selection-start-button">Start
+                  now</button>
+                <ul class="space-y-2 text-gray-400">
+                  <li>• Cancel anytime</li>
+                  <li>• Custom branding</li>
+                  <li>• Custom avatars</li>
+                  <li class="font-bold">• No time limit</li>
+                  <li class="font-bold">• Website embedding</li>
+                  <li class="font-bold">• Full Web API Access</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div style="background-color: #1f1f1f; padding: 20px 80px; border-radius: 10px;">
+
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="border-b border-gray-700">
+                  <th class="py-2 text-gray-400"></th>
+                  <th class="py-2 text-gray-400">FREE</th>
+                  <th class="py-2 text-gray-400">PREMIUM</th>
+                  <th class="py-2 text-gray-700">PRO</th>
+                  <th class="py-2 text-gray-700">ENTERPRISE</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm">
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">License</td>
+                  <td class="py-2">Personal</td>
+                  <td class="py-2">Personal</td>
+                  <td class="py-2 text-gray-700">Commercial</td>
+                  <td class="py-2 text-gray-700">Commercial</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Watermarks / Pop ups</td>
+                  <td class="py-2">✓</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2 text-gray-700">No</td>
+                  <td class="py-2 text-gray-700">No</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Support</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2">Yes</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Credits</td>
+                  <td class="py-2">20</td>
+                  <td class="py-2">100</td>
+                  <td class="py-2 text-gray-700">200</td>
+                  <td class="py-2 text-gray-700">Custom plan</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Re-useable credits</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2">Yes</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Your own scanned avatar</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Voices</td>
+                  <td class="py-2">4</td>
+                  <td class="py-2">4</td>
+                  <td class="py-2 text-gray-700">8</td>
+                  <td class="py-2 text-gray-700">16</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Language</td>
+                  <td class="py-2">English, Spanish, Dutch,French, German,Chinese,Arabic, Japanese
+                  </td>
+                  <td class="py-2">English, Spanish, Dutch,French, German,Chinese,Arabic, Japanese
+                  </td>
+                  <td class="py-2 text-gray-700">English, Spanish, Dutch,French,
+                    German,Chinese,Arabic, Japanese </td>
+                  <td class="py-2 text-gray-700">English, Spanish, Dutch,French,
+                    German,Chinese,Arabic, Japanese </td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Uploading knowledge</td>
+                  <td class="py-2">Text/Prompt</td>
+                  <td class="py-2">PDF/DOC</td>
+                  <td class="py-2 text-gray-700">PDF/DOC</td>
+                  <td class="py-2 text-gray-700">PDF/DOC</td>
+                </tr>
+                <tr class="border-b border-gray-800">
+                  <td class="py-2">Website embedding</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2">No</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                  <td class="py-2 text-gray-700">Yes</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="avatar-section premium-pay-part" id="toggleAvatarSection" style="display: none;">
+          <div class="" id="avatarSection">
+            <h2 class="text-5xl font-bold mb-8 text-blue-400">Pricing</h2>
+            <div id="account-credit-deposit" class="bg-white rounded-lg shadow-md mt-8 max-w-md mx-auto">
+              <div class="p-6">
+                <div class="mb-4">
+                  <label for="premium-card-element" class="block text-sm font-medium text-gray-700">Card details</label>
+                  <div id="premium-card-element"
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                  </div>
+                  <div id="premium-card-errors" class="mt-2 text-red-600 text-sm"></div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-4">
+                  <button class="save-exit menu-button" id="premium-start-button" onclick="handlePremiumPay()">Start
+                    Now</button>
+                  <button class="exit cancel-premium-pay-button" onclick="cancelPremiumPay()"
+                    style="color: black;">Cancel</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -646,6 +840,53 @@
   </div>
 </div>
 
+
+<div id="saveAvatarConfirmation" class="modal-exit px-8" style="display: none;">
+  <div class="modal-content-exit">
+    <h2 class="credit_modal_title" style="font-size: 25px;">Charged Credits</h2>
+    <ul class="charged_credit_list mb-4" style="list-style-type: disc; text-align: left;">
+      <li class="hair_credit_element" style="display: none;">HAIR Credit Amount: 2</li>
+      <li class="body_credit_element" style="display: none;">WARDROBE Credit Amount: 3</li>
+      <!-- <hr />
+      <li class="total_credit_element" style="display: none;"></li> -->
+    </ul>
+    <div class="grid grid-cols-2 gap-4">
+      <button class="save-exit menu-button" onclick="handleSaveCustomizedAvatar()" id="openPopup">Save</button>
+      <!--button class="cancel-exit" onclick="location.reload();">Exit</!--button> -->
+      <button class="exit" onclick="cancelSaveAvatarExit();">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="buyCreditsConfirmation" class="modal-exit" style="display: none; width: 30%;">
+  <div class="modal-content-exit">
+    <h3 class="credit_modal_title">Buy Credits</h3>
+    <div class="grid grid-cols-2 gap-4 mb-4">
+      <button class="bg-blue-500 text-white py-2 px-4 rounded" onclick="setSelectedCreditAmount(12)">100
+        (€12)</button>
+      <button class="bg-blue-500 text-white py-2 px-4 rounded" onclick="setSelectedCreditAmount(60)">500
+        (€60)</button>
+      <button class="bg-blue-500 text-white py-2 px-4 rounded" onclick="setSelectedCreditAmount(30)">250
+        (€30)</button>
+      <button class="bg-blue-500 text-white py-2 px-4 rounded" onclick="setSelectedCreditAmount(96)">800
+        (€96)</button>
+    </div>
+
+    <div class="mt-4">
+      <label for="card-element" class="block text-sm font-medium text-gray-700">Card details</label>
+      <div id="card-element" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+      </div>
+      <div id="card-errors" class="mt-2 text-red-600 text-sm"></div>
+    </div>
+    <div class="mt-6 grid grid-cols-2 gap-4">
+      <button id="deposit-button" class="menu-button" onclick="handleDeposit()">
+        Deposit
+      </button>
+      <button class="exit rounded" onclick="cancelBuyCredits();">Cancel</button>
+    </div>
+
+  </div>
+</div>
 
 <!-- Pop-up -->
 <div id="popup" class="popup" style="display: none;">
@@ -1015,9 +1256,15 @@
               1  Generate</button>
         </div>
         <div>
-          <button class="menu-button" onclick="showExitConfirmation();"><i class="fas fa-door-open"></i>Exit</button>
-          <button class="menu-button"  id="reset" onclick="handleResetButtonClick();"><i class="fas fa-undo reset-ico"></i>Reset</button>
-          <button class="menu-button" id="openPopup" onclick="handleSendCommands({ saveavatar: parseFloat(document.getElementById('avatarId').textContent) })"><i class="fas fa-save save-ico"></i>Save</button>
+          <button class="menu-button" onclick="showExitConfirmation();">
+            <i class="fas fa-door-open"></i>Exit
+          </button>
+          <button class="menu-button" id="reset" onclick="handleResetButtonClick();">
+            <i class="fas fa-undo reset-ico"></i>Reset
+          </button>
+          <button class="menu-button" onclick="showSaveAvatarExit()">
+            <i class="fas fa-save save-ico"></i>Save
+          </button>
         </div>
       </div>
 
@@ -2226,693 +2473,1076 @@
             <ul id="hairSubMenu" class="sub-menu" style="display: none;">
               <li>
                 <button class="transparent-button">Hair</button>
-                  <div class="content-container" style="display: none;">
-                    <button onclick="randomizeHair()" style="width: 70%;">Randomize Hair</button>
+                <div class="content-container" style="display: none;">
+                  <button onclick="randomizeHair()" style="width: 70%;">Randomize
+                    Hair</button>
 
 
-                    <div class="image-container">
-                      <div class="image-row">
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_08_v2.PNG" onclick="handleSendCommands({ assetname : 'hair_08_v2' })" alt="hair_08_v2">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Male_03.PNG" onclick="handleSendCommands({ assetname : 'Hair_Male_03' })" alt="">
-                        </div> 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Male_02.PNG" onclick="handleSendCommands({ assetname : 'Hair_Male_02' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Male_01.PNG" onclick="handleSendCommands({ assetname : 'Hair_Male_01' })" alt="">
-                        </div>
-                          
-  
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Wavy_03.png" onclick="handleSendCommands({ assetname : 'Hair_Wavy_03' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Straight_02.png" onclick="handleSendCommands({ assetname : 'Hair_Straight_02' })" alt="">
-                        </div>  
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Wavy_02.png" onclick="handleSendCommands({ assetname : 'Hair_Wavy_02' })" alt="">
-                        </div> 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_AB_Hair_04.png" onclick="handleSendCommands({ assetname : 'AB_Hair_04' })" alt="">
-                        </div>
-  
-  
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_AB_Hair_03.png" onclick="handleSendCommands({ assetname : 'AB_Hair_03' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_AB_Hair_02.png" onclick="handleSendCommands({ assetname : 'AB_Hair_02' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_AB_Hair_01.png" onclick="handleSendCommands({ assetname : 'AB_Hair_01' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Wavy.png" onclick="handleSendCommands({ assetname : 'Hair_Wavy_01' })" alt="">
-                        </div>
-  
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Straight_01.png" onclick="handleSendCommands({ assetname : 'Hair_Straight_01' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_High_Ponytail.png" onclick="handleSendCommands({ assetname : 'High_ponytail' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_DG.png" onclick="handleSendCommands({ assetname : 'DG' })" alt="hair_1_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Stephanie.png" onclick="handleSendCommands({ assetname : 'Stephanie' })" alt="hair_Stephanie_icon.png">
-                        </div>
-                        
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Afro.png" onclick="handleSendCommands({ assetname : 'Afro' })" alt="hair_3_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Angel_Braids_Ponytail.png" onclick="handleSendCommands({ assetname : 'Angel_braids' })" alt="hair_AngelBraids_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Angel_Ponytail.png" onclick="handleSendCommands({ assetname : 'Angel_ponytail' })" alt="hair_AngelPonytail_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Bi_Wen_Jin.png" onclick="handleSendCommands({ assetname : 'Bi_Wen_Jin' })" alt="hair_BiWenJun_icon.png">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Brad_Pitt.png" onclick="handleSendCommands({ assetname : 'Brad_Pitt_Hair' })" alt="hair_BradPitt_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Buzzcut.png" onclick="handleSendCommands({ assetname : 'Buzzcut' })" alt="hair_2_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Crypto.png" onclick="handleSendCommands({ assetname : 'Crypto' })" alt="hair_17_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Cuban.png" onclick="handleSendCommands({ assetname : 'Cuban' })">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Curly.png" onclick="handleSendCommands({ assetname : 'Curly' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Curly_Ponytail.png" onclick="handleSendCommands({ assetname : 'Curly_Ponytail' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_David_Schwartz.png" onclick="handleSendCommands({ assetname : 'David_Schwarztz' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Dom.png" onclick="handleSendCommands({ assetname : 'Dom' })">
-                        </div>
+                  <div class="image-container">
+                    <div class="image-row">
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_08_v2.PNG" onclick="setSelectedHair('hair_08_v2')"
+                          alt="hair_08_v2">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Male_03.PNG" onclick="setSelectedHair('Hair_Male_03')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Male_02.PNG" onclick="setSelectedHair('Hair_Male_02')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Male_01.PNG" onclick="setSelectedHair('Hair_Male_01')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Wavy_03.png" onclick="setSelectedHair('Hair_Wavy_03')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Straight_02.png"
+                          onclick="setSelectedHair('Hair_Straight_02')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Wavy_02.png" onclick="setSelectedHair('Hair_Wavy_02')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_AB_Hair_04.png" onclick="setSelectedHair('AB_Hair_04')" alt="">
+                        <p>2</p>
+                      </div>
 
 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Elon_Musk.png" onclick="handleSendCommands({ assetname : 'Elon_Musk' })" alt="hair_12_icon.png">
-                        </div>                       
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Gary_Vee.png" onclick="handleSendCommands({ assetname : 'Gary_Vee' })" alt="hair_GaryVee_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Katy_Perry.png" onclick="handleSendCommands({ assetname : 'Katy_Perry' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Livi.png" onclick="handleSendCommands({ assetname : 'Livi' })">
-                        </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_AB_Hair_03.png" onclick="setSelectedHair('AB_Hair_03')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_AB_Hair_02.png" onclick="setSelectedHair('AB_Hair_02')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_AB_Hair_01.png" onclick="setSelectedHair('AB_Hair_01')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Wavy.png" onclick="setSelectedHair('Hair_Wavy_01')" alt="">
+                        <p>2</p>
+                      </div>
 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Madonna.png" onclick="handleSendCommands({ assetname : 'Madonna_Hair' })" alt="hair_Madonna_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Marilyn_Monroe.png" onclick="handleSendCommands({ assetname : 'Marilyn_Monroe' })" alt="hair_Marilyn_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Mason.png" onclick="handleSendCommands({ assetname : 'Mason' })" alt="hair_15_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Max.png" onclick="handleSendCommands({ assetname : 'Max' })" alt="hair_Max_icon.png">
-                        </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Straight_01.png"
+                          onclick="setSelectedHair('Hair_Straight_01')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_High_Ponytail.png" onclick="setSelectedHair('High_ponytail')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_DG.png" onclick="setSelectedHair('DG')" alt="hair_1_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Stephanie.png" onclick="setSelectedHair('Stephanie')"
+                          alt="hair_Stephanie_icon.png">
+                        <p>2</p>
+                      </div>
 
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Afro.png" onclick="setSelectedHair('Afro')"
+                          alt="hair_3_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Angel_Braids_Ponytail.png"
+                          onclick="setSelectedHair('Angel_braids')" alt="hair_AngelBraids_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Angel_Ponytail.png" onclick="setSelectedHair('Angel_ponytail')"
+                          alt="hair_AngelPonytail_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Bi_Wen_Jin.png" onclick="setSelectedHair('Bi_Wen_Jin')"
+                          alt="hair_BiWenJun_icon.png">
+                        <p>2</p>
+                      </div>
 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Natalia.png" onclick="handleSendCommands({ assetname : 'Natalia' })" alt="hair_9_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Peaky_Blinders.png" onclick="handleSendCommands({ assetname : 'Peaky_Blinders_Hair' })" alt="hair_Mullet_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Pixie_Cut.png" onclick="handleSendCommands({ assetname : 'Pixie_cut' })" alt="hair_PixieCut_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Sadaf.png" onclick="handleSendCommands({ assetname : 'Sadaf' })" alt="hair_Sadaf_icon.png">
-                        </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Brad_Pitt.png" onclick="setSelectedHair('Brad_Pitt_Hair')"
+                          alt="hair_BradPitt_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Buzzcut.png" onclick="setSelectedHair('Buzzcut')"
+                          alt="hair_2_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Crypto.png" onclick="setSelectedHair('Crypto')"
+                          alt="hair_17_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Cuban.png" onclick="setSelectedHair('Cuban')">
+                        <p>2</p>
+                      </div>
 
-                        
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Sisi.png" onclick="handleSendCommands({ assetname : 'Sisi' })" alt="hair_19_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Snoop_Dogg.png" onclick="handleSendCommands({ assetname : 'Snoop_Dogg' })" alt="hair_SnoopDogg_icon.png">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Suzanne.png" onclick="handleSendCommands({ assetname : 'Suzanne' })" alt="hair_Suzanne_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Tijmen.png" onclick="handleSendCommands({ assetname : 'Tijmen' })" alt="hair_Tijmen_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Wavy.png" onclick="handleSendCommands({ assetname : 'Wavy' })" alt="hair_Wavy_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_William.png" onclick="handleSendCommands({ assetname : 'William' })" alt="hair_14_icon.png">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Wolfcut.png" onclick="handleSendCommands({ assetname : 'Wolfcut' })" alt="hair_13_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Zuckerberg.png" onclick="handleSendCommands({ assetname : 'Zuckerberg' })" alt="hair_Zuckerberg_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Alice.png" onclick="handleSendCommands({ assetname : 'AliceHair' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Cybercut.png" onclick="handleSendCommands({ assetname : 'CyberCut' })" alt="">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Lil_Miquela.png" onclick="handleSendCommands({ assetname : 'Lil_Miquela' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_StraightBangs.png" onclick="handleSendCommands({ assetname : 'StraightBangs' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Mohawk.png" onclick="handleSendCommands({ assetname : 'Mohawk' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Eva.png" onclick="handleSendCommands({ assetname : 'Eva' })" alt="">
-                        </div>
-
-
-                       
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Straight_01.png" onclick="handleSendCommands({ assetname : 'Hair_Straight_01' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_Hair_Wavy_01.png" onclick="handleSendCommands({ assetname : 'Hair_Wavy_01' })" alt="">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Hair/Icon_Hair_AB_Hair_01.png" onclick="handleSendCommands({ assetname : 'AB_Hair_01' })" alt="">
-                        </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Curly.png" onclick="setSelectedHair('Curly')">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Curly_Ponytail.png"
+                          onclick="setSelectedHair('Curly_Ponytail')">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_David_Schwartz.png"
+                          onclick="setSelectedHair('David_Schwarztz')">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Dom.png" onclick="setSelectedHair('Dom')">
+                        <p>2</p>
+                      </div>
 
 
-                      </div>            
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Elon_Musk.png" onclick="setSelectedHair('Elon_Musk')"
+                          alt="hair_12_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Gary_Vee.png" onclick="setSelectedHair('Gary_Vee')"
+                          alt="hair_GaryVee_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Katy_Perry.png" onclick="setSelectedHair('Katy_Perry')">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Livi.png" onclick="setSelectedHair('Livi')">
+                        <p>2</p>
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Madonna.png" onclick="setSelectedHair('Madonna_Hair')"
+                          alt="hair_Madonna_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Marilyn_Monroe.png" onclick="setSelectedHair('Marilyn_Monroe')"
+                          alt="hair_Marilyn_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Mason.png" onclick="setSelectedHair('Mason')"
+                          alt="hair_15_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Max.png" onclick="setSelectedHair('Max')"
+                          alt="hair_Max_icon.png">
+                        <p>2</p>
+                      </div>
+
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Natalia.png" onclick="setSelectedHair('Natalia')"
+                          alt="hair_9_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Peaky_Blinders.png"
+                          onclick="setSelectedHair('Peaky_Blinders_Hair')" alt="hair_Mullet_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Pixie_Cut.png" onclick="setSelectedHair('Pixie_cut')"
+                          alt="hair_PixieCut_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Sadaf.png" onclick="setSelectedHair('Sadaf')"
+                          alt="hair_Sadaf_icon.png">
+                        <p>2</p>
+                      </div>
+
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Sisi.png" onclick="setSelectedHair('Sisi')"
+                          alt="hair_19_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Snoop_Dogg.png" onclick="setSelectedHair('Snoop_Dogg')"
+                          alt="hair_SnoopDogg_icon.png">
+                        <p>2</p>
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Suzanne.png" onclick="setSelectedHair('Suzanne')"
+                          alt="hair_Suzanne_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Tijmen.png" onclick="setSelectedHair('Tijmen')"
+                          alt="hair_Tijmen_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Wavy.png" onclick="setSelectedHair('Wavy')"
+                          alt="hair_Wavy_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_William.png" onclick="setSelectedHair('William')"
+                          alt="hair_14_icon.png">
+                        <p>2</p>
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Wolfcut.png" onclick="setSelectedHair('Wolfcut')"
+                          alt="hair_13_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Zuckerberg.png" onclick="setSelectedHair('Zuckerberg')"
+                          alt="hair_Zuckerberg_icon.png">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Alice.png" onclick="setSelectedHair('AliceHair')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Cybercut.png" onclick="setSelectedHair('CyberCut')" alt="">
+                        <p>2</p>
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Lil_Miquela.png" onclick="setSelectedHair('Lil_Miquela')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_StraightBangs.png" onclick="setSelectedHair('StraightBangs')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Mohawk.png" onclick="setSelectedHair('Mohawk')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Eva.png" onclick="setSelectedHair('Eva')" alt="">
+                        <p>2</p>
+                      </div>
+
+
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Straight_01.png"
+                          onclick="setSelectedHair('Hair_Straight_01')" alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_Hair_Wavy_01.png" onclick="setSelectedHair('Hair_Wavy_01')"
+                          alt="">
+                        <p>2</p>
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Hair/Icon_Hair_AB_Hair_01.png" onclick="setSelectedHair('AB_Hair_01')" alt="">
+                        <p>2</p>
+                      </div>
+
+
                     </div>
+                  </div>
 
 
-                    <div class="slider-container">
-                      <div class="slider-label-container">
-                        <span class="slider-label">Length</span>
-                        <span class="slider-value">1</span>
-                      </div>   
-                      <input type="range" min="0.2" max="1" step="0.1" value="1" class="slider" oninput="handleSendCommands({ slidertype : 'HairLength*' + parseFloat(this.value) })">
+                  <div class="slider-container">
+                    <div class="slider-label-container">
+                      <span class="slider-label">Length</span>
+                      <span class="slider-value">1</span>
                     </div>
+                    <input type="range" min="0.2" max="1" step="0.1" value="1" class="slider"
+                      oninput="handleSendCommands({ slidertype : 'HairLength*' + parseFloat(this.value) })">
+                  </div>
 
-                    <div class="slider-container">
-                      <div class="slider-label-container">
-                        <span class="slider-label">Blend</span>
-                        <span class="slider-value">0.2</span>
-                      </div>   
-                      <input type="range" min="0" max="0.3" step="0.01" value="0.2" class="slider" oninput="handleSendCommands({ scalarname : 'HairBlend*' + parseFloat(this.value) })">
+                  <div class="slider-container">
+                    <div class="slider-label-container">
+                      <span class="slider-label">Blend</span>
+                      <span class="slider-value">0.2</span>
                     </div>
+                    <input type="range" min="0" max="0.3" step="0.01" value="0.2" class="slider"
+                      oninput="handleSendCommands({ scalarname : 'HairBlend*' + parseFloat(this.value) })">
+                  </div>
 
-                    <div class="slider-container">
-                      <div class="slider-label-container">
-                        <span class="slider-label">Melanin</span>
-                        <span class="slider-value">0</span>
-                      </div>   
-                      <input type="range" min="0" max="1" step="0.1" value="0.1" class="slider" oninput="handleSendCommands({ scalarname : 'HairMelanin*' + parseFloat(this.value) })">
+                  <div class="slider-container">
+                    <div class="slider-label-container">
+                      <span class="slider-label">Melanin</span>
+                      <span class="slider-value">0</span>
                     </div>
+                    <input type="range" min="0" max="1" step="0.1" value="0.1" class="slider"
+                      oninput="handleSendCommands({ scalarname : 'HairMelanin*' + parseFloat(this.value) })">
+                  </div>
 
 
-                    <div class="gradient-panel">
-                      <div class="gradient-row">
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #3f332b, #171519);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#3f332b', vectorname2 : 'HairTipColor*#FF0000'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #6d4f3a, #47261f);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#6d4f3a', vectorname2 : 'HairTipColor*#47261f'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #231010, #8f2c13);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#231010', vectorname2 : 'HairTipColor*#8f2c13'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #8c5436, #3e1a0b);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#8c5436', vectorname2 : 'HairTipColor*#3e1a0b'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #9c8171, #bba591);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#9c8171', vectorname2 : 'HairTipColor*#bba591'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
+                  <div class="gradient-panel">
+                    <div class="gradient-row">
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #3f332b, #171519);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#3f332b', vectorname2 : 'HairTipColor*#FF0000'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #6d4f3a, #47261f);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#6d4f3a', vectorname2 : 'HairTipColor*#47261f'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #231010, #8f2c13);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#231010', vectorname2 : 'HairTipColor*#8f2c13'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #8c5436, #3e1a0b);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#8c5436', vectorname2 : 'HairTipColor*#3e1a0b'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #9c8171, #bba591);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#9c8171', vectorname2 : 'HairTipColor*#bba591'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
 
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #242221, #242221);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#242221', vectorname2 : 'HairTipColor*#242221'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b5b2a7, #b5b2a7);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#b5b2a7', vectorname2 : 'HairTipColor*#b5b2a7'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #9c8273, #563521);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#9c8273', vectorname2 : 'HairTipColor*#563521'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #51362e, #2d1004);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#51362e', vectorname2 : 'HairTipColor*#2d1004'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #a24827, #6b2317);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#a24827', vectorname2 : 'HairTipColor*#6b2317'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #242221, #242221);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#242221', vectorname2 : 'HairTipColor*#242221'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b5b2a7, #b5b2a7);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#b5b2a7', vectorname2 : 'HairTipColor*#b5b2a7'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #9c8273, #563521);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#9c8273', vectorname2 : 'HairTipColor*#563521'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #51362e, #2d1004);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#51362e', vectorname2 : 'HairTipColor*#2d1004'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #a24827, #6b2317);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#a24827', vectorname2 : 'HairTipColor*#6b2317'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
 
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #8bb140, #10150a);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#8bb140', vectorname2 : 'HairTipColor*#10150a'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #a5b500, #a5b500);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#a5b500', vectorname2 : 'HairTipColor*#a5b500'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b4204d, #271c48);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#b4204d', vectorname2 : 'HairTipColor*#271c48'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b199a4, #842b55);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#b199a4', vectorname2 : 'HairTipColor*#842b55'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #af2f56, #b3a019);" onclick="handleSendCommands({ vectorname : 'HairRootColor*#af2f56', vectorname2 : 'HairTipColor*#b3a019'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })"></div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #8bb140, #10150a);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#8bb140', vectorname2 : 'HairTipColor*#10150a'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #a5b500, #a5b500);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#a5b500', vectorname2 : 'HairTipColor*#a5b500'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b4204d, #271c48);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#b4204d', vectorname2 : 'HairTipColor*#271c48'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b199a4, #842b55);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#b199a4', vectorname2 : 'HairTipColor*#842b55'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #af2f56, #b3a019);"
+                        onclick="handleSendCommands({ vectorname : 'HairRootColor*#af2f56', vectorname2 : 'HairTipColor*#b3a019'}) + handleSendCommands({ scalarname : 'HairBlend: 0.1', scalarname2 : 'HairMelanin: 0.1' }) + handleSendCommands({ scalarname : 'HairMelanin*0' })">
                       </div>
                     </div>
+                  </div>
 
-                    <div class="color-wheel">
-                      <div class="color-slider"></div>
+                  <div class="color-wheel">
+                    <div class="color-slider"></div>
                   </div>
 
 
-                  </div>
+                </div>
               </li>
-              <li >
+              <li>
                 <button class="transparent-button">Eyebrows</button>
-                  <div class="content-container" style="display: none;">
-                    <button onclick="randomizeEyebrows()" style="width: 70%;">Randomize Eyebrows</button>
+                <div class="content-container" style="display: none;">
+                  <button onclick="randomizeEyebrows()" style="width: 70%;">Randomize
+                    Eyebrows</button>
 
 
-                    <div class="image-container">
-                      <div class="image-row">
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="/src/no_go.png" onclick="handleSendCommands({ assetname : 'No_Eyebrow' })" alt="No go">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_7.png" onclick="handleSendCommands({ assetname : 'Eyebrows_7' })" alt="Eyebrows_7_Icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_6.png" onclick="handleSendCommands({ assetname : 'Eyebrows_6' })" alt="Eyebrows_6_Icon.png">
-                        </div>                          
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_11.png" onclick="handleSendCommands({ assetname : 'Eyebrows_11' })" alt="Eyebrows_11_Icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_3.png" onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_3' })" alt="Unibrow_3.png">
-                        </div>                         
-                        
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_10.png" onclick="handleSendCommands({ assetname : 'Eyebrows_Name_10' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Eyebrows_Name_2.png" onclick="handleSendCommands({ assetname : 'Eyebrows_Name_2' })" >
-                        </div>
-
-                        
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_SadafJadran_Eyebrows.png" onclick="handleSendCommands({ assetname : 'Eyebrows_SadafJadran' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_SnoopDogg_Eyebrows.png" onclick="handleSendCommands({ assetname : 'Eyebrows_SnoopDogg' })" >
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_1.png" onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_1' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_2.png" onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_2' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_4.png" onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_4' })" >
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_001.png" onclick="handleSendCommands({ assetname : 'F_Brows_001' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_002.png" onclick="handleSendCommands({ assetname : 'F_Brows_002' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_003.png" onclick="handleSendCommands({ assetname : 'F_Brows_003' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_004.png" onclick="handleSendCommands({ assetname : 'F_Brows_004' })" >
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_005.png" onclick="handleSendCommands({ assetname : 'F_Brows_005' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_M_Brow_001.png" onclick="handleSendCommands({ assetname : 'M_Brows_001' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_M_Brow_002.png" onclick="handleSendCommands({ assetname : 'M_Brows_002' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_M_Brow_003.png" onclick="handleSendCommands({ assetname : 'M_Brows_003' })" >
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Brows_LessDense_01.png" onclick="handleSendCommands({ assetname : 'Brows_LessDense_01' })" >
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyebrow/Icon_Eyebrow_Brows_LessDense_02.png" onclick="handleSendCommands({ assetname : 'Brows_LessDense_02' })" >
-                        </div>
-                        
+                  <div class="image-container">
+                    <div class="image-row">
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="/src/no_go.png" onclick="handleSendCommands({ assetname : 'No_Eyebrow' })"
+                          alt="No go">
                       </div>
-                    </div>
-
-
-                    <div class="color-panel">
-                      <div class="color-row">
-                        <div class="color-cell" style="background-color: #2a0d00;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#2a0d00' })"></div>
-                        <div class="color-cell" style="background-color: #622a00;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#622a00' })"></div>
-                        <div class="color-cell" style="background-color: #ab8b0c;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#ab8b0c' })"></div>
-                        <div class="color-cell" style="background-color: #202020;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#202020' })"></div>
-                        <div class="color-cell" style="background-color: #644800;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#644800' })"></div>
-
-                        <div class="color-cell" style="background-color: #00ffff;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#00ffff' })"></div>
-                        <div class="color-cell" style="background-color: #bb2900;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#bb2900' })"></div>
-                        <div class="color-cell" style="background-color: #0065bb;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#0065bb' })"></div>
-                        <div class="color-cell" style="background-color: #00b8bb;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#00b8bb' })"></div>
-                        <div class="color-cell" style="background-color: #00bb79;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00bb79' })"></div>
-
-                        <div class="color-cell" style="background-color: #bb00b7;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#bb00b7' })"></div>
-                        <div class="color-cell" style="background-color: #41645a;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#41645a' })"></div>
-                        <div class="color-cell" style="background-color: #6900bb;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#6900bb' })"></div>
-                        <div class="color-cell" style="background-color: #bb0074;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#bb0074' })"></div>
-                        <div class="color-cell" style="background-color: #ba77a2;" onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#ba77a2' })"></div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_7.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_7' })" alt="Eyebrows_7_Icon.png">
                       </div>
-                    </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_6.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_6' })" alt="Eyebrows_6_Icon.png">
+                      </div>
 
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_11.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_11' })" alt="Eyebrows_11_Icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_3.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_3' })" alt="Unibrow_3.png">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Eyebrow_Male_10.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_Name_10' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Eyebrows_Name_2.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_Name_2' })">
+                      </div>
+
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_SadafJadran_Eyebrows.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_SadafJadran' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_SnoopDogg_Eyebrows.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_SnoopDogg' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_1.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_1' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_2.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_2' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Unibrow_4.png"
+                          onclick="handleSendCommands({ assetname : 'Eyebrows_Unibrow_4' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_001.png"
+                          onclick="handleSendCommands({ assetname : 'F_Brows_001' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_002.png"
+                          onclick="handleSendCommands({ assetname : 'F_Brows_002' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_003.png"
+                          onclick="handleSendCommands({ assetname : 'F_Brows_003' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_004.png"
+                          onclick="handleSendCommands({ assetname : 'F_Brows_004' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_F_Brows_005.png"
+                          onclick="handleSendCommands({ assetname : 'F_Brows_005' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_M_Brow_001.png"
+                          onclick="handleSendCommands({ assetname : 'M_Brows_001' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_M_Brow_002.png"
+                          onclick="handleSendCommands({ assetname : 'M_Brows_002' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_M_Brow_003.png"
+                          onclick="handleSendCommands({ assetname : 'M_Brows_003' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Brows_LessDense_01.png"
+                          onclick="handleSendCommands({ assetname : 'Brows_LessDense_01' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyebrow/Icon_Eyebrow_Brows_LessDense_02.png"
+                          onclick="handleSendCommands({ assetname : 'Brows_LessDense_02' })">
+                      </div>
+
+                    </div>
                   </div>
+
+
+                  <div class="color-panel">
+                    <div class="color-row">
+                      <div class="color-cell" style="background-color: #2a0d00;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#2a0d00' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #622a00;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#622a00' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #ab8b0c;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#ab8b0c' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #202020;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#202020' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #644800;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#644800' })">
+                      </div>
+
+                      <div class="color-cell" style="background-color: #00ffff;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#00ffff' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #bb2900;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#bb2900' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #0065bb;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#0065bb' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #00b8bb;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#00b8bb' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #00bb79;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00bb79' })">
+                      </div>
+
+                      <div class="color-cell" style="background-color: #bb00b7;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#bb00b7' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #41645a;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#41645a' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #6900bb;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#6900bb' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #bb0074;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#bb0074' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #ba77a2;"
+                        onclick="handleSendCommands({ vectorname : 'EyebrowsColor*#ba77a2' })">
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </li>
               <li>
                 <button class="transparent-button">Eyelashes</button>
-                  <div class="content-container" style="display: none;">
-                    <button onclick="randomizeEyelashes()" style="width: 70%;">Randomize Eyelashes</button>
+                <div class="content-container" style="display: none;">
+                  <button onclick="randomizeEyelashes()" style="width: 70%;">Randomize
+                    Eyelashes</button>
 
 
-                    <div class="image-container">
-                      <div class="image-row">
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyelashes/eyelash_short_icon.png" onclick="handleSendCommands({ assetname : 'Lashes_Short' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyelashes/Icon_Eyelash_Eyelash_Male2.png" onclick="handleSendCommands({ assetname : 'DefaultEyelashes' })" alt="eyelash_short_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyelashes/Icon_Eyelash_Girly_lashes.png" onclick="handleSendCommands({ assetname : 'Girly' })" alt="eyelash_clumped_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyelashes/Icon_Eyelash_Alice.png" onclick="handleSendCommands({ assetname : 'Alice_Eyelashes' })" alt="eyelash_clumped_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyelashes/Icon_Eyelash_Clumped.png" onclick="handleSendCommands({ assetname : 'Eyelashes_Clumped_Lashes' })" alt="eyelash_girly_icon.png">
-                        </div>
+                  <div class="image-container">
+                    <div class="image-row">
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyelashes/eyelash_short_icon.png"
+                          onclick="handleSendCommands({ assetname : 'Lashes_Short' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyelashes/Icon_Eyelash_Eyelash_Male2.png"
+                          onclick="handleSendCommands({ assetname : 'DefaultEyelashes' })"
+                          alt="eyelash_short_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyelashes/Icon_Eyelash_Girly_lashes.png"
+                          onclick="handleSendCommands({ assetname : 'Girly' })" alt="eyelash_clumped_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyelashes/Icon_Eyelash_Alice.png"
+                          onclick="handleSendCommands({ assetname : 'Alice_Eyelashes' })"
+                          alt="eyelash_clumped_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyelashes/Icon_Eyelash_Clumped.png"
+                          onclick="handleSendCommands({ assetname : 'Eyelashes_Clumped_Lashes' })"
+                          alt="eyelash_girly_icon.png">
+                      </div>
 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Eyelashes/Icon_Eyelash_AB_Lashes_01.png" onclick="handleSendCommands({ assetname : 'AB_Lashes_01' })" alt="eyelash_girly_icon.png">
-                        </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Eyelashes/Icon_Eyelash_AB_Lashes_01.png"
+                          onclick="handleSendCommands({ assetname : 'AB_Lashes_01' })" alt="eyelash_girly_icon.png">
                       </div>
                     </div>
-
-
-                    <div class="color-panel">
-                      <div class="color-row">
-                        <div class="color-cell" style="background-color: #2a0d00;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#2a0d00' })"></div>
-                        <div class="color-cell" style="background-color: #622a00;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#622a00' })"></div>
-                        <div class="color-cell" style="background-color: #ab8b0c;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#ab8b0c' })"></div>
-                        <div class="color-cell" style="background-color: #202020;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#202020' })"></div>
-                        <div class="color-cell" style="background-color: #644800;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#644800' })"></div>
-
-                        <div class="color-cell" style="background-color: #00ffff;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00ffff' })"></div>
-                        <div class="color-cell" style="background-color: #bb2900;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#bb2900' })"></div>
-                        <div class="color-cell" style="background-color: #0065bb;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#0065bb' })"></div>
-                        <div class="color-cell" style="background-color: #00b8bb;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00b8bb' })"></div>
-                        <div class="color-cell" style="background-color: #00bb79;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00bb79' })"></div>
-
-                        <div class="color-cell" style="background-color: #bb00b7;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#bb00b7' })"></div>
-                        <div class="color-cell" style="background-color: #41645a;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#41645a' })"></div>
-                        <div class="color-cell" style="background-color: #6900bb;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#6900bb' })"></div>
-                        <div class="color-cell" style="background-color: #bb0074;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#bb0074' })"></div>
-                        <div class="color-cell" style="background-color: #ba77a2;" onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#ba77a2' })"></div>
-                      </div>
-                    </div>
-
                   </div>
+
+
+                  <div class="color-panel">
+                    <div class="color-row">
+                      <div class="color-cell" style="background-color: #2a0d00;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#2a0d00' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #622a00;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#622a00' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #ab8b0c;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#ab8b0c' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #202020;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#202020' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #644800;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#644800' })">
+                      </div>
+
+                      <div class="color-cell" style="background-color: #00ffff;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00ffff' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #bb2900;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#bb2900' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #0065bb;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#0065bb' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #00b8bb;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00b8bb' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #00bb79;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#00bb79' })">
+                      </div>
+
+                      <div class="color-cell" style="background-color: #bb00b7;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#bb00b7' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #41645a;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#41645a' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #6900bb;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#6900bb' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #bb0074;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#bb0074' })">
+                      </div>
+                      <div class="color-cell" style="background-color: #ba77a2;"
+                        onclick="handleSendCommands({ vectorname : 'EyelsahesColor*#ba77a2' })">
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </li>
               <li>
                 <button class="transparent-button">Mustache</button>
-                  <div class="content-container" style="display: none;">
+                <div class="content-container" style="display: none;">
 
-                    <button onclick="randomizeMustache()" style="width: 70%;">Randomize Mustache</button>
+                  <button onclick="randomizeMustache()" style="width: 70%;">Randomize
+                    Mustache</button>
 
-                    <div class="image-container">
-                      <div class="image-row">
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="/src/no_go.png" onclick="handleSendCommands({ assetname : '00_NO_Mustache' })" alt="no go">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Zorro.png" onclick="handleSendCommands({ assetname : 'Zorro' })" alt="mustache_Zorro_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Frenchfork_Mustaches_02.png" onclick="handleSendCommands({ assetname : 'Frenchfork_01' })" alt="mustache_Frenchfork_01_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Hook_Mustaches.png" onclick="handleSendCommands({ assetname : 'mustache_Hook' })" alt="mustache_Hook_icon.png">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Horseshoe_Mustaches.png" onclick="handleSendCommands({ assetname : 'mustache_Horseshoe' })" alt="mustache_Horseshoe_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Straight_Mustaches.png" onclick="handleSendCommands({ assetname : 'Straight_Mustaches' })" alt="mustache_Straight_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Chevron_Mustaches.png" onclick="handleSendCommands({ assetname : 'Mustache_Chevron' })" alt="mustache_Horseshoe_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Dali.png" onclick="handleSendCommands({ assetname : 'Mustache_Dali' })" alt="mustache_Straight_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Frenchfork_Mustaches_02.png" onclick="handleSendCommands({ assetname : 'Mustache_Frenchfork_02' })" alt="mustache_Straight_icon.png">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Gooate_Mustaches.png" onclick="handleSendCommands({ assetname : 'Mustache_Gooate' })" alt="mustache_Horseshoe_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Imperial.png" onclick="handleSendCommands({ assetname : 'Mustache_Imperial' })" alt="mustache_Straight_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Vandyke.png" onclick="handleSendCommands({ assetname : 'Mustache_Vandyke' })" alt="mustache_Horseshoe_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Mustache/Mustache_Vikinggoatee_Mustaches.png" onclick="handleSendCommands({ assetname : 'Mustache_Vikinggoatee' })" alt="mustache_Straight_icon.png">
-                        </div>
-
-                        
-
-                        
-
+                  <div class="image-container">
+                    <div class="image-row">
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="/src/no_go.png" onclick="handleSendCommands({ assetname : '00_NO_Mustache' })"
+                          alt="no go">
                       </div>
-                    </div>
-
-                    <div class="slider-container">
-                      <div class="slider-label-container">
-                        <span class="slider-label">Length</span>
-                        <span class="slider-value">1</span>
-                      </div>   
-                      <input type="range" min="0.2" max="1" step="0.1" value="1" class="slider" oninput="handleSendCommands({ slidertype : 'MustacheLength*' + parseFloat(this.value) })">
-                    </div>
-
-
-
-
-                    <!-- Slider of 2 colors to combine the colors-->
-
-                    <div class="gradient-panel">
-                      <div class="gradient-row">
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #3f332b, #171519);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#3f332b', vectorname2 : 'MustacheTipColor*#FF0000'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #6d4f3a, #47261f);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#6d4f3a', vectorname2 : 'MustacheTipColor*#47261f'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #231010, #8f2c13);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#231010', vectorname2 : 'MustacheTipColor*#8f2c13'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #8c5436, #3e1a0b);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#8c5436', vectorname2 : 'MustacheTipColor*#3e1a0b'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #9c8171, #bba591);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#9c8171', vectorname2 : 'MustacheTipColor*#bba591'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #242221, #242221);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#242221', vectorname2 : 'MustacheTipColor*#242221'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b5b2a7, #b5b2a7);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#b5b2a7', vectorname2 : 'MustacheTipColor*#b5b2a7'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #9c8273, #563521);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#9c8273', vectorname2 : 'MustacheTipColor*#563521'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #51362e, #2d1004);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#51362e', vectorname2 : 'MustacheTipColor*#2d1004'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #a24827, #6b2317);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#a24827', vectorname2 : 'MustacheTipColor*#6b2317'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #8bb140, #10150a);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#8bb140', vectorname2 : 'MustacheTipColor*#10150a'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #a5b500, #a5b500);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#a5b500', vectorname2 : 'MustacheTipColor*#a5b500'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b4204d, #271c48);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#b4204d', vectorname2 : 'MustacheTipColor*#271c48'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b199a4, #842b55);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#b199a4', vectorname2 : 'MustacheTipColor*#842b55'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #af2f56, #b3a019);" onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#af2f56', vectorname2 : 'MustacheTipColor*#b3a019'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })"></div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Zorro.png"
+                          onclick="handleSendCommands({ assetname : 'Zorro' })" alt="mustache_Zorro_icon.png">
                       </div>
-                    </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Frenchfork_Mustaches_02.png"
+                          onclick="handleSendCommands({ assetname : 'Frenchfork_01' })"
+                          alt="mustache_Frenchfork_01_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Hook_Mustaches.png"
+                          onclick="handleSendCommands({ assetname : 'mustache_Hook' })"
+                          alt="mustache_Hook_icon.png">
+                      </div>
 
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Horseshoe_Mustaches.png"
+                          onclick="handleSendCommands({ assetname : 'mustache_Horseshoe' })"
+                          alt="mustache_Horseshoe_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Straight_Mustaches.png"
+                          onclick="handleSendCommands({ assetname : 'Straight_Mustaches' })"
+                          alt="mustache_Straight_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Chevron_Mustaches.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Chevron' })"
+                          alt="mustache_Horseshoe_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Dali.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Dali' })"
+                          alt="mustache_Straight_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Frenchfork_Mustaches_02.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Frenchfork_02' })"
+                          alt="mustache_Straight_icon.png">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Gooate_Mustaches.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Gooate' })"
+                          alt="mustache_Horseshoe_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Imperial.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Imperial' })"
+                          alt="mustache_Straight_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Vandyke.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Vandyke' })"
+                          alt="mustache_Horseshoe_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Mustache/Mustache_Vikinggoatee_Mustaches.png"
+                          onclick="handleSendCommands({ assetname : 'Mustache_Vikinggoatee' })"
+                          alt="mustache_Straight_icon.png">
+                      </div>
+
+
+
+
+
+                    </div>
                   </div>
+
+                  <div class="slider-container">
+                    <div class="slider-label-container">
+                      <span class="slider-label">Length</span>
+                      <span class="slider-value">1</span>
+                    </div>
+                    <input type="range" min="0.2" max="1" step="0.1" value="1" class="slider"
+                      oninput="handleSendCommands({ slidertype : 'MustacheLength*' + parseFloat(this.value) })">
+                  </div>
+
+
+
+
+                  <!-- Slider of 2 colors to combine the colors-->
+
+                  <div class="gradient-panel">
+                    <div class="gradient-row">
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #3f332b, #171519);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#3f332b', vectorname2 : 'MustacheTipColor*#FF0000'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #6d4f3a, #47261f);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#6d4f3a', vectorname2 : 'MustacheTipColor*#47261f'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #231010, #8f2c13);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#231010', vectorname2 : 'MustacheTipColor*#8f2c13'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #8c5436, #3e1a0b);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#8c5436', vectorname2 : 'MustacheTipColor*#3e1a0b'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #9c8171, #bba591);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#9c8171', vectorname2 : 'MustacheTipColor*#bba591'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #242221, #242221);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#242221', vectorname2 : 'MustacheTipColor*#242221'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b5b2a7, #b5b2a7);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#b5b2a7', vectorname2 : 'MustacheTipColor*#b5b2a7'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #9c8273, #563521);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#9c8273', vectorname2 : 'MustacheTipColor*#563521'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #51362e, #2d1004);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#51362e', vectorname2 : 'MustacheTipColor*#2d1004'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #a24827, #6b2317);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#a24827', vectorname2 : 'MustacheTipColor*#6b2317'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #8bb140, #10150a);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#8bb140', vectorname2 : 'MustacheTipColor*#10150a'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #a5b500, #a5b500);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#a5b500', vectorname2 : 'MustacheTipColor*#a5b500'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b4204d, #271c48);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#b4204d', vectorname2 : 'MustacheTipColor*#271c48'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b199a4, #842b55);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#b199a4', vectorname2 : 'MustacheTipColor*#842b55'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #af2f56, #b3a019);"
+                        onclick="handleSendCommands({ vectorname : 'MustacheRootColor*#af2f56', vectorname2 : 'MustacheTipColor*#b3a019'}) + handleSendCommands({ scalarname : 'MustacheBlend: 0.1', scalarname2 : 'MustacheMelanin: 0.1' })">
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
               </li>
               <li>
                 <button class="transparent-button">Beard</button>
-                  <div class="content-container" style="display: none;">
-                    <button onclick="randomizeBeard()" style="width: 70%;">Randomize Beard</button>
+                <div class="content-container" style="display: none;">
+                  <button onclick="randomizeBeard()" style="width: 70%;">Randomize
+                    Beard</button>
 
-                    <div class="image-container">
-                      <div class="image-row">
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="/src/no_go.png" onclick="handleSendCommands({ assetname : '00_NO_Beard' })" alt="no go">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Imperial_Beard.png" onclick="handleSendCommands({ assetname : 'Imperial' })" alt="beard_Imperial_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_JohnDeaton_Beard.png" onclick="handleSendCommands({ assetname : 'beard_JohnDeaton' })" alt="beard_JohnDeaton_icon.png">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Frenchfork_Beard.png" onclick="handleSendCommands({ assetname : 'beard_FrenchFork' })" alt="beard_FrenchFork_icon.png">
-                        </div>
+                  <div class="image-container">
+                    <div class="image-row">
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="/src/no_go.png" onclick="handleSendCommands({ assetname : '00_NO_Beard' })"
+                          alt="no go">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Imperial_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Imperial' })" alt="beard_Imperial_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_JohnDeaton_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'beard_JohnDeaton' })"
+                          alt="beard_JohnDeaton_icon.png">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Frenchfork_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'beard_FrenchFork' })"
+                          alt="beard_FrenchFork_icon.png">
+                      </div>
 
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_BradGarlinghouse_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Brad_Garlinghouse' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Brad_Pitt.png" onclick="handleSendCommands({ assetname : 'Beard_Brad_Pitt' })">
-                        </div>
-
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_David_Schwards_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_David_Schwarztz' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_ElonMusk_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Elon_Musk' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Farokh_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Farokh' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Frenchfork_Short_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Frenchfork_Short' })">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Fullbeard.png" onclick="handleSendCommands({ assetname : 'Beard_Fullbeard' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Gooate_Chin_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Gooate_Chin_Beard' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_JeremyHogan_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_JeremyHogan' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Long_Straight_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Long_Straight' })">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_MartinHiesboeck_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_MartinHiesboeck' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Mason_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Mason' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Muttonchops_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Muttonchops' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Panos.png" onclick="handleSendCommands({ assetname : 'Beard_Panos' })">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_SnoopDogg_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_SnoopDogg' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Soulpatch_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Soulpatch' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Vandyke_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Vandyke' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Vandyke_Chin_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Vandyke_Chin' })">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Vikinggoatee_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Vikinggoatee' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Zorro_Chin_Beard.png" onclick="handleSendCommands({ assetname : 'Beard_Zorro_Chin' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Beard_Icons/Icon_Beard_Stubble.PNG" onclick="handleSendCommands({ assetname : 'Beard_Stubble' })">
-                        </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_BradGarlinghouse_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Brad_Garlinghouse' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Brad_Pitt.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Brad_Pitt' })">
+                      </div>
 
 
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_David_Schwards_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_David_Schwarztz' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_ElonMusk_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Elon_Musk' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Farokh_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Farokh' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Frenchfork_Short_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Frenchfork_Short' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Fullbeard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Fullbeard' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Gooate_Chin_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Gooate_Chin_Beard' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_JeremyHogan_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_JeremyHogan' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Long_Straight_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Long_Straight' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_MartinHiesboeck_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_MartinHiesboeck' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Mason_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Mason' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Muttonchops_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Muttonchops' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Panos.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Panos' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_SnoopDogg_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_SnoopDogg' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Soulpatch_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Soulpatch' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Vandyke_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Vandyke' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Vandyke_Chin_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Vandyke_Chin' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Vikinggoatee_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Vikinggoatee' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Zorro_Chin_Beard.png"
+                          onclick="handleSendCommands({ assetname : 'Beard_Zorro_Chin' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Beard_Icons/Icon_Beard_Stubble.PNG"
+                          onclick="handleSendCommands({ assetname : 'Beard_Stubble' })">
+                      </div>
+
+
+                    </div>
+                  </div>
+
+                  <div class="slider-container">
+                    <div class="slider-label-container">
+                      <span class="slider-label">Length</span>
+                      <span class="slider-value">1</span>
+                    </div>
+                    <input type="range" min="0.2" max="1" step="0.1" value="1" class="slider"
+                      oninput="handleSendCommands({ slidertype : 'BeardLength*' + parseFloat(this.value) })">
+                  </div>
+
+
+
+
+                  <!-- Slider of 2 colors to combine the colors-->
+
+                  <div class="gradient-panel">
+                    <div class="gradient-row">
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #3f332b, #171519);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#3f332b', vectorname2 : 'BeardTipColor*#FF0000'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #6d4f3a, #47261f);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#6d4f3a', vectorname2 : 'BeardTipColor*#47261f'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #231010, #8f2c13);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#231010', vectorname2 : 'BeardTipColor*#8f2c13'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #8c5436, #3e1a0b);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#8c5436', vectorname2 : 'BeardTipColor*#3e1a0b'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #9c8171, #bba591);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#9c8171', vectorname2 : 'BeardTipColor*#bba591'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #242221, #242221);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#242221', vectorname2 : 'BeardTipColor*#242221'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b5b2a7, #b5b2a7);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#b5b2a7', vectorname2 : 'BeardTipColor*#b5b2a7'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #9c8273, #563521);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#9c8273', vectorname2 : 'BeardTipColor*#563521'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #51362e, #2d1004);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#51362e', vectorname2 : 'BeardTipColor*#2d1004'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #a24827, #6b2317);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#a24827', vectorname2 : 'BeardTipColor*#6b2317'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #8bb140, #10150a);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#8bb140', vectorname2 : 'BeardTipColor*#10150a'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #a5b500, #a5b500);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#a5b500', vectorname2 : 'BeardTipColor*#a5b500'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b4204d, #271c48);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#b4204d', vectorname2 : 'BeardTipColor*#271c48'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #b199a4, #842b55);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#b199a4', vectorname2 : 'BeardTipColor*#842b55'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
+                      </div>
+                      <div class="gradient-cell"
+                        style="background: linear-gradient(to bottom right, #af2f56, #b3a019);"
+                        onclick="handleSendCommands({ vectorname : 'BeardRootColor*#af2f56', vectorname2 : 'BeardTipColor*#b3a019'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })">
                       </div>
                     </div>
+                  </div>
 
-                    <div class="slider-container">
-                      <div class="slider-label-container">
-                        <span class="slider-label">Length</span>
-                        <span class="slider-value">1</span>
-                      </div>   
-                      <input type="range" min="0.2" max="1" step="0.1" value="1" class="slider" oninput="handleSendCommands({ slidertype : 'BeardLength*' + parseFloat(this.value) })">
-                    </div>
-
-
-
-
-                    <!-- Slider of 2 colors to combine the colors-->
-
-                    <div class="gradient-panel">
-                      <div class="gradient-row">
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #3f332b, #171519);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#3f332b', vectorname2 : 'BeardTipColor*#FF0000'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #6d4f3a, #47261f);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#6d4f3a', vectorname2 : 'BeardTipColor*#47261f'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #231010, #8f2c13);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#231010', vectorname2 : 'BeardTipColor*#8f2c13'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #8c5436, #3e1a0b);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#8c5436', vectorname2 : 'BeardTipColor*#3e1a0b'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #9c8171, #bba591);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#9c8171', vectorname2 : 'BeardTipColor*#bba591'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #242221, #242221);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#242221', vectorname2 : 'BeardTipColor*#242221'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b5b2a7, #b5b2a7);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#b5b2a7', vectorname2 : 'BeardTipColor*#b5b2a7'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #9c8273, #563521);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#9c8273', vectorname2 : 'BeardTipColor*#563521'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #51362e, #2d1004);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#51362e', vectorname2 : 'BeardTipColor*#2d1004'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #a24827, #6b2317);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#a24827', vectorname2 : 'BeardTipColor*#6b2317'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #8bb140, #10150a);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#8bb140', vectorname2 : 'BeardTipColor*#10150a'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #a5b500, #a5b500);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#a5b500', vectorname2 : 'BeardTipColor*#a5b500'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b4204d, #271c48);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#b4204d', vectorname2 : 'BeardTipColor*#271c48'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #b199a4, #842b55);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#b199a4', vectorname2 : 'BeardTipColor*#842b55'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                        <div class="gradient-cell" style="background: linear-gradient(to bottom right, #af2f56, #b3a019);" onclick="handleSendCommands({ vectorname : 'BeardRootColor*#af2f56', vectorname2 : 'BeardTipColor*#b3a019'}) + handleSendCommands({ scalarname : 'BeardBlend: 0.1', scalarname2 : 'BeardMelanin: 0.1' })"></div>
-                      </div>
-                    </div>
-                    
                 </div>
               </li>
-              
+
 
               <li>
                 <button class="transparent-button">Hair Card</button>
-                  <div class="content-container" style="display: none;">
-                    <button onclick="randomizeHaircard()" style="width: 70%;">Randomize Haircard</button>
+                <div class="content-container" style="display: none;">
+                  <button onclick="randomizeHaircard()" style="width: 70%;">Randomize
+                    Haircard</button>
 
-                    <div class="image-container">
-                      <div class="image-row">
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Haircards/Icons_Hair_01.PNG" onclick="handleSendCommands({ assetname : 'Hair01_cinematic' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Haircards/Icons_Hair_02.PNG" onclick="handleSendCommands({ assetname : 'Hair02_cinematic' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Haircards/Icons_Hair_03.PNG" onclick="handleSendCommands({ assetname : 'Hair03_cinematic' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Haircards/Icons_LumiaEve_hair.PNG" onclick="handleSendCommands({ assetname : 'Hair04_LumiaEve_cinematic' })">
-                        </div>
-
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Haircards/Male_Stylized_Hair_Icon.PNG" onclick="handleSendCommands({ assetname : 'Mesh_hair_style1' })">
-                        </div>
-                        <div class="image-cell" onclick="toggleActive(this)">
-                          <img src="src/Haircards/Female_Stylized_Hair_Icon.PNG" onclick="handleSendCommands({ assetname : 'Mesh_hair_style2' })">
-                        </div>
-
+                  <div class="image-container">
+                    <div class="image-row">
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Haircards/Icons_Hair_01.PNG"
+                          onclick="handleSendCommands({ assetname : 'Hair01_cinematic' })">
                       </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Haircards/Icons_Hair_02.PNG"
+                          onclick="handleSendCommands({ assetname : 'Hair02_cinematic' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Haircards/Icons_Hair_03.PNG"
+                          onclick="handleSendCommands({ assetname : 'Hair03_cinematic' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Haircards/Icons_LumiaEve_hair.PNG"
+                          onclick="handleSendCommands({ assetname : 'Hair04_LumiaEve_cinematic' })">
+                      </div>
+
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Haircards/Male_Stylized_Hair_Icon.PNG"
+                          onclick="handleSendCommands({ assetname : 'Mesh_hair_style1' })">
+                      </div>
+                      <div class="image-cell" onclick="toggleActive(this)">
+                        <img src="src/Haircards/Female_Stylized_Hair_Icon.PNG"
+                          onclick="handleSendCommands({ assetname : 'Mesh_hair_style2' })">
+                      </div>
+
                     </div>
+                  </div>
 
-                   
-
-
-
-
-                    
                 </div>
               </li>
             </ul>
@@ -4530,107 +5160,150 @@
 
             <ul id="wardrobeSubMenu" class="sub-menu" style="display: none;">
               <li>
-                <div style="display: flex; justify-content: space-between;"> <!-- Added display: flex -->
-                  <button class="transparent-button" id="femaleBtn" style="width: 48%;">Female <i class="fas fa-venus"></i></button>
+                <div style="display: flex; justify-content: space-between;">
+                  <!-- Added display: flex -->
+                  <button class="transparent-button" id="femaleBtn" style="width: 48%;">Female
+                    <i class="fas fa-venus"></i></button>
                   <br>
-                  <button class="transparent-button" id="maleBtn" style="width: 48%;">Male  <i class="fas fa-mars"></i></button>
+                  <button class="transparent-button" id="maleBtn" style="width: 48%;">Male <i
+                      class="fas fa-mars"></i></button>
                 </div>
-                
-                <button class="transparent-button" >Full body</button>
-                <div class="content-container" style="display: block;">
+
+                <button class="transparent-button">Full body</button>
+                <div class="content-container">
 
                   <div class="fullbody-container">
                     <div class="image-row">
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Swimwear.PNG" onclick="handleSendCommands({ assetname: 'SwimweareFemale' })" alt="">
+                        <img src="src/Outfits/Swimwear.PNG" onclick="setSelectedBody('SwimweareFemale')" alt="">
+                        <p>3</p>
                       </div>
-                      <div class="image-cell" data-gender="male"  onclick="toggleActive(this)">
-                        <img src="src/Outfits/SwimwearMale.PNG" onclick="handleSendCommands({ assetname: 'SwimwearMale' })" alt="">
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/SwimwearMale.PNG" onclick="setSelectedBody('SwimwearMale')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Businessman01.png" onclick="setSelectedBody('Businessman01')"
+                          alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Businessman02.png" onclick="setSelectedBody('Businessman02')"
+                          alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_CasualFemale01.png" onclick="setSelectedBody('CasualFemale01')"
+                          alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_CasualFemale02.png" onclick="setSelectedBody('CasualFemale02')"
+                          alt="">
+                        <p>3</p>
                       </div>
 
-                      <div class="image-cell"data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Businessman01.png" onclick="handleSendCommands({ assetname: 'Businessman01' })" alt="">
-                      </div>
-                      <div class="image-cell"data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Businessman02.png" onclick="handleSendCommands({ assetname: 'Businessman02' })" alt="">
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Casualfemale03.png" onclick="setSelectedBody('CasualFemale03')"
+                          alt="">
+                        <p>3</p>
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_CasualFemale01.png" onclick="handleSendCommands({ assetname: 'CasualFemale01' })" alt="">
+                        <img src="src/Outfits/Layer_6.PNG" onclick="setSelectedBody('CasualFemale04')" alt="">
+                        <p>3</p>
                       </div>
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_CasualFemale02.png" onclick="handleSendCommands({ assetname: 'CasualFemale02' })" alt="">
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Casualmale01.png" onclick="setSelectedBody('CasualMale01')"
+                          alt="">
+                        <p>3</p>
                       </div>
-
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Casualfemale03.png" onclick="handleSendCommands({ assetname: 'CasualFemale03' })" alt="">
-                      </div>
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Layer_6.PNG" onclick="handleSendCommands({ assetname: 'CasualFemale04' })" alt="">
-                      </div>
-                      <div class="image-cell"data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Casualmale01.png" onclick="handleSendCommands({ assetname: 'CasualMale01' })" alt="">
-                      </div>
-                      <div class="image-cell"data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Layer_5.PNG" onclick="handleSendCommands({ assetname: 'CasualMale02' })" alt="">
-                      </div>
-                      
-                      <div class="image-cell"data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_SportMale.png" onclick="handleSendCommands({ assetname: 'SportsMale' })" alt="">
-                      </div>
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Layer_4.PNG" onclick="handleSendCommands({ assetname: 'SportsFemale' })" alt="">
-                      </div>
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Layer_1.PNG" onclick="handleSendCommands({ assetname: 'CyberFemale' })" alt="">
-                      </div>
-                      <div class="image-cell"data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Male_Outfit_06.PNG" onclick="handleSendCommands({ assetname: 'CyberMale' })" alt="">
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Layer_5.PNG" onclick="setSelectedBody('CasualMale02')" alt="">
+                        <p>3</p>
                       </div>
 
                       <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Armor.PNG" onclick="handleSendCommands({ assetname: 'M_Armor_01' })" alt="">
+                        <img src="src/Outfits/Icon_SportMale.png" onclick="setSelectedBody('SportsMale')" alt="">
+                        <p>3</p>
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Female_Armor.PNG" onclick="handleSendCommands({ assetname: 'F_Armor_01' })" alt="">
-                      </div>                      
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_BasicT_001.PNG" onclick="handleSendCommands({ assetname: 'Basic_Tshirt_Skinny_Jeans_Outfit' })" alt="">
+                        <img src="src/Outfits/Layer_4.PNG" onclick="setSelectedBody('SportsFemale')" alt="">
+                        <p>3</p>
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_BodyConDress_002.PNG" onclick="handleSendCommands({ assetname: 'Fitted_Bodycon_Dress' })" alt="">
+                        <img src="src/Outfits/Layer_1.PNG" onclick="setSelectedBody('CyberFemale')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Male_Outfit_06.PNG" onclick="setSelectedBody('CyberMale')"
+                          alt="">
+                        <p>3</p>
+                      </div>
+
+                      <div class="image-cell" data-gender="male" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Armor.PNG" onclick="setSelectedBody('M_Armor_01')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Female_Armor.PNG" onclick="setSelectedBody('F_Armor_01')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_BasicT_001.PNG"
+                          onclick="setSelectedBody('Basic_Tshirt_Skinny_Jeans_Outfit')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_BodyConDress_002.PNG"
+                          onclick="setSelectedBody('Fitted_Bodycon_Dress')" alt="">
+                        <p>3</p>
                       </div>
 
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Gen_Z_003.PNG" onclick="handleSendCommands({ assetname: 'GenZ_outfit' })" alt="">
+                        <img src="src/Outfits/Icon_Gen_Z_003.PNG" onclick="setSelectedBody('GenZ_outfit')" alt="">
+                        <p>3</p>
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Office_01_004.PNG" onclick="handleSendCommands({ assetname: 'Office_Outfit_01' })" alt="">
+                        <img src="src/Outfits/Icon_Office_01_004.PNG" onclick="setSelectedBody('Office_Outfit_01')"
+                          alt="">
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Office_02_005.PNG" onclick="handleSendCommands({ assetname: 'Office_Outfit_02' })" alt="">
+                        <img src="src/Outfits/Icon_Office_02_005.PNG" onclick="setSelectedBody('Office_Outfit_02')"
+                          alt="">
+                        <p>3</p>
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Hoodie_006.PNG" onclick="handleSendCommands({ assetname: 'Hoodie_Casual_Outfit' })" alt="">
+                        <img src="src/Outfits/Icon_Hoodie_006.PNG" onclick="setSelectedBody('Hoodie_Casual_Outfit')"
+                          alt="">
+                        <p>3</p>
                       </div>
-                      
+
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Autumn_007.PNG" onclick="handleSendCommands({ assetname: 'Autmn_Winter_Outfit' })" alt="">
-                      </div>
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Grunge_008.PNG" onclick="handleSendCommands({ assetname: 'Grunge_AllBlack_Outfit' })" alt="">
-                      </div>
-                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_Sportwear_009.PNG" onclick="handleSendCommands({ assetname: 'Fitness_Influencer_Outfit' })" alt="">
+                        <img src="src/Outfits/Icon_Autumn_007.PNG" onclick="setSelectedBody('Autmn_Winter_Outfit')"
+                          alt="">
+                        <p>3</p>
                       </div>
                       <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
-                        <img src="src/Outfits/Icon_SummerDress_010.PNG" onclick="handleSendCommands({ assetname: 'Summer_Flowy_Outfit' })" alt="">
+                        <img src="src/Outfits/Icon_Grunge_008.PNG"
+                          onclick="setSelectedBody('Grunge_AllBlack_Outfit')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_Sportwear_009.PNG"
+                          onclick="setSelectedBody('Fitness_Influencer_Outfit')" alt="">
+                        <p>3</p>
+                      </div>
+                      <div class="image-cell" data-gender="female" onclick="toggleActive(this)">
+                        <img src="src/Outfits/Icon_SummerDress_010.PNG"
+                          onclick="setSelectedBody('Summer_Flowy_Outfit')" alt="">
+                        <p>3</p>
                       </div>
                     </div>
 
                   </div>
 
                 </div>
-              </li>              
+              </li>
             </ul>
 
             
@@ -5630,6 +6303,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="javascript/chatbot_dashboard.js"></script>
 
 <script src="main.js"></script>
+<script src="javascript/credit.js"></script>
+<script src="javascript/premium.js"></script>
 <script src="javascript/randomize.js"></script>
 
 

@@ -1223,16 +1223,3 @@ function sendImageToAPI(base64Image) {
       console.error("Error sending image to API:", error);
     });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
