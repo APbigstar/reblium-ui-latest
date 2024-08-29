@@ -332,7 +332,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     try {
       const avatars = await fetchAvatarData(user_info_id);
 
-      displayAvatarNames(avatars);
+      await displayAvatarNames(avatars);
       // displayAvatarImageData(avatars); // Call the new function
     } catch (error) {
       console.error("Error updating avatar section:", error);
@@ -438,10 +438,10 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // Hide the skeleton loader and display the avatars
-  function hideSkeletonLoader() {
+  async function hideSkeletonLoader() {
     avatarsContainer.innerHTML = ""; // Clear the container
     // Call your displayAvatarNames function here to populate the container with avatars
-    displayAvatarNames(avatarsData); // Replace with your actual avatars data
+    await displayAvatarNames(avatarsData); // Replace with your actual avatars data
   }
 
   // Simulate loading avatars (replace this with your actual data fetching logic)
@@ -510,6 +510,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       avatarDiv.appendChild(avatarImg);
       avatarDiv.appendChild(avatarName);
+
+      if (selectedSubscription == null) {
+        const watermarkContainer = document.createElement("div");
+        watermarkContainer.id = "watermarkContainer";
+  
+        // Add watermark items
+        for (let i = 0; i < 5; i++) {
+          const watermarkItem = document.createElement("div");
+          watermarkItem.className = "avatar_wathermark_item";
+          watermarkItem.textContent = "Reblium";
+          watermarkContainer.appendChild(watermarkItem);
+        }
+  
+        avatarDiv.appendChild(watermarkContainer);
+      }
 
       const avatarButtons = document.createElement("div");
       avatarButtons.className = "avatar-buttons";
@@ -943,7 +958,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Fetch and display the avatars for the user with matching user_info_id
       const avatars = await fetchAvatarData(user_info_id);
-      displayAvatarNames(avatars);
+      await displayAvatarNames(avatars);
     } catch (error) {
       console.error("Error initializing page:", error);
     }
