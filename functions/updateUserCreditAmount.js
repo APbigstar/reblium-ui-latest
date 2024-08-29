@@ -25,6 +25,8 @@ router.post("/", async (req, res) => {
 
   try {
     const { user_id, amount, premium } = req.body;
+    const premuim_value = ''
+    
 
     if (!user_id || amount === undefined) {
       return res
@@ -51,12 +53,14 @@ router.post("/", async (req, res) => {
 
     if (premium == "") {
       newAmount = currentAmount + amount;
+      premuim_value = 'free'
     }
     if (
       currentCredits[0].premium_status == "free" &&
       (premium == "premium" || premium == "pro")
     ) {
       newAmount = currentAmount + amount;
+      premuim_value = premium
     }
 
     if (newAmount < 0) {
@@ -66,7 +70,7 @@ router.post("/", async (req, res) => {
 
     await connection.execute(
       "UPDATE User_Credits SET amount = ?, premium_status = ? WHERE user_id = ?",
-      [newAmount, premium, user_id]
+      [newAmount, premuim_value, user_id]
     );
 
     // Commit the transaction
