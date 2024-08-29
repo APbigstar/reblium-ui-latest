@@ -985,11 +985,11 @@
 
 <div id="sizeContainer" style="display: none; position: relative;">
   <div id="watermarkContainer">
-    <div class="wathermark_item">Reblium</div>
-    <div class="wathermark_item">Reblium</div>
-    <div class="wathermark_item">Reblium</div>
-    <div class="wathermark_item">Reblium</div>
-    <div class="wathermark_item">Reblium</div>
+    <canvas class="watermark_item"></canvas>
+    <canvas class="watermark_item"></canvas>
+    <canvas class="watermark_item"></canvas>
+    <canvas class="watermark_item"></canvas>
+    <canvas class="watermark_item"></canvas>
   </div>
 <div id="videoContainer" style="display: none;">
 <audio id="audioRef"></audio>
@@ -5393,6 +5393,25 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+
+        const canvases = document.querySelectorAll('.watermark_item');
+  
+        canvases.forEach(canvas => {
+          canvas.width = 200;  // Set width
+          canvas.height = 60;  // Set height
+          const ctx = canvas.getContext('2d');
+          
+          // Optional: Set background
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+          
+          // Draw text
+          ctx.font = '2.5rem Arial';
+          ctx.fillStyle = 'rgba(136, 136, 136, 0.5)';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('Reblium', canvas.width / 2, canvas.height / 2);
+        });
+
         const menuItems = document.querySelectorAll(".overlay-menu a");
 
         // Function to handle scrolling to a section

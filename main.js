@@ -514,15 +514,24 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (selectedSubscription == null) {
         const watermarkContainer = document.createElement("div");
         watermarkContainer.id = "watermarkContainer";
-  
-        // Add watermark items
+
+        // Create canvas elements for watermarks
         for (let i = 0; i < 5; i++) {
-          const watermarkItem = document.createElement("div");
-          watermarkItem.className = "avatar_wathermark_item";
-          watermarkItem.textContent = "Reblium";
-          watermarkContainer.appendChild(watermarkItem);
+          const canvas = document.createElement("canvas");
+          canvas.width = 100; // Set an appropriate width
+          canvas.height = 50; // Set an appropriate height
+          canvas.className = "avatar_watermark_item";
+
+          const ctx = canvas.getContext("2d");
+          ctx.font = "1.2rem Arial";
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';// #888 with 50% opacity
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("Reblium", canvas.width / 2, canvas.height / 2);
+
+          watermarkContainer.appendChild(canvas);
         }
-  
+
         avatarDiv.appendChild(watermarkContainer);
       }
 
