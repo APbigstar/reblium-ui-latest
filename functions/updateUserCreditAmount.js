@@ -15,7 +15,6 @@ router.post("/", async (req, res) => {
   const password = process.env.DB_PASSWORD;
   const database = process.env.DB_DATABASE;
 
-  // Create a database connection
   const connection = await mysql.createConnection({
     host: host,
     user: user,
@@ -27,24 +26,18 @@ router.post("/", async (req, res) => {
     const { user_id, amount, premium } = req.body;
     let premuim_value = ''
     
-
     if (!user_id || amount === undefined) {
       return res
         .status(400)
         .json({ error: "Missing user_id or amount in request body" });
     }
 
-    // Start a transaction
-    await connection.beginTransaction();
-
-    // Check current credit amount
     const [currentCredits] = await connection.execute(
       "SELECT amount, premium_status FROM User_Credits WHERE user_id = ? FOR UPDATE",
       [user_id]
     );
 
     if (currentCredits.length === 0) {
-      await connection.rollback();
       return res.status(404).json({ error: "User not found" });
     }
 
@@ -55,7 +48,6 @@ router.post("/", async (req, res) => {
       newAmount = currentAmount + amount;
       premuim_value = 'free'
     }
-
     console.log(currentCredits[0].premium_status)
     console.log(premium)
     if (
@@ -67,7 +59,6 @@ router.post("/", async (req, res) => {
     }
 
     if (newAmount < 0) {
-      await connection.rollback();
       return res.status(400).json({ error: "Insufficient credits" });
     }
 
@@ -75,9 +66,6 @@ router.post("/", async (req, res) => {
       "UPDATE User_Credits SET amount = ?, premium_status = ? WHERE user_id = ?",
       [newAmount, premuim_value, user_id]
     );
-
-    // Commit the transaction
-    await connection.commit();
 
     res.json({ success: true, updatedAmount: newAmount });
   } catch (error) {
