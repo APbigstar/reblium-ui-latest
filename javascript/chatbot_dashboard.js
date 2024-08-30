@@ -127,7 +127,7 @@ window.handleMute = function () {
     icon.className = "fas fa-volume-up";
     icon.style.color = "";
     // pElement.style.display = "none";
-    soundEnablePopup.classList.add("hidden");
+    // soundEnablePopup.classList.add("hidden");
   }
 };
 
