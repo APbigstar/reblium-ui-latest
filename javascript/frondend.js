@@ -13,6 +13,8 @@ const presetAvatars = document.querySelectorAll('.preset-avatar');
 
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
+
+  console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
   // Toggle the 'display' property for dashboard and artist_mode
   document.getElementById('avatarId').textContent = ''; // Clears the avatar ID display
   document.getElementById('avatarName').textContent = ''; // Clears the avatar ID display
@@ -39,9 +41,6 @@ function toggleDashboardAndArtistMode() {
 presetAvatars.forEach(function (presetAvatar) {
   presetAvatar.addEventListener('click', toggleDashboardAndArtistMode);
 });
-
-
-
 
 document.addEventListener('DOMContentLoaded', function() {
   // Automatically select the 'Games' category on page load
@@ -196,6 +195,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to handle the display toggle and button state
 function updateDisplayState(buttonType) {
+
+  console.log('xxxxxxxxxxxxxxxxxxxxxxxx')
+
   const chatbot = document.getElementById('chatbot');
   const artistMode = document.getElementById('artist_mode');
   const conversationButton = document.getElementById('conversationButton');
