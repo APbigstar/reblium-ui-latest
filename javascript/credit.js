@@ -111,6 +111,7 @@ async function handleDeposit() {
       cancelBuyCredits();
       showSaveAvatarExit();
       await getUserCredits();
+      showNotification("Added credits successfully!", "", "success");
     } else if (confirmResult.paymentIntent.status === "requires_action") {
       // Handle 3D Secure authentication if needed
       window.location.href =
@@ -182,6 +183,11 @@ function cancelBuyCredits() {
 function showBuyCredits() {
   const creditBuyModal = document.getElementById("buyCreditsConfirmation");
   creditBuyModal.style.display = "block";
+  showNotification(
+    "You don't have enough credits",
+    "Please try to buy credits",
+    "error"
+  );
 }
 
 async function updateCreditAmount() {
