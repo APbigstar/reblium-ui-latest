@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
 
   try {
     const { user_id, amount, premium } = req.body;
-    const premuim_value = ''
+    let premuim_value = ''
     
 
     if (!user_id || amount === undefined) {
@@ -55,6 +55,9 @@ router.post("/", async (req, res) => {
       newAmount = currentAmount + amount;
       premuim_value = 'free'
     }
+
+    console.log(currentCredits[0].premium_status)
+    console.log(premium)
     if (
       currentCredits[0].premium_status == "free" &&
       (premium == "premium" || premium == "pro")
