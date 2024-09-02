@@ -71,7 +71,7 @@ function showCategory(categoryId, event = null) {
   var selectedCategory = document.getElementById(categoryId);
   if (selectedCategory) {
     selectedCategory.style.display = 'block';
-  }f
+  }
 
   // Add 'selected' class to the clicked category button
   if (event) {

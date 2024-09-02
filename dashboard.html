@@ -991,7 +991,7 @@
     <canvas class="watermark_item"></canvas>
     <canvas class="watermark_item"></canvas>
   </div>
-<div id="videoContainer" style="display: none;">
+<div id="videoContainer" style="display: none;"></div>
 <audio id="audioRef"></audio>
 
 
@@ -5432,7 +5432,8 @@
 
       function detectVideoLoadedAndExecuteFunctions() {
         const videoElement = document
-          .getElementById("streamingVideoContainer");
+          .getElementById("videoContainer")
+          .querySelector("video");
 
           console.log(videoElement, videoElement.readyState)
 
