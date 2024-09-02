@@ -45,12 +45,6 @@ async function setCurrentPremium() {
     "premium-plan-selected"
   );
 
-  // Remove any existing event listeners
-  premiumButton.removeEventListener("click", cancelPremiumPriceSection);
-  premiumButton.removeEventListener("click", () =>
-    showPremiumPriceSection("premium")
-  );
-
   if (selectedSubscription == 1 || selectedSubscription == 2) {
     premiumButton.addEventListener("click", cancelPremiumPriceSection);
     currentSelectedPlanShow.style.display = "block";
