@@ -38,53 +38,59 @@ async function getSelectedSubscription() {
 
 async function setCurrentPremium() {
   console.log("Setting current premium");
-  // const premiumButton = document.getElementById(
-  //   "premium-subscription-start-button"
-  // );
-  // const currentSelectedPlanShow = document.getElementById(
-  //   "premium-plan-selected"
-  // );
+  const premiumButton = document.getElementById(
+    "premium-subscription-start-button"
+  );
+  const currentSelectedPlanShow = document.getElementById(
+    "premium-plan-selected"
+  );
 
-  // if (selectedSubscription == 1 || selectedSubscription == 2) {
-  //   premiumButton.addEventListener("click", cancelPremiumPriceSection);
-  //   currentSelectedPlanShow.style.display = "block";
-  //   premiumButton.textContent = "Cancel";
-  //   try {
-  //     const response = await fetch(
-  //       "/.netlify/functions/updateUserCreditAmount",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           user_id: globalUserInfoId,
-  //           amount: 100,
-  //           premium: "premium",
-  //         }),
-  //       }
-  //     );
+  // Remove any existing event listeners
+  premiumButton.removeEventListener("click", cancelPremiumPriceSection);
+  premiumButton.removeEventListener("click", () =>
+    showPremiumPriceSection("premium")
+  );
 
-  //     const res = await response.json();
+  if (selectedSubscription == 1 || selectedSubscription == 2) {
+    premiumButton.addEventListener("click", cancelPremiumPriceSection);
+    currentSelectedPlanShow.style.display = "block";
+    premiumButton.textContent = "Cancel";
+    try {
+      const response = await fetch(
+        "/.netlify/functions/updateUserCreditAmount",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: globalUserInfoId,
+            amount: 100,
+            premium: "premium",
+          }),
+        }
+      );
 
-  //     if (res.success) {
-  //       chargedCreditAmount = 0;
-  //       selectedHair = "";
-  //       selectedBody = "";
-  //       await getUserCredits();
-  //     } else {
-  //       console.error("Failed to update credit amount:", res.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error updating credit amount:", error);
-  //   }
-  // } else {
-  //   premiumButton.addEventListener("click", () =>
-  //     showPremiumPriceSection("premium")
-  //   );
-  //   currentSelectedPlanShow.style.display = "none";
-  //   premiumButton.textContent = "Start now";
-  // }
+      const res = await response.json();
+
+      if (res.success) {
+        chargedCreditAmount = 0;
+        selectedHair = "";
+        selectedBody = "";
+        await getUserCredits();
+      } else {
+        console.error("Failed to update credit amount:", res.error);
+      }
+    } catch (error) {
+      console.error("Error updating credit amount:", error);
+    }
+  } else {
+    premiumButton.addEventListener("click", () =>
+      showPremiumPriceSection("premium")
+    );
+    currentSelectedPlanShow.style.display = "none";
+    premiumButton.textContent = "Start now";
+  }
 }
 
 async function cancelPremiumPriceSection() {
