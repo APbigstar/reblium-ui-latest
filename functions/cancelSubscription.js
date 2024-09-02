@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
   });
 
   try {
-    const { user_plan_id } = req.body;
+    const { user_plan_id, userId } = req.body;
 
     console.log("Plan ID+++++++++++++++++", user_plan_id);
 
@@ -61,6 +61,12 @@ router.post("/", async (req, res) => {
         "UPDATE User_Plans SET expires_at = ?, complete = 1 WHERE id = ?",
         [expiresAt, user_plan_id]
       );
+
+
+      await connection.execute(
+        "UPDATE User_Credits SET premiunm_status = free WHERE id = user_id",
+        [userId]
+      )
 
       return res.json({ success: true });
     }

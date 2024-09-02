@@ -103,6 +103,7 @@ async function cancelPremiumPriceSection() {
       },
       body: JSON.stringify({
         user_plan_id: selectedUserPlanId,
+        userId: globalUserInfoId
       }),
     });
 
@@ -655,6 +656,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       // avatarButtons.appendChild(chatButton);
 
       avatarDiv.appendChild(avatarButtons);
+
+      console.log("clicked avatar")
 
       // Add the event listener for both click and double-click on an avatar
       avatarDiv.addEventListener("click", async () => {
