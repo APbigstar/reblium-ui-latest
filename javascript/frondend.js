@@ -1,7 +1,7 @@
 // Get references to the dashboard and artist_mode elements
 const dashboard = document.getElementById('dashboard');
 const artistMode = document.getElementById('artist_mode');
-const watermarkContainer = document.getElementById('watermarkContainer');
+// const watermarkContainer = document.getElementById('watermarkContainer');
 const chatbot = document.getElementById('chatbot');
 
 const navbar = document.querySelector('.navbar');
@@ -23,16 +23,16 @@ function toggleDashboardAndArtistMode() {
   if (dashboard.style.display !== 'none') {
     dashboard.style.display = 'none';
     artistMode.style.display = 'block';
-    if (selectedSubscription == null) {
-      watermarkContainer.style.display = "block"
-    } else {
-      watermarkContainer.style.display = "none"
-    }
+    // if (selectedSubscription == null) {
+    //   watermarkContainer.style.display = "block"
+    // } else {
+    //   watermarkContainer.style.display = "none"
+    // }
     chatbot.style.display = 'none';
   } else {
     dashboard.style.display = 'block';
     artistMode.style.display = 'none';
-    watermarkContainer.style.display = "none"
+    // watermarkContainer.style.display = "none"
     chatbot.style.display = 'none';
   }
 }
