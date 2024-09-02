@@ -663,9 +663,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         await waitForVideoLoad(); // Ensures the video or related content is fully loaded
 
-        const selectedAvatarId = avatar.id; // Ensure 'avatar' is the correct reference for the clicked avatar
+        const selectedAvatarId = avatar.id;
+        
+        console.log(avatar.id)
 
         const selectedAvatar = avatars.find((av) => av.id === selectedAvatarId);
+        console.log(selectedAvatar)
         if (selectedAvatar) {
           const avatarJsonData = selectedAvatar.Avatar;
           console.log(
