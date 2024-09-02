@@ -31,7 +31,8 @@ async function initiateSocialAuthentication(providerName) {
             const query = new URLSearchParams({
                 projectId: '4a04d037-a1fb-4bed-b26b-8fbd86c94828',
                 // login_url: 'https://beta.reblium.com/dashboard',
-                login_url: 'https://test-reblium.netlify.app/dashboard',
+                // login_url: 'https://test-reblium.netlify.app/dashboard',
+                login_url: 'http://localhost:8888/dashboard',
                 with_logout: '0'
             }).toString();
 
@@ -72,8 +73,8 @@ document.getElementById('login-button').addEventListener('click', async (event) 
     const query = new URLSearchParams({
         projectId: '4a04d037-a1fb-4bed-b26b-8fbd86c94828',
         // login_url: 'https://beta.reblium.com/dashboard',
-        // login_url: 'http://localhost:8888/dashboard',
-        login_url: 'https://test-reblium.netlify.app/dashboard',
+        // login_url: 'https://test-reblium.netlify.app/dashboard',
+        login_url: 'http://localhost:8888/dashboard',
         with_logout: '0'
     }).toString();
 

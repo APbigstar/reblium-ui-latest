@@ -281,7 +281,7 @@ html {
   cursor: pointer;
 }
 
-.transparent-button-active {
+.transparent-button-active, .gender-button-active {
   background-color: transparent;
   text-transform: uppercase;
   border-radius: 25px;
@@ -297,12 +297,13 @@ html {
   border: white 1px solid;
 }
 
-.transparent-button-active:hover {
+.transparent-button-active:hover, .gender-button-active:hover {
   background-color: var(--secondary-color);
   border: var(--secondary-color) 1px solid;
 }
 
 .transparent-button,
+.gender-button,
 .button-display {
   background-color: transparent;
   text-transform: uppercase;
@@ -316,7 +317,7 @@ html {
   width: 190px;
 }
 
-.transparent-button {
+.transparent-button, .gender-button {
   border: 0.5px solid #464646;
   color: #464646;
 }

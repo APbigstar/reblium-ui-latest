@@ -14,7 +14,6 @@ const presetAvatars = document.querySelectorAll('.preset-avatar');
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
 
-  console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz')
   // Toggle the 'display' property for dashboard and artist_mode
   document.getElementById('avatarId').textContent = ''; // Clears the avatar ID display
   document.getElementById('avatarName').textContent = ''; // Clears the avatar ID display
@@ -408,7 +407,11 @@ function toggleMenu(menuId) {
 
 // Function to open the first button in the specified sub-menu
 function openFirstButton(menuId) {
-  const firstButton = document.querySelector(`#${menuId}SubMenu button:first-child`);
+  const firstButton = document.querySelector(`#${menuId}SubMenu button.transparent-button:nth-of-type(1)`);
+  if (menuId == 'wardrobe') {
+    const female = document.querySelector(`#${menuId}SubMenu button.gender-button:nth-of-type(1)`);
+    female.click();
+  }
   if (firstButton) {
     firstButton.click();
   }
