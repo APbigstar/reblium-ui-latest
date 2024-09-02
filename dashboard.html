@@ -5435,6 +5435,8 @@
           .getElementById("videoContainer")
           .querySelector("video");
 
+          console.log(videoElement, videoElement.readyState)
+
         if (videoElement && videoElement.readyState >= 3 && !videoLoaded) {
           // The video element exists and is loaded (readyState >= 3 indicates loaded)
           console.log("Video is loaded and ready to play.");
@@ -5462,6 +5464,7 @@
       // Function to return a promise that resolves when the video is loaded
       function waitForVideoLoad() {
         console.log("Waiting for video loading.")
+        console.log(videoLoaded)
         if (videoLoaded) {
           return Promise.resolve();
         } else {
