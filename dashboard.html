@@ -62,7 +62,6 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script src="https://unpkg.com/@arcware/webrtc-plugin@latest/index_new.umd.js"></script>
 
     <title>Reblium Avatar System</title>
     <!-- Hotjar Tracking Code for https://reblium.netlify.app/ -->
@@ -9855,13 +9854,13 @@
       let randomizationPromise;
 
       function detectVideoLoadedAndExecuteFunctions() {
-        var videoContainer = document.getElementById("videoContainer");
+        const videoContainer = document.getElementById("videoContainer");
         if (!videoContainer) {
           console.log("Video container not found");
           return;
         }
 
-        var videoElement = videoContainer.querySelector("video");
+        const videoElement = videoContainer.querySelector("video");
         if (!videoElement) {
           console.log("Video element not found");
           return;
@@ -9873,11 +9872,7 @@
         if (videoElement.readyState >= 3 && !videoLoaded) {
           console.log("Video is loaded and ready to play.");
 
-          if (
-            typeof randomizationPromise !== "undefined" &&
-            randomizationPromise &&
-            randomizationPromise.resolve
-          ) {
+          if (randomizationPromise) {
             randomizationPromise.resolve();
           }
 
@@ -9886,18 +9881,11 @@
           handleSendCommands({ autocamera: "Yes" });
         }
       }
-
-      // Initialize WebRTC and then start checking for video
-      initializeWebRTC(function (error, webrtc) {
-        if (error) {
-          console.error("Failed to initialize WebRTC:", error);
-          return;
-        }
-
-        console.log("WebRTC initialized successfully");
-        // Now you can start checking for the video element
-        checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 100);
-      });
+      // Define an interval to periodically check for video loading
+      const checkInterval = setInterval(
+        detectVideoLoadedAndExecuteFunctions,
+        1000
+      ); // Check every second
 
       // Function to return a promise that resolves when the video is loaded
       function waitForVideoLoad() {
