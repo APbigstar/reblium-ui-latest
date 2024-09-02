@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
 
 
       await connection.execute(
-        "UPDATE User_Credits SET premiunm_status = free WHERE id = user_id",
+        "UPDATE User_Credits SET premium_status = free WHERE id = user_id",
         [userId]
       )
 
