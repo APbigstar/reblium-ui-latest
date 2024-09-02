@@ -657,10 +657,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       avatarDiv.appendChild(avatarButtons);
 
-      console.log("clicked avatar")
-
       // Add the event listener for both click and double-click on an avatar
       avatarDiv.addEventListener("click", async () => {
+      console.log("clicked avatar")
+
         await waitForVideoLoad(); // Ensures the video or related content is fully loaded
 
         const selectedAvatarId = avatar.id; // Ensure 'avatar' is the correct reference for the clicked avatar
@@ -871,7 +871,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   window.uploadLogo = uploadLogo;
 
   function loadLogo() {
-    const user_info_id = window.localStorage.getItem("user_info_id"); // Assuming user_info_id is stored in localStorage
+    // const user_info_id = window.localStorage.getItem("user_info_id"); // Assuming user_info_id is stored in localStorage
+    const user_info_id = globalUserInfoId
     const chatbotLogo = document.getElementById("chatbotLogo");
 
     if (!user_info_id) {

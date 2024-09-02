@@ -5461,6 +5461,7 @@
 
       // Function to return a promise that resolves when the video is loaded
       function waitForVideoLoad() {
+        console.log("Waiting for video loading.")
         if (videoLoaded) {
           return Promise.resolve();
         } else {
