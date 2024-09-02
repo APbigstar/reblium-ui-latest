@@ -62,6 +62,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://unpkg.com/@arcware/webrtc-plugin@latest/index_new.umd.js"></script>
 
     <title>Reblium Avatar System</title>
     <!-- Hotjar Tracking Code for https://reblium.netlify.app/ -->
@@ -9854,35 +9855,49 @@
       let randomizationPromise;
 
       function detectVideoLoadedAndExecuteFunctions() {
-        const videoElement = document
-          .getElementById("videoContainer")
-          .querySelector("video");
+        var videoContainer = document.getElementById("videoContainer");
+        if (!videoContainer) {
+          console.log("Video container not found");
+          return;
+        }
 
-        console.log(videoElement, videoElement.readyState);
+        var videoElement = videoContainer.querySelector("video");
+        if (!videoElement) {
+          console.log("Video element not found");
+          return;
+        }
 
-        if (videoElement && videoElement.readyState >= 3 && !videoLoaded) {
-          // The video element exists and is loaded (readyState >= 3 indicates loaded)
+        console.log("Video element:", videoElement);
+        console.log("Video ready state:", videoElement.readyState);
+
+        if (videoElement.readyState >= 3 && !videoLoaded) {
           console.log("Video is loaded and ready to play.");
 
-          // Resolve the randomization promise to trigger the function
-          if (randomizationPromise) {
+          if (
+            typeof randomizationPromise !== "undefined" &&
+            randomizationPromise &&
+            randomizationPromise.resolve
+          ) {
             randomizationPromise.resolve();
           }
 
-          // Set the flag to true to prevent further logging and function calls
           videoLoaded = true;
-
-          // Clear the interval to stop further checks
           clearInterval(checkInterval);
           handleSendCommands({ autocamera: "Yes" });
         }
       }
 
-      // Define an interval to periodically check for video loading
-      const checkInterval = setInterval(
-        detectVideoLoadedAndExecuteFunctions,
-        1000
-      ); // Check every second
+      // Initialize WebRTC and then start checking for video
+      initializeWebRTC(function (error, webrtc) {
+        if (error) {
+          console.error("Failed to initialize WebRTC:", error);
+          return;
+        }
+
+        console.log("WebRTC initialized successfully");
+        // Now you can start checking for the video element
+        checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 100);
+      });
 
       // Function to return a promise that resolves when the video is loaded
       function waitForVideoLoad() {

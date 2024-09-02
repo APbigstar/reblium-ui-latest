@@ -26,8 +26,6 @@ router.post("/", async (req, res) => {
   try {
     const { user_plan_id, userId } = req.body;
 
-    console.log("Plan ID+++++++++++++++++", user_plan_id);
-
     if (!user_plan_id) {
       return res
         .status(400)
