@@ -281,7 +281,8 @@ html {
   cursor: pointer;
 }
 
-.transparent-button-active, .gender-button-active {
+.transparent-button-active,
+.gender-button-active {
   background-color: transparent;
   text-transform: uppercase;
   border-radius: 25px;
@@ -297,7 +298,8 @@ html {
   border: white 1px solid;
 }
 
-.transparent-button-active:hover, .gender-button-active:hover {
+.transparent-button-active:hover,
+.gender-button-active:hover {
   background-color: var(--secondary-color);
   border: var(--secondary-color) 1px solid;
 }
@@ -317,7 +319,8 @@ html {
   width: 190px;
 }
 
-.transparent-button, .gender-button {
+.transparent-button,
+.gender-button {
   border: 0.5px solid #464646;
   color: #464646;
 }
@@ -2992,4 +2995,61 @@ table th {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.credit_modal_title {
+  color: #fff;
+  text-align: center;
+  font-family: Montserrat;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 12.8px;
+}
+
+.credit_card_modal {
+  display: flex;
+  align-items: flex-start;
+  padding: 50px;
+}
+
+.credit_section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 53px 42px;
+}
+
+.credit_amount_section {
+  align-items: center;
+  background: black;
+}
+
+.credit_amount_section button {
+  width: 70%;
+}
+
+.credit_amount_view_section {
+  background: #2962ff;
+}
+
+.credit_amounts {
+  color: #fff;
+  font-family: Montserrat;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 9.6px;
+}
+
+.credit_card_detail_title {
+  color: #9b9b9b;
+  font-family: Arial;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: 9.6px;
 }

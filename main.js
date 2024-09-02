@@ -1,6 +1,6 @@
 let globalUserId = null; // Define at a global scope accessible to both functions
 let globalUserInfoId = null;
-let globalUserEmail = null;
+let globalUserEmail = localStorage.getItem('user_email');
 let userCreditAmount = 0;
 let selectedSubscription = null;
 let selectedUserPlanId = null;

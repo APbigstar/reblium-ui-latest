@@ -3,8 +3,11 @@ let selectedBody = "";
 let chargedCreditAmount = 0;
 let selectedCreditAmount = 0;
 
+// const stripe = Stripe(
+//   "pk_test_51Lk3NyF22hdHq8pHZqvo4zdHTulTRAOglzRh9mYLFoBTxxNYf6KsBbuE6sva3HMNkoNzK5QG3Dni3trOyyKBTmac00DpBp4Cpb"
+// );
 const stripe = Stripe(
-  "pk_test_51Lk3NyF22hdHq8pHZqvo4zdHTulTRAOglzRh9mYLFoBTxxNYf6KsBbuE6sva3HMNkoNzK5QG3Dni3trOyyKBTmac00DpBp4Cpb"
+  "pk_live_51Lk3NyF22hdHq8pHctUFM6zqjf1bm9cDvVcFok3Fc2YI0W2wT6gwLgg7f65CAlCFqut9fBUTe3x1Et7j4MoRpLsv00lOOKEc5Z"
 );
 const elements = stripe.elements();
 const cardElement = elements.create("card");
@@ -36,6 +39,7 @@ async function handleDeposit() {
   depositButton.textContent = "Processing...";
 
   try {
+    console.log(globalUserEmail)
     // Create PaymentIntent on your server
     const response = await fetch(
       "/.netlify/functions/createCreditPaymentIntent",

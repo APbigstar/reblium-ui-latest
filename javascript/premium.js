@@ -1,5 +1,8 @@
+// const premium_stripe = Stripe(
+//   "pk_test_51Lk3NyF22hdHq8pHZqvo4zdHTulTRAOglzRh9mYLFoBTxxNYf6KsBbuE6sva3HMNkoNzK5QG3Dni3trOyyKBTmac00DpBp4Cpb"
+// );
 const premium_stripe = Stripe(
-  "pk_test_51Lk3NyF22hdHq8pHZqvo4zdHTulTRAOglzRh9mYLFoBTxxNYf6KsBbuE6sva3HMNkoNzK5QG3Dni3trOyyKBTmac00DpBp4Cpb"
+  "pk_live_51Lk3NyF22hdHq8pHctUFM6zqjf1bm9cDvVcFok3Fc2YI0W2wT6gwLgg7f65CAlCFqut9fBUTe3x1Et7j4MoRpLsv00lOOKEc5Z"
 );
 const premium_element = premium_stripe.elements();
 const premium_cardElement = premium_element.create("card");
@@ -34,8 +37,6 @@ async function handlePremiumPay() {
       cardErrors.textContent = "";
     }
   });
-  const token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbW9AcmVibGl1bS5jb20iLCJleHAiOjE3MjQ0Mzc2NzgsImdyb3VwcyI6W3siaWQiOjQxNTEyLCJuYW1lIjoiZGVmYXVsdCIsImlzX2RlZmF1bHQiOnRydWV9XSwiaGFzX2F0dHJzIjp0cnVlLCJpYXQiOjE3MjQzNTEyNzgsImlzX21hc3RlciI6dHJ1ZSwiaXNzIjoiaHR0cHM6Ly9sb2dpbi54c29sbGEuY29tIiwicHJvbW9fZW1haWxfYWdyZWVtZW50IjpmYWxzZSwicHVibGlzaGVyX2lkIjo0MDU0MzUsInN1YiI6ImQ2NWUzODBmLThlMTYtNDNjMS1iOTEwLWE0ODVjMTZkM2EyNyIsInR5cGUiOiJ4c29sbGFfbG9naW4iLCJ1c2VybmFtZSI6IkRlbW8gUmVibGl1bSIsInhzb2xsYV9sb2dpbl9hY2Nlc3Nfa2V5IjoiNUN6ZU11MTNmZWY2cXVpR2FDX1pIRzJlcnBFVUhoLUlhTmFIdDl2Y3E0WSIsInhzb2xsYV9sb2dpbl9wcm9qZWN0X2lkIjoiNGEwNGQwMzctYTFmYi00YmVkLWIyNmItOGZiZDg2Yzk0ODI4In0.7IOvVh6ifTrvNZ9om-21UJVG89ZugJ4F8Qi3_-IPzUQ&remember_me=false";
 
   depositButton.disabled = true;
   depositButton.textContent = "Processing...";
@@ -46,7 +47,6 @@ async function handlePremiumPay() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-xsolla-token": token, // Ensure this line is included
       },
       body: JSON.stringify({
         plan_id: planID[selectedPlan][selectedPeriod],
