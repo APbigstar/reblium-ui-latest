@@ -2,7 +2,7 @@ const express = require("express");
 const serverless = require("serverless-http");
 const mysql = require('mysql2/promise');
 const { format } = require('date-fns');
-const { constructWebhookEvent } = require('src/lib/stripeLib');
+const { constructWebhookEvent } = require("./stripeLib"); 
 
 const app = express();
 const router = express.Router();
