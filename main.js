@@ -38,6 +38,7 @@ async function setCurrentPremium() {
   const premiumButton = document.getElementById(
     "premium-subscription-start-button"
   );
+  const freePlanButton = document.getElementById('free-plan-button');
   const currentSelectedPlanShow = document.getElementById(
     "premium-plan-selected"
   );
@@ -52,6 +53,7 @@ async function setCurrentPremium() {
     premiumButton.addEventListener("click", cancelPremiumPriceSection);
     currentSelectedPlanShow.style.display = "block";
     premiumButton.textContent = "Cancel";
+    freePlanButton.style.display = 'none'
     try {
       const response = await fetch(
         "/.netlify/functions/updateUserCreditAmount",
@@ -87,6 +89,7 @@ async function setCurrentPremium() {
     );
     currentSelectedPlanShow.style.display = "none";
     premiumButton.textContent = "Start now";
+    freePlanButton.style.display = "block"
   }
 }
 
