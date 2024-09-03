@@ -71,7 +71,6 @@ router.post("/", async (req, res) => {
     // const result = constructWebhookEvent(req.body, sig);
 
     if (result?.id) {
-      console.log("Webhook event processed:", result);
       const [userPlans] = await connection.execute(
         "SELECT * FROM User_Plans WHERE provider_id = ?",
         [result.id]
@@ -84,12 +83,10 @@ router.post("/", async (req, res) => {
             provider_id: result.id,
             user_plan_id: userPlans[0]?.id,
           });
-          console.log("invoice", invoice);
           const { status } = result;
           const paid = result.paid ?? invoice.paid;
           const amount = result.amount ?? invoice.amount;
           const currency = result.currency ?? invoice.currency;
-          console.log("test1", paid, amount, currency);
           await connection.execute(
             "UPDATE User_Plan_Invoice SET status = ?, paid = ?, amount = ?, currency = ? WHERE id = ?",
             [status, paid, amount, currency, invoice.id]

@@ -11,7 +11,6 @@ app.use(express.json());
 // Middleware to verify Xsolla token and get user info
 const verifyXsollaToken = async (req, res, next) => {
   const xsollaToken = req.headers["x-xsolla-token"];
-  console.log("token-------?", xsollaToken);
   if (!xsollaToken) {
     return res
       .status(401)
@@ -62,11 +61,6 @@ router.post("/", async (req, res) => {
 
   try {
     const { amount, userId, userEmail } = req.body;
-    // const userId = req.user.user_id; // Get user ID from Xsolla user info
-    // const userId = 154; // Get user ID from Xsolla user info
-    // const userEmail = "demo@reblium.com"; // Get user email from Xsolla user info
-
-    console.log("User ID:", userId, "Email:", userEmail, "Amount", amount);
 
     if (!amount) {
       return res.status(400).json({ success: false, error: "Missing amount" });
@@ -80,9 +74,7 @@ router.post("/", async (req, res) => {
 
     let customer_id = "";
     if (stripeCustomer.length === 0) {
-      console.log("Customer function=======================");
       const customer = await createCustomer(userEmail);
-      console.log("Stripe Customer---------------->", customer);
       customer_id = customer.id;
       await connection.execute(
         "INSERT INTO Stripe_Customer (customer_id, user_id) VALUES (?, ?)",
@@ -98,7 +90,6 @@ router.post("/", async (req, res) => {
       userEmail
     );
 
-    console.log("Payment intent=======================>", payment_intent);
     res.json({
       success: true,
       data: { client_secret: payment_intent?.client_secret },

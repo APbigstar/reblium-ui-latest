@@ -8,9 +8,6 @@ const router = express.Router();
 app.use(express.json({ limit: '10mb' })); // Parse the request body as JSON
 
 router.post("/", async (req, res) => {
-    // Log received request body for debugging
-    console.log("Received request body:", req.body);
-
     // Retrieve environment variables for database connection
     const host = process.env.DB_HOST;
     const user = process.env.DB_USER;

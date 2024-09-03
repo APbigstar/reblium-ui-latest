@@ -80,7 +80,6 @@ async function handlePremiumPay() {
     }
 
     if (confirmResult.paymentIntent.status === "succeeded") {
-      console.log("confirm function start--");
       // Payment successful, confirm on your server
       const confirmResponse = await fetch(
         "/.netlify/functions/confirmPlanPaymentIntent",

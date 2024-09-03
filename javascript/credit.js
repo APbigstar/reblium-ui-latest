@@ -39,7 +39,6 @@ async function handleDeposit() {
   depositButton.textContent = "Processing...";
 
   try {
-    console.log(globalUserEmail)
     // Create PaymentIntent on your server
     const response = await fetch(
       "/.netlify/functions/createCreditPaymentIntent",
@@ -82,7 +81,6 @@ async function handleDeposit() {
     }
 
     if (confirmResult.paymentIntent.status === "succeeded") {
-      console.log("confirm function start--");
       // Payment successful, confirm on your server
       const confirmResponse = await fetch(
         "/.netlify/functions/confirmCreditPaymentIntent",
@@ -143,6 +141,18 @@ function setSelectedCreditAmount(amount) {
 
   // Add 'selected-credit' class to the clicked button
   event.target.classList.add("selected-credit");
+
+  const creditData = { 12: 100, 30: 250, 60: 500, 96: 800 };
+
+  const creditPriceEle = document.querySelector("div.credit_amount_view_section h2.total-price")
+  const creditAmountEle = document.querySelector("div.credit_amount_view_section span.credit-amount")
+  const subCreditAmountEle = document.querySelector("div.credit_amount_view_section span.sub-credit-amount")
+  const totalCreditAmountEle = document.querySelector("div.credit_amount_view_section span.total-credit-amount")
+
+  creditPriceEle.textContent =amount
+  creditAmountEle.textContent = creditData[amount]
+  subCreditAmountEle.textContent = creditData[amount]
+  totalCreditAmountEle.textContent = creditData[amount]
 }
 
 function showSaveAvatarExit() {
@@ -192,6 +202,8 @@ function showBuyCredits() {
     "Please try to buy credits",
     "error"
   );
+  const firstCreditAmountButton =  document.querySelector(`#buyCreditsConfirmation button.credit-button:nth-of-type(1)`);
+  firstCreditAmountButton.click();
 }
 
 async function updateCreditAmount() {

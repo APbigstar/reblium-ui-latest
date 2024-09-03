@@ -11,7 +11,6 @@ async function getUserCredits() {
   );
 
   const creditData = await checkUserCreditAmount.json();
-  console.log(creditData);
   if (creditData.amount) {
     userCreditAmount = creditData.amount;
     document.getElementById("exportCredits").textContent = userCreditAmount;
@@ -26,7 +25,6 @@ async function getSelectedSubscription() {
     `/.netlify/functions/getSelectedSubscription?user_id=${globalUserInfoId}`
   );
   const subscriptionData = await checkCurrentUserSubscription.json();
-  console.log("subscriptionData", subscriptionData);
   if (subscriptionData.plan) {
     selectedSubscription = subscriptionData.plan;
     selectedUserPlanId = subscriptionData.userPlanId;
@@ -37,7 +35,6 @@ async function getSelectedSubscription() {
 }
 
 async function setCurrentPremium() {
-  console.log("Setting current premium");
   const premiumButton = document.getElementById(
     "premium-subscription-start-button"
   );
@@ -94,7 +91,6 @@ async function setCurrentPremium() {
 }
 
 async function cancelPremiumPriceSection() {
-  console.log("Click Cancel Subscription Button.");
   try {
     const response = await fetch("/.netlify/functions/cancelSubscription", {
       method: "POST",
@@ -139,7 +135,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (response.ok) {
         const userData = await response.json();
-        // console.log(userData);
 
         // Display the user's email in your HTML
         document.getElementById("userEmail").textContent = userData.email;
@@ -152,7 +147,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png";
         }
 
-        // console.log('User ID from XSolla:', userData.id); // Display the user ID in the console log
         return userData;
       } else {
         throw new Error("Invalid user token");
@@ -317,17 +311,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // // display all the images by avatar id
-  // function displayAvatarImageData(avatars) {
-  //   for (const avatar of avatars) {
-  //     if (avatar.Avatar_Image) {
-  //       console.log(`Avatar ID ${avatar.id} Image Data:`, avatar.Avatar_Image);
-  //     } else {
-  //       console.log(`Avatar ID ${avatar.id} has no image data.`);
-  //     }
-  //   }
-  // }
-
   // Refactor Fetching and Displaying Avatars:
   async function updateAvatarSection(user_info_id) {
     try {
@@ -341,22 +324,23 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   async function fetchBlendshapeData(user_info_id) {
-    try {
-      const response = await fetch(
-        `/.netlify/functions/getBlendshape?user_info_id=${user_info_id}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const blendshapeData = await response.json();
-      console.log("Fetched blendshape data:", blendshapeData);
-      handleSendCommands({ loadUserblendshapes: blendshapeData });
+    // try {
+    //   const response = await fetch(
+    //     `/.netlify/functions/getBlendshape?user_info_id=${user_info_id}`
+    //   );
+    //   if (!response.ok) {
+    //     throw new Error("Network response was not ok");
+    //   }
+    //   const blendshapeData = await response.json();
+    //   handleSendCommands({ loadUserblendshapes: blendshapeData });
 
-      return blendshapeData;
-    } catch (error) {
-      console.error("Error fetching blendshape data:", error);
-      return null;
-    }
+    //   return blendshapeData;
+    // } catch (error) {
+    //   console.error("Error fetching blendshape data:", error);
+    //   return null;
+    // }
+
+    console.log('Call Blend Shape Function')
   }
 
   // Function to fetch avatar data from the backend API for a specific user_info_id
@@ -366,7 +350,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         `/.netlify/functions/getUserAvatars?user_info_id=${user_info_id}`
       );
       const data = await response.json();
-      console.log("Fetched avatar data:", data);
       return data;
     } catch (error) {
       console.error("Error fetching avatar data:", error);
@@ -384,18 +367,17 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       const personalizedAvatars = await response.json();
-      console.log("Personalized Avatars:", personalizedAvatars);
 
-      const container = document.getElementById("personalizedAvatarButton"); // Assuming this is the container for all avatars
+      // const container = document.getElementById("personalizedAvatarButton"); // Assuming this is the container for all avatars
 
-      // Ensure the container exists
-      if (!container) {
-        console.error("Avatar display container not found.");
-        return;
-      }
+      // // Ensure the container exists
+      // if (!container) {
+      //   console.error("Avatar display container not found.");
+      //   return;
+      // }
 
       // Clear previous content
-      container.innerHTML = "";
+      // container.innerHTML = "";
 
       // Iterate over each personalized avatar and create an img element
       personalizedAvatars.forEach((avatar) => {
@@ -442,7 +424,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function hideSkeletonLoader() {
     avatarsContainer.innerHTML = ""; // Clear the container
     // Call your displayAvatarNames function here to populate the container with avatars
-    await displayAvatarNames(avatarsData); // Replace with your actual avatars data
+    // await displayAvatarNames(avatarsData); // Replace with your actual avatars data
   }
 
   // Simulate loading avatars (replace this with your actual data fetching logic)
@@ -452,7 +434,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     // Simulate an API call or data loading delay
     setTimeout(() => {
       // Replace the following with your actual data loading logic
-      const avatarsData = fetchAvatars(); // Example fetchAvatars function
+      // const avatarsData = fetchAvatars(); // Example fetchAvatars function
 
       // Once avatarsData is available, hide the skeleton loader and display avatars
       hideSkeletonLoader();
@@ -659,22 +641,15 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Add the event listener for both click and double-click on an avatar
       avatarDiv.addEventListener("click", async () => {
-      console.log("clicked avatar")
 
         await waitForVideoLoad(); // Ensures the video or related content is fully loaded
 
         const selectedAvatarId = avatar.id;
         
-        console.log(avatar.id)
 
         const selectedAvatar = avatars.find((av) => av.id === selectedAvatarId);
-        console.log(selectedAvatar)
         if (selectedAvatar) {
           const avatarJsonData = selectedAvatar.Avatar;
-          console.log(
-            `JSON Data for Avatar ID ${selectedAvatarId}:`,
-            avatarJsonData
-          );
 
           handleSendCommands(avatarJsonData);
 
@@ -686,11 +661,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
           // Extract and log the Personas information
           if (avatarJsonData && avatarJsonData.Personas) {
-            console.log(
-              `Personas Information for Avatar ID ${selectedAvatarId}:`,
-              avatarJsonData.Personas
-            );
-
             // Display the Personas information in the input field
             document.getElementById("personaInput").value =
               avatarJsonData.Personas;
@@ -775,7 +745,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Update the avatar section after successful deletion
       await updateAvatarSection(user_info_id);
-      console.log("Avatar deleted successfully:", selectedAvatarId);
     } catch (error) {
       console.error("Error deleting avatar:", error);
     }
@@ -865,7 +834,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       const result = await response.json();
-      console.log("Upload result:", result.message);
     } catch (error) {
       console.error("Error uploading logo:", error);
     }
@@ -882,20 +850,21 @@ document.addEventListener("DOMContentLoaded", async function () {
       console.error("User info ID is not available.");
       return; // Exit if no user_info_id is found
     }
-
-    fetch(`/.netlify/functions/getUserLogo?user_info_id=${user_info_id}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch logo");
-        }
-        return response.text(); // Expecting a Base64 encoded string
-      })
-      .then((base64Data) => {
-        chatbotLogo.src = base64Data; // Set the image src to the Base64 string
-      })
-      .catch((error) => {
-        console.error("Error loading logo:", error);
-      });
+    
+    console.log("Call Log Loading Function.");
+    // fetch(`/.netlify/functions/getUserLogo?user_info_id=${user_info_id}`)
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Failed to fetch logo");
+    //     }
+    //     return response.text(); // Expecting a Base64 encoded string
+    //   })
+    //   .then((base64Data) => {
+    //     chatbotLogo.src = base64Data; // Set the image src to the Base64 string
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error loading logo:", error);
+    //   });
   }
 
   // This function gets the tier name based on the user id
@@ -941,7 +910,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       const userId = userData.id;
       globalUserId = userData.id;
-      console.log(userId);
       // Check if the user exists in the database and get the user_info_id
       const checkUserExistsResponse = await fetch(
         `/.netlify/functions/checkUserExists?user_id=${userId}`
@@ -952,12 +920,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         // User does not exist, so add it to the database
         user_info_id = await createUser(userId);
         globalUserInfoId = user_info_id;
-        // console.log('New user created with user_info_id:', user_info_id);
       } else {
         // User already exists, get the user_info_id
         user_info_id = checkUserExistsData.user_info_id;
         globalUserInfoId = user_info_id;
-        // console.log('User already exists in the database:', user_info_id);
       }
       window.localStorage.setItem("user_info_id", user_info_id);
 

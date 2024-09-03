@@ -134,16 +134,12 @@
           }
           const jsonData = await response.json(); // Parse the JSON response
 
-          // Now you have the JSON data
-          console.log(jsonData);
-
           // Call your handleSendCommands function with the JSON data
           handleSendCommands({ resetavatar: JSON.stringify(jsonData) });
           // handleSendCommands({ cameraswitch: 'Head' });
 
           // Extracting the persona data from the JSON file
           const personaInfo = jsonData["Personas"];
-          console.log(personaInfo);
 
           // Display persona data in popup input
           if (personaInfo) {
@@ -162,7 +158,6 @@
             throw new Error(`Failed to fetch ${filePath}`);
           }
           const jsonData = await response.json();
-          console.log("JSON Data:", jsonData);
           // Here you can add more processing logic as needed
         } catch (error) {
           console.error("Error loading JSON data:", error);
@@ -189,10 +184,7 @@
           .getElementById("reset")
           .addEventListener("click", handleResetButtonClick);
       });
-
-      const avatarId = parseFloat(
-        document.getElementById("avatarId").textContent
-      );
+      
     </script>
 
     <nav class="navbar">
@@ -1117,9 +1109,7 @@
       style="display: none"
     >
       <div class="modal-content-exit">
-        <h2 class="text-white" style="font-size: 25px">
-          Charged Credits
-        </h2>
+        <h2 class="text-white" style="font-size: 25px">Charged Credits</h2>
         <ul
           class="charged_credit_list mb-4"
           style="list-style-type: disc; text-align: left"
@@ -1150,60 +1140,72 @@
     <div
       id="buyCreditsConfirmation"
       class="modal-exit"
-      style="display: none; width: 30%"
+      style="display: none; width: 60%; background-color: unset"
     >
-      <div class="modal-content-exit">
-        <h3 class="credit_modal_title">Buy Credits</h3>
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <button
-            class="bg-blue-500 text-white py-2 px-4 rounded"
-            onclick="setSelectedCreditAmount(12)"
-          >
+      <div class="modal-content-exit credit_card_modal">
+        <div class="credit_amount_section credit_section">
+          <h3 class="credit_modal_title">BUY CREDITS</h3>
+          <button class="credit-button" onclick="setSelectedCreditAmount(12)">
             100 (€12)
           </button>
-          <button
-            class="bg-blue-500 text-white py-2 px-4 rounded"
-            onclick="setSelectedCreditAmount(60)"
-          >
-            500 (€60)
-          </button>
-          <button
-            class="bg-blue-500 text-white py-2 px-4 rounded"
-            onclick="setSelectedCreditAmount(30)"
-          >
+          <button class="credit-button" onclick="setSelectedCreditAmount(30)">
             250 (€30)
           </button>
-          <button
-            class="bg-blue-500 text-white py-2 px-4 rounded"
-            onclick="setSelectedCreditAmount(96)"
-          >
+          <button class="credit-button" onclick="setSelectedCreditAmount(60)">
+            500 (€60)
+          </button>
+          <button class="credit-button" onclick="setSelectedCreditAmount(96)">
             800 (€96)
           </button>
+          <button class="cancel-button" onclick="cancelBuyCredits();">
+            CANCEL
+          </button>
         </div>
-
-        <div class="mt-4">
-          <label
-            for="card-element"
-            class="block text-sm font-medium text-gray-700"
-            >Card details</label
-          >
-          <div
-            id="card-element"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-          ></div>
-          <div id="card-errors" class="mt-2 text-red-600 text-sm"></div>
+        <div class="credit_amount_view_section credit_section">
+          <div>
+            <h2 class="total-price">€12</h2>
+            <div class="price-breakdown">
+              <span>Buy credit</span>
+              <span class="credit-amount">€12</span>
+            </div>
+            <div class="price-breakdown">
+              <span>Subtotal</span>
+              <span class="sub-credit-amount">€12</span>
+            </div>
+            <button class="promo-code-button">Add promo code</button>
+            <div class="total-due">
+              <span>Total due</span>
+              <span class="total-credit-amount">€12</span>
+            </div>
+          </div>
+          <p class="powered-by">Powered by Stripe</p>
         </div>
-        <div class="mt-6 grid grid-cols-2 gap-4">
+        <div class="credit_card_detail_section credit_section">
+          <h3 class="section-title">Pay with card</h3>
+          <div class="card-input">
+            <input
+              id="credit_card_user_email"
+              type="email"
+              placeholder="Email"
+            />
+            <div
+              id="card-element"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            ></div>
+            <div id="card-errors" class="mt-2 text-red-600 text-sm"></div>
+          </div>
           <button
             id="deposit-button"
-            class="menu-button"
+            class="pay-button"
             onclick="handleDeposit()"
           >
-            Deposit
+            Pay now
           </button>
-          <button class="exit rounded" onclick="cancelBuyCredits();">
-            Cancel
-          </button>
+          <p class="terms">
+            By providing your card information, you allow [YOUR STRIPE ACCOUNT
+            NAME] to charge your card for future payments in accordance with
+            their terms*.
+          </p>
         </div>
       </div>
     </div>
@@ -9817,6 +9819,11 @@
       }
 
       document.addEventListener("DOMContentLoaded", () => {
+        const creditCardEmail = document.getElementById(
+          "credit_card_user_email"
+        );
+        creditCardEmail.value = localStorage.getItem("user_email");
+
         const canvases = document.querySelectorAll(".watermark_item");
 
         canvases.forEach((canvas) => {
@@ -9866,12 +9873,7 @@
           return;
         }
 
-        console.log("Video element:", videoElement);
-        console.log("Video ready state:", videoElement.readyState);
-
         if (videoElement.readyState >= 3 && !videoLoaded) {
-          console.log("Video is loaded and ready to play.");
-
           if (randomizationPromise) {
             randomizationPromise.resolve();
           }
@@ -9889,8 +9891,6 @@
 
       // Function to return a promise that resolves when the video is loaded
       function waitForVideoLoad() {
-        console.log("Waiting for video loading.");
-        console.log(videoLoaded);
         if (videoLoaded) {
           return Promise.resolve();
         } else {
@@ -9940,7 +9940,6 @@
             const ageRange = `Agemin*${sliderValue}, Agemax*${sliderValue}`;
 
             const result = [...checkboxValues, ageRange].join(", ");
-            console.log("Generated Result:", result);
             handleSendCommands({ randomize: result });
             handleSendCommands({ assetname: "Studio_makeUp" });
 
@@ -10176,15 +10175,15 @@
         }
       }
 
-      document.addEventListener("DOMContentLoaded", () => {
-        const hotelReceptionistImage = document.querySelector(
-          "#hotelReceptionist img"
-        );
+      // document.addEventListener("DOMContentLoaded", () => {
+      //   const hotelReceptionistImage = document.querySelector(
+      //     "#hotelReceptionist img"
+      //   );
 
-        hotelReceptionistImage.addEventListener("click", () => {
-          window.open("chatwithohad.html", "_blank");
-        });
-      });
+      //   hotelReceptionistImage.addEventListener("click", () => {
+      //     window.open("chatwithohad.html", "_blank");
+      //   });
+      // });
 
       function toggleFullScreen() {
         var fullScreenIcon = document.getElementById("fullScreenIcon");
@@ -10421,7 +10420,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
+    <!-- <script>
       // Example to subscribe to range changes
       document.getElementById("inputPieces").addEventListener(
         "rangechange",
@@ -10431,7 +10430,7 @@
         },
         true
       );
-    </script>
+    </script> -->
 
     <script src="javascript/range-slider.js"></script>
     <script>

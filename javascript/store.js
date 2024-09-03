@@ -11,7 +11,6 @@ async function fetchGroupsAndCreateDropdown() {
     }
 
     const data = await resp.json(); // Assuming the response is in JSON format
-    console.log("All data received:", data);  // Log the entire response data
 
     // Create dropdown element
     const dropdown = document.createElement('select');
@@ -98,9 +97,6 @@ async function fetchItemsByGroup(selectedGroup) {
     if (resp.ok) {
         const data = await resp.json();
         const itemListContainer = document.getElementById('itemList');
-        console.log("data store:", data);  // Log the entire response data
-
-    
         // Clear the itemListContainer before adding new items
         itemListContainer.innerHTML = '';
     
@@ -273,7 +269,6 @@ async function fetchUserInventory(userToken) {
         }
 
         const data = await response.json();
-        console.log('User inventory:', data);
         displayInventory(data); // Function to handle the display of inventory items on the UI
     } catch (error) {
         console.error('Error fetching user inventory:', error);

@@ -85,16 +85,16 @@ function addBotMessage(message) {
 // Automatically open the chatbox on page load
 toggleChatbox();
 
-document.addEventListener("DOMContentLoaded", function () {
-  const modal = document.getElementById("popupModal");
-  const audioPlayer = document.getElementById("audioPlayer");
-  modal.style.display = "flex"; // Show modal on page load
+// document.addEventListener("DOMContentLoaded", function () {
+//   const modal = document.getElementById("popupModal");
+//   const audioPlayer = document.getElementById("audioPlayer");
+//   modal.style.display = "flex"; // Show modal on page load
 
-  document.getElementById("closeButton").addEventListener("click", function () {
-    modal.style.display = "none"; // Hide modal
-    audioPlayer.muted = false; // Unmute the audio
-  });
-});
+//   document.getElementById("closeButton").addEventListener("click", function () {
+//     modal.style.display = "none"; // Hide modal
+//     audioPlayer.muted = false; // Unmute the audio
+//   });
+// });
 
 // Mute button
 let hasEnabledSound = false; // Flag to track if the user has enabled sound
@@ -103,19 +103,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const audioRef = document.getElementById("audioRef");
   audioRef.muted = true; // Ensure audio is muted initially
 
-  const soundEnablePopup = document.getElementById("sound-enable-popup");
-  if (!hasEnabledSound) {
-    soundEnablePopup.classList.remove("hidden"); // Show the pop-up on page load
-  }
+  // const soundEnablePopup = document.getElementById("sound-enable-popup");
+  // if (!hasEnabledSound) {
+  //   soundEnablePopup.classList.remove("hidden"); // Show the pop-up on page load
+  // }
 
   // Add event listener for enabling sound
-  document
-    .getElementById("enable-sound-button")
-    .addEventListener("click", function () {
-      handleMute();
-      hasEnabledSound = true;
-      soundEnablePopup.classList.add("hidden");
-    });
+  // document
+  //   .getElementById("enable-sound-button")
+  //   .addEventListener("click", function () {
+  //     handleMute();
+  //     hasEnabledSound = true;
+  //     soundEnablePopup.classList.add("hidden");
+  //   });
 });
 window.handleMute = function () {
   const audioRef = document.getElementById("audioRef");

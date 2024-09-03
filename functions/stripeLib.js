@@ -11,10 +11,7 @@ if (!process.env.PUBLIC_STRIPE_SECRET_API_KEY) {
 //     "PUBLIC_STRIPE_WEBHOOK_SECRET is not set in the environment variables"
 //   );
 // }
-console.log(
-  "process.env.PUBLIC_STRIPE_SECRET_API_KEY",
-  process.env.PUBLIC_STRIPE_SECRET_API_KEY
-);
+
 const stripe = new Stripe(process.env.PUBLIC_STRIPE_SECRET_API_KEY, {
   apiVersion: "2024-06-20",
 });
@@ -193,7 +190,6 @@ function constructWebhookEvent(payload, signature) {
       trial: !!data.trial_end,
     };
   } else {
-    console.log(`Unhandled event type ${eventType}`);
     return null;
   }
 

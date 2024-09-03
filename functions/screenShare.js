@@ -20,8 +20,6 @@ router.post("/", async (req, res) => {
     }
 
     try {
-        console.log('Received image data');
-
         // Assuming GPT-4o can interpret the base64 image
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
@@ -41,7 +39,6 @@ router.post("/", async (req, res) => {
         });
 
         const interpretation = response.choices[0].message.content;
-        console.log('Image interpreted:', interpretation);
 
         res.json({ interpretation, message: 'Interpretation provided successfully' });
     } catch (error) {
