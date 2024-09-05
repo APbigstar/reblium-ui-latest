@@ -41,7 +41,7 @@ async function handleDeposit() {
   try {
     // Create PaymentIntent on your server
     const response = await fetch(
-      "/.netlify/functions/createCreditPaymentIntent",
+      "/.netlify/functions/credit/createCreditPaymentIntent",
       {
         method: "POST",
         headers: {
@@ -83,7 +83,7 @@ async function handleDeposit() {
     if (confirmResult.paymentIntent.status === "succeeded") {
       // Payment successful, confirm on your server
       const confirmResponse = await fetch(
-        "/.netlify/functions/confirmCreditPaymentIntent",
+        "/.netlify/functions/credit/confirmCreditPaymentIntent",
         {
           method: "POST",
           headers: {
