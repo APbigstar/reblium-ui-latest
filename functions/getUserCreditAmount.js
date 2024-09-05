@@ -28,11 +28,28 @@ router.get("/", async (req, res) => {
       user_id,
     ]);
 
+    const getCurrentUserPlan = `
+      SELECT plan_id, id, created_at
+      FROM User_Plans 
+      WHERE user_id = ? 
+        AND is_active = 1 
+        AND (status = 'open' OR status = 'active') 
+        AND expires_at IS NULL
+    `;
+
+    const [planRows] = await connection.execute(getCurrentUserPlan, [user_id]);
+
+    console.log(planRows)
+
     if (rows.length === 0) {
       res.json({ exists: false });
     } else {
       const creditAmount = rows[0].amount;
-      res.json({ exists: true, amount: creditAmount });
+      if (planRows.length > 0) {
+        res.json({ exists: true, amount: creditAmount, createdAt: planRows[0].created_at });
+      } else {
+        res.json({ exists: true, amount: creditAmount });
+      }
     }
   } catch (error) {
     console.error("Error executing database query:", error);

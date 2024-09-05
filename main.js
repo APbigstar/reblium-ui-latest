@@ -1,6 +1,6 @@
 let globalUserId = null; // Define at a global scope accessible to both functions
 let globalUserInfoId = null;
-let globalUserEmail = localStorage.getItem('user_email');
+let globalUserEmail = localStorage.getItem("user_email");
 let userCreditAmount = 0;
 let selectedSubscription = null;
 let selectedUserPlanId = null;
@@ -11,12 +11,27 @@ async function getUserCredits() {
   );
 
   const creditData = await checkUserCreditAmount.json();
+
+  console.log(creditData);
   if (creditData.amount) {
     userCreditAmount = creditData.amount;
     document.getElementById("exportCredits").textContent = userCreditAmount;
+    document.getElementById("detail_page_credit_amount").textContent =
+      userCreditAmount;
+    if (creditData.createdAt) {
+      let createdDate = new Date(creditData.createdAt);
+      createdDate.setMonth(createdDate.getMonth() + 1);
+      let oneMonthLater = createdDate.toISOString().slice(0, 10);
+      document.getElementById("plan_created_date_p").innerHTML = `You're next billing cycle starts on ` + `<span style="font-size: 1.2rem; color: rgb(34 211 238);">` + oneMonthLater + `</span>`;
+    } else {
+      document.getElementById("plan_created_date_p").textContent = "No Plan";
+    }
   } else {
     userCreditAmount = 0;
     document.getElementById("exportCredits").textContent = userCreditAmount;
+    document.getElementById("detail_page_credit_amount").textContent =
+      userCreditAmount;
+    document.getElementById("plan_created_date_p").textContent = "No Plan";
   }
 }
 
@@ -31,91 +46,6 @@ async function getSelectedSubscription() {
   } else {
     selectedSubscription = null;
     selectedUserPlanId = null;
-  }
-}
-
-async function setCurrentPremium() {
-  const premiumButton = document.getElementById(
-    "premium-subscription-start-button"
-  );
-  const freePlanButton = document.getElementById('free-plan-button');
-  const currentSelectedPlanShow = document.getElementById(
-    "premium-plan-selected"
-  );
-
-  // Remove any existing event listeners
-  premiumButton.removeEventListener("click", cancelPremiumPriceSection);
-  premiumButton.removeEventListener("click", () =>
-    showPremiumPriceSection("premium")
-  );
-
-  if (selectedSubscription == 1 || selectedSubscription == 2) {
-    premiumButton.addEventListener("click", cancelPremiumPriceSection);
-    currentSelectedPlanShow.style.display = "block";
-    premiumButton.textContent = "Cancel";
-    freePlanButton.style.display = 'none'
-    try {
-      const response = await fetch(
-        "/.netlify/functions/updateUserCreditAmount",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_id: globalUserInfoId,
-            amount: 100,
-            premium: "premium",
-          }),
-        }
-      );
-
-      const res = await response.json();
-
-      if (res.success) {
-        chargedCreditAmount = 0;
-        selectedHair = "";
-        selectedBody = "";
-        await getUserCredits();
-      } else {
-        console.error("Failed to update credit amount:", res.error);
-      }
-    } catch (error) {
-      console.error("Error updating credit amount:", error);
-    }
-  } else {
-    premiumButton.addEventListener("click", () =>
-      showPremiumPriceSection("premium")
-    );
-    currentSelectedPlanShow.style.display = "none";
-    premiumButton.textContent = "Start now";
-    freePlanButton.style.display = "block"
-  }
-}
-
-async function cancelPremiumPriceSection() {
-  try {
-    const response = await fetch("/.netlify/functions/cancelSubscription", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_plan_id: selectedUserPlanId,
-        userId: globalUserInfoId
-      }),
-    });
-
-    const res = await response.json();
-
-    if (res.success) {
-      await getSelectedSubscription();
-      await setCurrentPremium();
-    } else {
-      console.error("Failed to cancel subscription:", res.error);
-    }
-  } catch (error) {
-    console.error("Error canceling subscription", error);
   }
 }
 
@@ -343,7 +273,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     //   return null;
     // }
 
-    console.log('Call Blend Shape Function')
+    console.log("Call Blend Shape Function");
   }
 
   // Function to fetch avatar data from the backend API for a specific user_info_id
@@ -644,11 +574,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Add the event listener for both click and double-click on an avatar
       avatarDiv.addEventListener("click", async () => {
-
         await waitForVideoLoad(); // Ensures the video or related content is fully loaded
 
         const selectedAvatarId = avatar.id;
-        
 
         const selectedAvatar = avatars.find((av) => av.id === selectedAvatarId);
         if (selectedAvatar) {
@@ -846,14 +774,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   function loadLogo() {
     // const user_info_id = window.localStorage.getItem("user_info_id"); // Assuming user_info_id is stored in localStorage
-    const user_info_id = globalUserInfoId
+    const user_info_id = globalUserInfoId;
     const chatbotLogo = document.getElementById("chatbotLogo");
 
     if (!user_info_id) {
       console.error("User info ID is not available.");
       return; // Exit if no user_info_id is found
     }
-    
+
     console.log("Call Log Loading Function.");
     // fetch(`/.netlify/functions/getUserLogo?user_info_id=${user_info_id}`)
     //   .then((response) => {
@@ -871,25 +799,25 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // This function gets the tier name based on the user id
-  async function fetchTierName(user_info_id) {
-    try {
-      const response = await fetch(
-        `/.netlify/functions/user-tier?user_info_id=${user_info_id}`
-      );
-      const data = await response.json();
-      if (response.ok) {
-        document.getElementById(
-          "tier"
-        ).textContent = `Reblium: ${data.tier_name}`;
-      } else {
-        console.error("Failed to fetch tier name:", data.error);
-      }
-    } catch (error) {
-      console.error("Error fetching tier name:", error);
-      document.getElementById("tier").textContent =
-        "Error fetching tier information.";
-    }
-  }
+  // async function fetchTierName(user_info_id) {
+  //   try {
+  //     const response = await fetch(
+  //       `/.netlify/functions/user-tier?user_info_id=${user_info_id}`
+  //     );
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       document.getElementById(
+  //         "tier"
+  //       ).textContent = `Reblium: ${data.tier_name}`;
+  //     } else {
+  //       console.error("Failed to fetch tier name:", data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching tier name:", error);
+  //     document.getElementById("tier").textContent =
+  //       "Error fetching tier information.";
+  //   }
+  // }
 
   // // Call the function with user_info_id when needed
   document.getElementById("save-exit").addEventListener("click", () => {
@@ -936,7 +864,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       }
 
       await fetchPersonalizedAvatars(user_info_id);
-      await fetchTierName(user_info_id);
+      // await fetchTierName(user_info_id);
       await getUserCredits();
       await getSelectedSubscription();
       await setCurrentPremium();
@@ -955,19 +883,26 @@ document.addEventListener("DOMContentLoaded", async function () {
   await initPage();
 });
 
-function showNotification(message, subMessage, type = 'success', duration = 5000) {
+function showNotification(
+  message,
+  subMessage,
+  type = "success",
+  duration = 5000
+) {
   const colorClasses = {
-    success: 'bg-green-100 border-green-500 text-green-700',
-    error: 'bg-red-100 border-red-500 text-red-700',
-    warning: 'bg-yellow-100 border-yellow-500 text-yellow-700',
-    info: 'bg-blue-100 border-blue-500 text-blue-700'
+    success: "bg-green-100 border-green-500 text-green-700",
+    error: "bg-red-100 border-red-500 text-red-700",
+    warning: "bg-yellow-100 border-yellow-500 text-yellow-700",
+    info: "bg-blue-100 border-blue-500 text-blue-700",
   };
 
   const iconPaths = {
-    success: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
-    error: 'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z',
-    warning: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
-    info: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+    success: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+    error:
+      "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
+    warning:
+      "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+    info: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
   };
 
   const colorClass = colorClasses[type] || colorClasses.success;
@@ -991,19 +926,19 @@ function showNotification(message, subMessage, type = 'success', duration = 5000
   `;
 
   // Remove existing notification if any
-  const existingNotification = document.getElementById('notification');
+  const existingNotification = document.getElementById("notification");
   if (existingNotification) {
     existingNotification.remove();
   }
 
   // Add new notification
-  document.body.insertAdjacentHTML('beforeend', notificationHtml);
-  
+  document.body.insertAdjacentHTML("beforeend", notificationHtml);
+
   // Show notification with animation
   setTimeout(() => {
-    const notification = document.getElementById('notification');
-    notification.classList.remove('opacity-0', 'translate-y-[-1rem]');
-    notification.classList.add('opacity-100', 'translate-y-0');
+    const notification = document.getElementById("notification");
+    notification.classList.remove("opacity-0", "translate-y-[-1rem]");
+    notification.classList.add("opacity-100", "translate-y-0");
   }, 10);
 
   // Auto-hide notification
@@ -1013,10 +948,10 @@ function showNotification(message, subMessage, type = 'success', duration = 5000
 }
 
 function closeNotification() {
-  const notification = document.getElementById('notification');
+  const notification = document.getElementById("notification");
   if (notification) {
-    notification.classList.remove('opacity-100', 'translate-y-0');
-    notification.classList.add('opacity-0', 'translate-y-[-1rem]');
+    notification.classList.remove("opacity-100", "translate-y-0");
+    notification.classList.add("opacity-0", "translate-y-[-1rem]");
     setTimeout(() => {
       notification.remove();
     }, 300);

@@ -107,7 +107,7 @@ router.post("/", async (req, res) => {
       payment_intent.status === "succeeded"
     ) {
       await connection.execute(
-        "UPDATE User_Plans SET is_active = true WHERE id = ?",
+        "UPDATE User_Plans SET is_active = 1 WHERE id = ?",
         [userPlans[0].id]
       );
 

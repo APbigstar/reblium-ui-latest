@@ -56,14 +56,14 @@ router.post("/", async (req, res) => {
       );
 
       await connection.execute(
-        "UPDATE User_Plans SET expires_at = ?, complete = 1 WHERE id = ?",
+        "UPDATE User_Plans SET expires_at = ?, complete = 1, is_active = 0 WHERE id = ?",
         [expiresAt, user_plan_id]
       );
 
 
       await connection.execute(
-        "UPDATE User_Credits SET premium_status = free WHERE id = user_id",
-        [userId]
+        "UPDATE User_Credits SET premium_status = ? WHERE user_id = ?",
+        ['free', userId]
       )
 
       return res.json({ success: true });

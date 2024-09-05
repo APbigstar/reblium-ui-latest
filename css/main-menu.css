@@ -6,6 +6,11 @@
   font-family: "Montserrat", sans-serif;
 }
 
+@font-face {
+  font-family: Futura;
+  src: url(../src/Fonts/futura/Futura\ Bold\ font.ttf);
+}
+
 body {
   overflow: hidden;
   position: relative;
@@ -1388,6 +1393,7 @@ input[type="range"]:focus {
 }
 
 .bottom-images {
+  position: relative;
   display: flex;
   justify-content: space-between;
   margin: 20px 0;
@@ -1410,6 +1416,31 @@ input[type="range"]:focus {
 .bottom-image:hover {
   transform: scale(1.05); /* Scales the div, and thus the image, larger */
   z-index: 10; /* Makes sure the hovered item comes above other content */
+}
+
+p.category-title {
+  position: absolute;
+  color: #F6F6F6;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-family: Futura;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 3px;
+}
+
+p.category-title-bottom {
+  bottom: 22px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  text-wrap: nowrap;
+}
+
+p.category-title-top {
+  top: 30px;
+  left: 30px;
+  text-wrap: wrap;
 }
 
 .bottom-image-text {
@@ -1495,7 +1526,7 @@ input[type="range"]:focus {
   color: var(--secondary-color);
   font-weight: normal;
   flex: 1;
-  font-size: 48px;
+  font-size: 2rem;
 }
 
 .new-avatar {
@@ -3102,4 +3133,23 @@ table th {
   font-size: 12px;
   color: #666;
   margin-top: 20px;
+}
+
+.custom-border {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.cyan-button {
+  background-color: #00ffff;
+  color: #000;
+  cursor: pointer;
+}
+.dark-button {
+  background-color: rgba(0, 0, 0);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  cursor: pointer;
+}
+
+.details-section {
+  width: 50%;
 }

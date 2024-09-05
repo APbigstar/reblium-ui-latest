@@ -24,8 +24,8 @@ router.post("/", async (req, res) => {
 
   try {
     const { user_id, amount, premium } = req.body;
-    let premuim_value = ''
-    
+    let premuim_value = "";
+
     if (!user_id || amount === undefined) {
       return res
         .status(400)
@@ -38,36 +38,40 @@ router.post("/", async (req, res) => {
     );
 
     if (currentCredits.length === 0) {
-      return res.status(404).json({ error: "User not found" });
+      if (premium == "premium" || premium == "pro") {
+        await connection.execute(
+          "INSERT INTO User_Credits (user_id, amount, premium_status) VALUES(?, ?, ?)",
+          [user_id, amount, premium]
+        );
+        return res.json({ success: true, updatedAmount: amount });
+      }
+    } else {
+      const currentAmount = currentCredits[0].amount;
+      let newAmount;
+
+      if (premium == "") {
+        newAmount = currentAmount + amount;
+        premuim_value = "free";
+      }
+      if (
+        currentCredits[0].premium_status == "free" &&
+        (premium == "premium" || premium == "pro")
+      ) {
+        newAmount = currentAmount + amount;
+        premuim_value = premium;
+      }
+
+      if (newAmount < 0) {
+        return res.status(400).json({ error: "Insufficient credits" });
+      }
+
+      await connection.execute(
+        "UPDATE User_Credits SET amount = ?, premium_status = ? WHERE user_id = ?",
+        [newAmount, premuim_value, user_id]
+      );
+
+      res.json({ success: true, updatedAmount: newAmount });
     }
-
-    const currentAmount = currentCredits[0].amount;
-    let newAmount;
-
-    if (premium == "") {
-      newAmount = currentAmount + amount;
-      premuim_value = 'free'
-    }
-    console.log(currentCredits[0].premium_status)
-    console.log(premium)
-    if (
-      currentCredits[0].premium_status == "free" &&
-      (premium == "premium" || premium == "pro")
-    ) {
-      newAmount = currentAmount + amount;
-      premuim_value = premium
-    }
-
-    if (newAmount < 0) {
-      return res.status(400).json({ error: "Insufficient credits" });
-    }
-
-    await connection.execute(
-      "UPDATE User_Credits SET amount = ?, premium_status = ? WHERE user_id = ?",
-      [newAmount, premuim_value, user_id]
-    );
-
-    res.json({ success: true, updatedAmount: newAmount });
   } catch (error) {
     await connection.rollback();
     console.error("Error executing database query:", error);

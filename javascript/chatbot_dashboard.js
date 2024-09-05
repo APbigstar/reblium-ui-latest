@@ -468,14 +468,14 @@ document.getElementById("Signup").addEventListener("click", function () {
 });
 
 // New listener for the tier div
-document.getElementById("tier").addEventListener("click", function () {
-  var img = document.getElementById("signupImage");
-  if (img.style.display === "none") {
-    img.style.display = "block"; // Show the image
-  } else {
-    img.style.display = "none"; // Optionally hide if you want to toggle by button too
-  }
-});
+// document.getElementById("tier").addEventListener("click", function () {
+//   var img = document.getElementById("signupImage");
+//   if (img.style.display === "none") {
+//     img.style.display = "block"; // Show the image
+//   } else {
+//     img.style.display = "none"; // Optionally hide if you want to toggle by button too
+//   }
+// });
 
 // Listener for the image itself
 document.getElementById("signupImage").addEventListener("click", function () {

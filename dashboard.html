@@ -184,7 +184,6 @@
           .getElementById("reset")
           .addEventListener("click", handleResetButtonClick);
       });
-      
     </script>
 
     <nav class="navbar">
@@ -205,6 +204,7 @@
         <div
           id="tier"
           style="color: #00cdff; margin-right: 10px; cursor: pointer"
+          onclick="toggleSection('tier-section')"
         ></div>
 
         <div style="padding-right: 10px">
@@ -286,8 +286,67 @@
           <a onclick="toggleSection('avatar-Pricing')"
             ><i class="fas fa-tag"></i> Pricing</a
           >
-          <a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
           <!-- <a href="https://discord.gg/AA9tDP8Djg" target="_blank"><i class="fas fa-cog"></i> Settings</a> -->
+        </div>
+      </div>
+      <div id="tier-section" style="display: none">
+        <div class="avatar-section" id="toggleAvatarSection">
+          <div id="discoverSection">
+            <h2 class="mb-4">Plan & Billing</h2>
+            <div class="flex item-start gap-2">
+              <div
+                class="details-section custom-border rounded-lg p-6 bg-black"
+              >
+                <h2 class="text-cyan-400 text-sm mb-4">Details</h2>
+                <div class="flex items-start mb-4">
+                  <img
+                    src="https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png"
+                    alt="User Avatar"
+                    class="rounded-full mr-4 w-24 h-24"
+                  />
+                  <div class="flex flex-col gap-2 w-full">
+                    <p class="font-semibold text-white">Mao Lin Liao</p>
+                    <p class="text-gray-400 text-sm">khlisns@gmail.com</p>
+                    <p class="text-gray-400 text-sm">Password: ••••••••••••</p>
+                    <button
+                      class="cyan-button w-full py-2 rounded-md text-sm font-semibold mb-2"
+                    >
+                      Change password
+                    </button>
+                    <button
+                      class="dark-button w-full py-2 rounded-md text-sm font-semibold"
+                    >
+                      Reset password
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="details-section custom-border rounded-lg p-6 bg-black"
+              >
+                <h2 class="text-cyan-400 text-sm mb-4">Details</h2>
+                <div class="mb-4">
+                  <p class="text-cyan-400 font-semibold mb-2" id="detail_premium_plan_type"></p>
+                  <p class="text-gray-400 text-sm mb-4">Credits left: <span id="detail_page_credit_amount"></span></p>
+                </div>
+                <p class="text-gray-400 text-sm mb-6" id="plan_created_date_p">
+                </p>
+                <button
+                  class="cyan-button w-full py-2 rounded-md text-sm font-semibold mb-2"
+                  onclick="toggleSection('avatar-Pricing')"
+                >
+                  Change plan
+                </button>
+                <button
+                  class="dark-button w-full py-2 rounded-md text-sm font-semibold"
+                  onclick="cancelPremiumPriceSection()"
+                >
+                  Cancel plan
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div id="avatar-Discover" style="display: block">
@@ -319,6 +378,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Clarissa - Virtual Concierge.DHS') + toggleDashboardAndArtistMode()"
                   alt="Hotel Receptionist"
                 />
+                <!-- <p class="category-title category-title-bottom">Virtual Concierge</p> -->
               </div>
               <div class="bottom-image">
                 <img
@@ -326,6 +386,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Edubot - Virtual Tutor.DHS') + toggleDashboardAndArtistMode()"
                   alt="Virtual Tutor"
                 />
+                <!-- <p class="category-title category-title-bottom">Virtual Tutors</p> -->
               </div>
               <div class="bottom-image">
                 <img
@@ -333,6 +394,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Mallie - Virtual Guide.DHS') + toggleDashboardAndArtistMode()"
                   alt="Virtual Tutor"
                 />
+                <!-- <p class="category-title category-title-bottom">Virtual Guide</p> -->
               </div>
             </div>
 
@@ -343,6 +405,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Reggie - frontdesk asistent.DHS') + toggleDashboardAndArtistMode()"
                   alt="GP Assistant"
                 />
+                <!-- <p class="category-title category-title-bottom">Virtual Frontdesk</p> -->
               </div>
               <div class="bottom-image">
                 <img
@@ -350,6 +413,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Grace - Virtual Hostess.DHS') + toggleDashboardAndArtistMode()"
                   alt="Virtual Guide"
                 />
+                <!-- <p class="category-title category-title-bottom">Virtual Hostess</p> -->
               </div>
               <div class="bottom-image">
                 <img
@@ -357,6 +421,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Quest - VIrtual Survey interviewer.DHS') + toggleDashboardAndArtistMode()"
                   alt="Virtual Guide"
                 />
+                <!-- <p class="category-title category-title-bottom">Virtual Survey</p> -->
               </div>
             </div>
 
@@ -367,6 +432,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Maartje - Dutch teacher.DHS') + toggleDashboardAndArtistMode()"
                   alt="GP Assistant"
                 />
+                <!-- <p class="category-title category-title-top">Learning <br /> Dutch</p> -->
               </div>
               <div class="bottom-image">
                 <img
@@ -374,6 +440,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Camila - Spanish teacher.DHS') + toggleDashboardAndArtistMode()"
                   alt="Virtual Guide"
                 />
+                <!-- <p class="category-title category-title-top">Learning<br /> Spanish</p> -->
               </div>
               <div class="bottom-image">
                 <img
@@ -381,6 +448,7 @@
                   onclick="loadAndSendAvatarData('avatar_presets/json/Sora -  Japanese Language Teacher.DHS') + toggleDashboardAndArtistMode()"
                   alt="Virtual Guide"
                 />
+                <!-- <p class="category-title category-title-top">Learning<br /> Japanese</p> -->
               </div>
             </div>
           </div>
@@ -769,12 +837,12 @@
                 ANNUALLY
               </button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
               <!-- Free Plan -->
               <div class="bg-gray-900 p-6 rounded-lg">
                 <h3 class="text-2xl font-bold mb-2">Free</h3>
                 <p class="text-blue-400 mb-4">
-                  <span id="freeCredits">10</span> credits
+                  <span id="freeCredits">0</span> credits
                 </p>
                 <p class="text-3xl font-bold mb-4">
                   €0
@@ -832,7 +900,7 @@
                 </ul>
               </div>
               <!-- Pro Plan -->
-              <div
+              <!-- <div
                 class="bg-gray-900 p-6 rounded-lg opacity-50"
                 style="position: relative"
               >
@@ -849,7 +917,7 @@
                 </div>
                 <h3 class="text-2xl font-bold mb-2">Pro</h3>
                 <p class="text-blue-400 mb-4">
-                  <span id="proCredits">400</span> credits
+                  <span id="proCredits">200</span> credits
                 </p>
                 <p class="text-3xl font-bold mb-4">
                   €<span id="proPrice">120</span>
@@ -867,9 +935,9 @@
                   <li class="font-bold">• 500 mins streaming</li>
                   <li class="font-bold">• Website embedding</li>
                 </ul>
-              </div>
+              </div> -->
               <!-- Enterprise Plan -->
-              <div
+              <!-- <div
                 class="bg-gray-900 p-6 rounded-lg opacity-50"
                 style="position: relative"
               >
@@ -900,7 +968,7 @@
                   <li class="font-bold">• Website embedding</li>
                   <li class="font-bold">• Full Web API Access</li>
                 </ul>
-              </div>
+              </div> -->
             </div>
           </div>
           <div
@@ -916,8 +984,8 @@
                   <th class="py-2 text-gray-400"></th>
                   <th class="py-2 text-gray-400">FREE</th>
                   <th class="py-2 text-gray-400">PREMIUM</th>
-                  <th class="py-2 text-gray-700">PRO</th>
-                  <th class="py-2 text-gray-700">ENTERPRISE</th>
+                  <!-- <th class="py-2 text-gray-700">PRO</th> -->
+                  <!-- <th class="py-2 text-gray-700">ENTERPRISE</th> -->
                 </tr>
               </thead>
               <tbody class="text-sm">
@@ -925,50 +993,50 @@
                   <td class="py-2">License</td>
                   <td class="py-2">Personal</td>
                   <td class="py-2">Personal</td>
-                  <td class="py-2 text-gray-700">Commercial</td>
-                  <td class="py-2 text-gray-700">Commercial</td>
+                  <!-- <td class="py-2 text-gray-700">Commercial</td> -->
+                  <!-- <td class="py-2 text-gray-700">Commercial</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Watermarks / Pop ups</td>
                   <td class="py-2">✓</td>
                   <td class="py-2">No</td>
-                  <td class="py-2 text-gray-700">No</td>
-                  <td class="py-2 text-gray-700">No</td>
+                  <!-- <td class="py-2 text-gray-700">No</td> -->
+                  <!-- <td class="py-2 text-gray-700">No</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Support</td>
                   <td class="py-2">No</td>
                   <td class="py-2">Yes</td>
-                  <td class="py-2 text-gray-700">Yes</td>
-                  <td class="py-2 text-gray-700">Yes</td>
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Credits</td>
-                  <td class="py-2">20</td>
+                  <td class="py-2">0</td>
                   <td class="py-2">100</td>
-                  <td class="py-2 text-gray-700">200</td>
-                  <td class="py-2 text-gray-700">Custom plan</td>
+                  <!-- <td class="py-2 text-gray-700">200</td> -->
+                  <!-- <td class="py-2 text-gray-700">Custom plan</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Re-useable credits</td>
                   <td class="py-2">No</td>
                   <td class="py-2">Yes</td>
-                  <td class="py-2 text-gray-700">Yes</td>
-                  <td class="py-2 text-gray-700">Yes</td>
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Your own scanned avatar</td>
                   <td class="py-2">No</td>
                   <td class="py-2">No</td>
-                  <td class="py-2 text-gray-700">Yes</td>
-                  <td class="py-2 text-gray-700">Yes</td>
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Voices</td>
                   <td class="py-2">4</td>
                   <td class="py-2">4</td>
-                  <td class="py-2 text-gray-700">8</td>
-                  <td class="py-2 text-gray-700">16</td>
+                  <!-- <td class="py-2 text-gray-700">8</td> -->
+                  <!-- <td class="py-2 text-gray-700">16</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Language</td>
@@ -980,28 +1048,28 @@
                     English, Spanish, Dutch,French, German,Chinese,Arabic,
                     Japanese
                   </td>
-                  <td class="py-2 text-gray-700">
+                  <!-- <td class="py-2 text-gray-700">
                     English, Spanish, Dutch,French, German,Chinese,Arabic,
                     Japanese
                   </td>
                   <td class="py-2 text-gray-700">
                     English, Spanish, Dutch,French, German,Chinese,Arabic,
                     Japanese
-                  </td>
+                  </td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Uploading knowledge</td>
                   <td class="py-2">Text/Prompt</td>
                   <td class="py-2">PDF/DOC</td>
-                  <td class="py-2 text-gray-700">PDF/DOC</td>
-                  <td class="py-2 text-gray-700">PDF/DOC</td>
+                  <!-- <td class="py-2 text-gray-700">PDF/DOC</td> -->
+                  <!-- <td class="py-2 text-gray-700">PDF/DOC</td> -->
                 </tr>
                 <tr class="border-b border-gray-800">
                   <td class="py-2">Website embedding</td>
                   <td class="py-2">No</td>
                   <td class="py-2">No</td>
-                  <td class="py-2 text-gray-700">Yes</td>
-                  <td class="py-2 text-gray-700">Yes</td>
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
+                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
                 </tr>
               </tbody>
             </table>

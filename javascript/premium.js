@@ -1,9 +1,9 @@
-// const premium_stripe = Stripe(
-//   "pk_test_51Lk3NyF22hdHq8pHZqvo4zdHTulTRAOglzRh9mYLFoBTxxNYf6KsBbuE6sva3HMNkoNzK5QG3Dni3trOyyKBTmac00DpBp4Cpb"
-// );
 const premium_stripe = Stripe(
-  "pk_live_51Lk3NyF22hdHq8pHctUFM6zqjf1bm9cDvVcFok3Fc2YI0W2wT6gwLgg7f65CAlCFqut9fBUTe3x1Et7j4MoRpLsv00lOOKEc5Z"
+  "pk_test_51Lk3NyF22hdHq8pHZqvo4zdHTulTRAOglzRh9mYLFoBTxxNYf6KsBbuE6sva3HMNkoNzK5QG3Dni3trOyyKBTmac00DpBp4Cpb"
 );
+// const premium_stripe = Stripe(
+//   "pk_live_51Lk3NyF22hdHq8pHctUFM6zqjf1bm9cDvVcFok3Fc2YI0W2wT6gwLgg7f65CAlCFqut9fBUTe3x1Et7j4MoRpLsv00lOOKEc5Z"
+// );
 const premium_element = premium_stripe.elements();
 const premium_cardElement = premium_element.create("card");
 
@@ -12,15 +12,14 @@ let selectedPlan = "premium";
 
 const monthlyBtn = document.getElementById("monthlyBtn");
 const annuallyBtn = document.getElementById("annuallyBtn");
-const freeCredits = document.getElementById("freeCredits");
-const premiumCredits = document.getElementById("premiumCredits");
-const proCredits = document.getElementById("proCredits");
 const premiumPrice = document.getElementById("premiumPrice");
 const proPrice = document.getElementById("proPrice");
 
+monthlyBtn.addEventListener("click", () => setPrice("monthly"));
+annuallyBtn.addEventListener("click", () => setPrice("annually"));
+
 const planID = {
-  premium: { monthly: 1, yearly: 2 },
-  pro: { monthly: 3, yearly: 4 },
+  premium: { monthly: 3, yearly: 4 },
 };
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -79,6 +78,8 @@ async function handlePremiumPay() {
       throw confirmResult.error;
     }
 
+    console.log(confirmResult);
+
     if (confirmResult.paymentIntent.status === "succeeded") {
       // Payment successful, confirm on your server
       const confirmResponse = await fetch(
@@ -87,7 +88,6 @@ async function handlePremiumPay() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-xsolla-token": token,
           },
           body: JSON.stringify({
             payment_intent_id: confirmResult.paymentIntent.id,
@@ -126,26 +126,110 @@ async function handlePremiumPay() {
   }
 }
 
-monthlyBtn.addEventListener("click", () => setPrice("monthly"));
-annuallyBtn.addEventListener("click", () => setPrice("annually"));
+async function setCurrentPremium() {
+  const premiumButton = document.getElementById(
+    "premium-subscription-start-button"
+  );
+  const freePlanButton = document.getElementById('free-plan-button');
+  const currentSelectedPlanShow = document.getElementById(
+    "premium-plan-selected"
+  );
+  const tilerElement = document.getElementById("tier");
+  const premiumPlanType = document.getElementById("detail_premium_plan_type");
+
+  // Remove any existing event listeners
+  premiumButton.removeEventListener("click", cancelPremiumPriceSection);
+  premiumButton.removeEventListener("click", () =>
+    showPremiumPriceSection("premium")
+  );
+
+  if (selectedSubscription == 3 || selectedSubscription == 4) {
+    premiumButton.addEventListener("click", cancelPremiumPriceSection);
+    currentSelectedPlanShow.style.display = "block";
+    premiumButton.textContent = "Cancel";
+    freePlanButton.style.display = 'none'
+    tilerElement.textContent = `Reblium: Premium`;
+    premiumPlanType.textContent = "Premium Plan"
+    try {
+      const response = await fetch(
+        "/.netlify/functions/updateUserCreditAmount",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: globalUserInfoId,
+            amount: 100,
+            premium: "premium",
+          }),
+        }
+      );
+
+      const res = await response.json();
+
+      if (res.success) {
+        chargedCreditAmount = 0;
+        selectedHair = "";
+        selectedBody = "";
+        await getUserCredits();
+      } else {
+        console.error("Failed to update credit amount:", res.error);
+      }
+    } catch (error) {
+      console.error("Error updating credit amount:", error);
+    }
+  } else {
+    premiumButton.addEventListener("click", () =>
+      showPremiumPriceSection("premium")
+    );
+    currentSelectedPlanShow.style.display = "none";
+    premiumButton.textContent = "Start now";
+    freePlanButton.style.display = "block"
+    tilerElement.textContent = `Reblium: Free`;
+    premiumPlanType.textContent = "Free Plan";
+  document.getElementById("plan_created_date_p").textContent = "No Plan";
+
+  }
+}
+
+async function cancelPremiumPriceSection() {
+  try {
+    const response = await fetch("/.netlify/functions/cancelSubscription", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_plan_id: selectedUserPlanId,
+        userId: globalUserInfoId
+      }),
+    });
+
+    const res = await response.json();
+
+    if (res.success) {
+      await getSelectedSubscription();
+      await setCurrentPremium();
+    } else {
+      console.error("Failed to cancel subscription:", res.error);
+    }
+  } catch (error) {
+    console.error("Error canceling subscription", error);
+  }
+}
 
 function setPrice(type) {
   if (type === "monthly") {
     selectedPeriod = "monthly";
     monthlyBtn.classList.replace("bg-gray-800", "bg-blue-starndard");
     annuallyBtn.classList.replace("bg-blue-starndard", "bg-gray-800");
-    freeCredits.textContent = "10";
-    premiumCredits.textContent = "100";
-    proCredits.textContent = "200";
     premiumPrice.textContent = "15";
     proPrice.textContent = "120";
   } else {
     selectedPeriod = "yearly";
     annuallyBtn.classList.replace("bg-gray-800", "bg-blue-starndard");
     monthlyBtn.classList.replace("bg-blue-starndard", "bg-gray-800");
-    freeCredits.textContent = "100";
-    premiumCredits.textContent = "200";
-    proCredits.textContent = "450";
     premiumPrice.textContent = "12";
     proPrice.textContent = "99";
   }

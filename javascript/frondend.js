@@ -107,6 +107,7 @@ function toggleSection(sectionId) {
     "avatar-Templates",
     "avatar-Avatars",
     "avatar-Pricing",
+    "tier-section",
   ];
 
   // Loop through all sections and hide them
