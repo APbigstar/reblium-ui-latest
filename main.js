@@ -7,7 +7,7 @@ let selectedUserPlanId = null;
 
 async function getUserCredits() {
   const checkUserCreditAmount = await fetch(
-    `/.netlify/functions/getUserCreditAmount?user_id=${globalUserInfoId}`
+    `/.netlify/functions/credit/getUserCreditAmount?user_id=${globalUserInfoId}`
   );
 
   const creditData = await checkUserCreditAmount.json();
@@ -37,7 +37,7 @@ async function getUserCredits() {
 
 async function getSelectedSubscription() {
   const checkCurrentUserSubscription = await fetch(
-    `/.netlify/functions/getSelectedSubscription?user_id=${globalUserInfoId}`
+    `/.netlify/functions/premium/getSelectedSubscription?user_id=${globalUserInfoId}`
   );
   const subscriptionData = await checkCurrentUserSubscription.json();
   if (subscriptionData.plan) {

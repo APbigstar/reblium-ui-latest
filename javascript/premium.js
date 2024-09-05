@@ -42,7 +42,7 @@ async function handlePremiumPay() {
 
   try {
     // Create PaymentIntent on your server
-    const response = await fetch("/.netlify/functions/createSubscription", {
+    const response = await fetch("/.netlify/functions/premium/createSubscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ async function handlePremiumPay() {
     if (confirmResult.paymentIntent.status === "succeeded") {
       // Payment successful, confirm on your server
       const confirmResponse = await fetch(
-        "/.netlify/functions/confirmPlanPaymentIntent",
+        "/.netlify/functions/premium/confirmPlanPaymentIntent",
         {
           method: "POST",
           headers: {
@@ -152,7 +152,7 @@ async function setCurrentPremium() {
     premiumPlanType.textContent = "Premium Plan"
     try {
       const response = await fetch(
-        "/.netlify/functions/updateUserCreditAmount",
+        "/.netlify/functions/credit/updateUserCreditAmount",
         {
           method: "POST",
           headers: {
@@ -195,7 +195,7 @@ async function setCurrentPremium() {
 
 async function cancelPremiumPriceSection() {
   try {
-    const response = await fetch("/.netlify/functions/cancelSubscription", {
+    const response = await fetch("/.netlify/functions/premium/cancelSubscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
