@@ -222,13 +222,8 @@
               class="w-1/2 bg-black text-white p-12 flex flex-col justify-between relative hidden md:block"
             >
               <!-- Left side content remains the same -->
-              <div class="absolute top-8 left-8">
-                <div
-                  class="text-2xl font-bold border border-white px-2 py-1 inline-block"
-                >
-                  <sup class="text-xs align-super mr-1">104</sup>
-                  Rb
-                </div>
+              <div class="absolute top-8 left-8" style="width: 95px;">
+                <img src="./src/Reblium_Icon.ico" alt="log">
               </div>
               <div class="mt-24">
                 <h2 class="text-4xl font-bold mb-12">CREATE YOUR ACCOUNT</h2>
@@ -270,6 +265,7 @@
                     class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
                     placeholder="Enter your full name"
                     required
+                    tabindex="1"
                   />
                 </div>
                 <div>
@@ -285,6 +281,7 @@
                     class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
                     placeholder="demo@reblium.com"
                     required
+                    tabindex="2"
                   />
                   <p id="emailError" class="mt-1 text-sm text-red-600 hidden">
                     Please enter a valid email address.
@@ -302,6 +299,7 @@
                     name="password"
                     class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
                     required
+                    tabindex="2"
                   />
                 </div>
                 <div>
@@ -316,6 +314,7 @@
                     name="confirmPassword"
                     class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
                     required
+                    tabindex="3"
                   />
                 </div>
                 <button
@@ -332,7 +331,7 @@
               </p>
               <p class="mt-4 text-sm text-gray-600">
                 Already have an account?
-                <a href="#" class="text-blue-600 hover:text-blue-500">Log in</a>
+                <a href="login.html" class="text-blue-600 hover:text-blue-500">Log in</a>
               </p>
             </div>
             <div

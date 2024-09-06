@@ -117,6 +117,10 @@ document.addEventListener("DOMContentLoaded", async function () {
     redirectToLogin();
   }
 
+  function redirectToLogin() {
+    window.location.href = "/login.html";
+  }
+
   const urlParams = new URLSearchParams(window.location.search);
   const userToken = urlParams.get("token");
 

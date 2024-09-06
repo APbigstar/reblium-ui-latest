@@ -69,8 +69,6 @@ document
     const password = document.getElementById("id_password_1").value;
     const loginMessage = document.getElementById("login-message");
 
-    console.log(email, password)
-
     try {
       const response = await fetch("/.netlify/functions/auth/signin", {
         method: "POST",
