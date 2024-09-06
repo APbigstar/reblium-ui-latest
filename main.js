@@ -1,4 +1,3 @@
-let globalUserId = null; // Define at a global scope accessible to both functions
 let globalUserInfoId = null;
 let globalUserEmail = localStorage.getItem("user_email");
 let userCreditAmount = 0;
@@ -12,7 +11,6 @@ async function getUserCredits() {
 
   const creditData = await checkUserCreditAmount.json();
 
-  console.log(creditData);
   if (creditData.amount) {
     userCreditAmount = creditData.amount;
     document.getElementById("exportCredits").textContent = userCreditAmount;
@@ -22,7 +20,11 @@ async function getUserCredits() {
       let createdDate = new Date(creditData.createdAt);
       createdDate.setMonth(createdDate.getMonth() + 1);
       let oneMonthLater = createdDate.toISOString().slice(0, 10);
-      document.getElementById("plan_created_date_p").innerHTML = `You're next billing cycle starts on ` + `<span style="font-size: 1.2rem; color: rgb(34 211 238);">` + oneMonthLater + `</span>`;
+      document.getElementById("plan_created_date_p").innerHTML =
+        `You're next billing cycle starts on ` +
+        `<span style="font-size: 1.2rem; color: rgb(34 211 238);">` +
+        oneMonthLater +
+        `</span>`;
     } else {
       document.getElementById("plan_created_date_p").textContent = "No Plan";
     }
@@ -59,7 +61,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Function to fetch user data from the XSolla API using the user token
   async function fetchUserData(userToken) {
     try {
-      const response = await fetch("https://login.xsolla.com/api/users/me", {
+      const response = await fetch("/.netlify/functions/auth/validate-token", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${userToken}`,
@@ -87,6 +89,32 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
       throw error;
     }
+  }
+
+  function storeToken(token) {
+    const tokenData = JSON.parse(atob(token.split(".")[1]));
+    const expirationTime = tokenData.exp * 1000; // Convert to milliseconds
+    localStorage.setItem("token", token);
+    localStorage.setItem("tokenExpiration", expirationTime);
+  }
+
+  function setUpTokenExpirationCheck() {
+    setInterval(checkTokenExpiration, 60000);
+  }
+
+  function checkTokenExpiration() {
+    const expirationTime = localStorage.getItem("tokenExpiration");
+    if (expirationTime && Date.now() > parseInt(expirationTime)) {
+      console.log("Token has expired");
+      logout();
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiration");
+    localStorage.removeItem("user_info_id");
+    redirectToLogin();
   }
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -220,29 +248,29 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   });
 
-  // Function to create a new user in the database
-  async function createUser(userId) {
-    try {
-      const response = await fetch(`/.netlify/functions/addUser`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: userId }),
-      });
+  // // Function to create a new user in the database
+  // async function createUser(userId) {
+  //   try {
+  //     const response = await fetch(`/.netlify/functions/addUser`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ user_id: userId }),
+  //     });
 
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error("Error creating new user: " + errorMessage);
-      }
+  //     if (!response.ok) {
+  //       const errorMessage = await response.text();
+  //       throw new Error("Error creating new user: " + errorMessage);
+  //     }
 
-      const data = await response.json();
-      return data.user_info_id;
-    } catch (error) {
-      console.error("Error creating new user:", error);
-      throw error;
-    }
-  }
+  //     const data = await response.json();
+  //     return data.user_info_id;
+  //   } catch (error) {
+  //     console.error("Error creating new user:", error);
+  //     throw error;
+  //   }
+  // }
 
   // Refactor Fetching and Displaying Avatars:
   async function updateAvatarSection(user_info_id) {
@@ -833,30 +861,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (!userToken) {
         console.error("User token not found in URL.");
+        // Redirect to login page if no token is present
+        window.location.href = "/login.html";
         return;
       }
 
-      // Fetch user data from the XSolla API using the user token
+      storeToken(userToken);
+      setUpTokenExpirationCheck();
+
       const userData = await fetchUserData(userToken);
 
-      const userId = userData.id;
-      globalUserId = userData.id;
-      // Check if the user exists in the database and get the user_info_id
-      const checkUserExistsResponse = await fetch(
-        `/.netlify/functions/checkUserExists?user_id=${userId}`
-      );
-      const checkUserExistsData = await checkUserExistsResponse.json();
-
-      if (!checkUserExistsData.exists) {
-        // User does not exist, so add it to the database
-        user_info_id = await createUser(userId);
-        globalUserInfoId = user_info_id;
-      } else {
-        // User already exists, get the user_info_id
-        user_info_id = checkUserExistsData.user_info_id;
-        globalUserInfoId = user_info_id;
+      if (userData) {
+        user_info_id = userData.id;
+        globalUserInfoId = userData.id;
+        window.localStorage.setItem("user_info_id", user_info_id);
       }
-      window.localStorage.setItem("user_info_id", user_info_id);
 
       const blendshapeData = await fetchBlendshapeData(user_info_id);
       if (blendshapeData) {
