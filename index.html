@@ -62,7 +62,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-      .signup-modal-overlay {
+      .modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -100,7 +100,7 @@
         padding: 0;
       }
       .main-text {
-        font-size: 32px;
+        font-size: 40px;
         font-weight: bold;
         color: #fff;
         margin-bottom: 30px;
@@ -172,9 +172,13 @@
       }
     </script>
 
-    <div id="modalOverlay" class="signup-modal-overlay" style="display: flex">
+    <div
+      id="introModalOverlay"
+      class="intro-modal-overlay modal-overlay"
+      style="display: flex"
+    >
       <div class="signup-modal">
-        <button id="closeSignUpModal" class="signup-modal-close-button">
+        <button id="closeIntroModal" class="signup-modal-close-button">
           &times;
         </button>
         <div class="intro-text" id="welcomeSection">
@@ -196,11 +200,22 @@
             </button>
           </div>
         </div>
-        <div id="signupOption" style="display: none">
+      </div>
+    </div>
+    <div
+      id="modalOverlay"
+      class="signup-modal-overlay modal-overlay"
+      style="display: none"
+    >
+      <div class="signup-modal">
+        <button id="closeSignUpModal" class="signup-modal-close-button">
+          &times;
+        </button>
+        <div id="signupOption" style="display: block">
           <h1 class="text-white">
             Reblium's Beta is now free and open for everyone
           </h1>
-          <p class="main-text">Sign up to keep generating for free</p>
+          <p class="main-text">SIGN UP TO SAVE YOUR AVATAR</p>
           <div class="flex item-center justify-center gap-2">
             <button id="signUpFormBtn" class="menu-button">Sign up</button>
             <button
@@ -222,8 +237,8 @@
               class="w-1/2 bg-black text-white p-12 flex flex-col justify-between relative hidden md:block"
             >
               <!-- Left side content remains the same -->
-              <div class="absolute top-8 left-8" style="width: 95px;">
-                <img src="./src/Reblium_Icon.ico" alt="log">
+              <div class="absolute top-8 left-8" style="width: 95px">
+                <img src="./src/Reblium_Icon.ico" alt="log" />
               </div>
               <div class="mt-24">
                 <h2 class="text-4xl font-bold mb-12">CREATE YOUR ACCOUNT</h2>
@@ -331,7 +346,9 @@
               </p>
               <p class="mt-4 text-sm text-gray-600">
                 Already have an account?
-                <a href="login.html" class="text-blue-600 hover:text-blue-500">Log in</a>
+                <a href="login.html" class="text-blue-600 hover:text-blue-500"
+                  >Log in</a
+                >
               </p>
             </div>
             <div
@@ -8846,18 +8863,19 @@
         const inputs = document.querySelectorAll("#signupFormElement input");
         const emailInput = document.getElementById("email");
         const emailError = document.getElementById("emailError");
-        const messageElement = document.getElementById('signupMessage');
-            
+        const messageElement = document.getElementById("signupMessage");
+
         // Check if user was redirected due to verification failure
-        const verificationFailed = localStorage.getItem('verificationFailed');
-        if (verificationFailed === 'true') {
-            messageElement.textContent = "Email verification failed. Please try signing up again.";
-            messageElement.className = "mt-4 text-sm text-red-600";
-            
-            // Clear the verification failure state
-            localStorage.removeItem('verificationFailed');
+        const verificationFailed = localStorage.getItem("verificationFailed");
+        if (verificationFailed === "true") {
+          messageElement.textContent =
+            "Email verification failed. Please try signing up again.";
+          messageElement.className = "mt-4 text-sm text-red-600";
+
+          // Clear the verification failure state
+          localStorage.removeItem("verificationFailed");
         }
-        
+
         inputs.forEach((input, index) => {
           input.addEventListener("keydown", function (e) {
             if (e.key === "Tab") {
@@ -8882,9 +8900,8 @@
         .addEventListener("submit", async function (e) {
           e.preventDefault();
 
-
-          const signupForm = document.getElementById('signupForm');
-          const verificationForm = document.getElementById('verificationForm');
+          const signupForm = document.getElementById("signupForm");
+          const verificationForm = document.getElementById("verificationForm");
 
           const name = document.getElementById("name").value;
           const email = document.getElementById("email").value;
@@ -8919,8 +8936,8 @@
             if (response.ok) {
               messageElement.textContent = data.message;
               messageElement.className = "mt-4 text-sm text-green-600";
-              signupForm.classList.add('hidden');
-              verificationForm.classList.remove('hidden');
+              signupForm.classList.add("hidden");
+              verificationForm.classList.remove("hidden");
             } else {
               throw new Error(
                 data.error || "An error occurred during sign up."
@@ -8932,42 +8949,45 @@
           }
         });
 
+      document
+        .getElementById("verificationFormElement")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-        document.getElementById('verificationFormElement').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const code = document.getElementById('verificationCode').value;
-            const messageElement = document.getElementById('verificationMessage');
+          const code = document.getElementById("verificationCode").value;
+          const messageElement = document.getElementById("verificationMessage");
 
-            try {
-                const response = await fetch('/.netlify/functions/auth/verify', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ code }),
-                });
+          try {
+            const response = await fetch("/.netlify/functions/auth/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ code }),
+            });
 
-                const data = await response.json();
+            const data = await response.json();
 
-                if (response.ok && data.success) {
-                    messageElement.textContent = data.message;
-                    messageElement.className = "mt-4 text-sm text-green-600";
-                    
-                    // Redirect to login page after a short delay
-                    setTimeout(() => {
-                      window.location.href = "/login.html";
-                    }, 2000);
-                } else {
-                    throw new Error(data.error || 'Verification failed');
-                }
-            } catch (error) {
-                messageElement.textContent = error.message;
-                messageElement.className = "mt-4 text-sm text-red-600";
+            if (response.ok && data.success) {
+              messageElement.textContent = data.message;
+              messageElement.className = "mt-4 text-sm text-green-600";
+
+              // Redirect to login page after a short delay
+              setTimeout(() => {
+                window.location.href = "/login.html";
+              }, 2000);
+            } else {
+              throw new Error(data.error || "Verification failed");
             }
+          } catch (error) {
+            messageElement.textContent = error.message;
+            messageElement.className = "mt-4 text-sm text-red-600";
+          }
         });
 
       const closeModalBtn = document.getElementById("closeSignUpModal");
+      const introModalOverlay = document.getElementById("introModalOverlay");
+      const closeIntroModalBtn = document.getElementById("closeIntroModal");
       const signUpLoginBtn = document.getElementById("signUpLogin");
       const modalOverlay = document.getElementById("modalOverlay");
       const signupOption = document.getElementById("signupOption");
@@ -8984,17 +9004,20 @@
       });
 
       closeModalBtn.addEventListener("click", () => {
-        welcomeSection.style.display = "block";
         modalOverlay.style.display = "none";
         signupOption.style.display = "none";
         signUpFormSection.style.display = "none";
       });
 
-      //   signUpLoginBtn.addEventListener("click", () => {
-      //     window.location.href = "http://localhost:8888/login";
-      //   });
+      closeIntroModalBtn.addEventListener("click", () => {
+        console.log("CCadfafadsfasdf");
+        introModalOverlay.style.display = "none";
+      });
+
       processSignUpProcess.addEventListener("click", () => {
-        showSignUpOption();
+        introModalOverlay.style.display = "none";
+        modalOverlay.style.display = "flex";
+        signupOption.style.display = "block";
       });
 
       modalOverlay.addEventListener("click", (e) => {
@@ -9003,18 +9026,45 @@
         }
       });
 
-      function showSignUpOption() {
-        signupOption.style.display = "block";
-        welcomeSection.style.display = "none";
-      }
+      introModalOverlay.addEventListener("click", (e) => {
+        if (e.target === introModalOverlay) {
+          introModalOverlay.style.display = "none";
+        }
+      });
 
       function cancelSignUpOption() {
         signupOption.style.display = "none";
-        welcomeSection.style.display = "block";
+        modalOverlay.style.display = "none";
       }
 
+      function checkDisplayStatus(element, status) {
+        // If element is a string (i.e., an ID), get the actual element
+        if (typeof element === 'string') {
+            element = document.getElementById(element);
+        }
+        
+        // Check if the element exists
+        if (!element) {
+            console.error('Element not found');
+            return false;
+        }
+
+        // Get the computed style of the element
+        const style = window.getComputedStyle(element);
+        
+        // Return true if the display matches the status, false otherwise
+        return style.display === status;
+    }
+
       function showSignUpModal() {
-        modalOverlay.style.display = "flex";
+        if (checkDisplayStatus(modalOverlay, 'flex') && checkDisplayStatus(signUpFormSection, 'block')) {
+            return;
+        } else {
+          introModalOverlay.style.display = "none";
+          modalOverlay.style.display = "flex";
+          signupOption.style.display = "block";
+          signUpFormSection.style.display = "none";
+        }
       }
 
       function setSelectedHair(assetName) {
@@ -9171,8 +9221,7 @@
         // document.addEventListener('keydown', handleSpaceKey);
 
         // Usage example:
-        waitForVideoLoad().then(() => {
-        });
+        waitForVideoLoad().then(() => {});
       });
 
       // Define the list of asset names

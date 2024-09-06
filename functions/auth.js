@@ -2,7 +2,6 @@ const express = require("express");
 const serverless = require("serverless-http");
 const mysql = require("mysql2/promise");
 const bcrypt = require("bcryptjs");
-const sgMail = require("@sendgrid/mail");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
@@ -17,13 +16,25 @@ require("dotenv").config();
 
 // Create a Nodemailer transporter
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST, // e.g., 'smtp.gmail.com'
-  port: process.env.EMAIL_PORT, // e.g., 587
-  secure: process.env.EMAIL_SECURE === "true", // true for 465, false for other ports
+  host: process.env.EMAIL_HOST,
+  port: parseInt(process.env.EMAIL_PORT),
+  secure: process.env.EMAIL_SECURE,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+// Verify transporter
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("Transporter verification error:", error);
+  } else {
+    console.log("Server is ready to take our messages");
+  }
 });
 
 router.post("/signup", async (req, res) => {
@@ -78,11 +89,17 @@ router.post("/signup", async (req, res) => {
 
     const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: process.env.EMAIL_USER,
       to: email,
-      subject: "Verify Your Email",
+      subject: "Verify Your Reblium Account",
       text: `Hello ${name}, please verify your email by clicking on this link: ${verificationUrl} or use this code: ${verificationCode}`,
-      html: `<p>Hello ${name},</p><p>Please verify your email by clicking on this link: <a href="${verificationUrl}">Verify Email</a> or use this code: <strong>${verificationCode}</strong></p>`,
+      html: `
+        <p>Hello ${name},</p>
+        <p>Please verify your email by clicking on this link: 
+           <a href="${verificationUrl}">Verify Email</a>
+        </p>
+        <p>Or use this verification code: <strong>${verificationCode}</strong></p>
+      `,
     };
 
     await transporter.sendMail(mailOptions);
