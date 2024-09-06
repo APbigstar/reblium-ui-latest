@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Verification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+      <h1 id="verificationTitle" class="text-2xl font-bold mb-4 text-center">
+        Verifying Your Email
+      </h1>
+      <p id="verificationMessage" class="text-center mb-4">
+        Please wait while we verify your email...
+      </p>
+      <div id="loadingSpinner" class="flex justify-center">
+        <div
+          class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"
+        ></div>
+      </div>
+      <div id="verificationResult" class="mt-4 text-center hidden">
+        <p id="resultMessage" class="mb-4"></p>
+      </div>
+    </div>
+
+    <script>
+      async function verifyEmail(token) {
+        try {
+          const response = await fetch("/.netlify/functions/auth/verify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token }),
+          });
+
+          const data = await response.json();
+
+          document.getElementById("loadingSpinner").classList.add("hidden");
+          document
+            .getElementById("verificationResult")
+            .classList.remove("hidden");
+
+          if (response.ok) {
+            document.getElementById("verificationTitle").textContent =
+              "Email Verified";
+            document.getElementById("resultMessage").textContent = data.message;
+            document
+              .getElementById("resultMessage")
+              .classList.add("text-green-600");
+
+            // Clear the pending verification state
+            localStorage.removeItem("verificationPending");
+
+            // Redirect to login page after a short delay
+            setTimeout(() => {
+              window.location.href = "/login.html";
+            }, 2000);
+          } else {
+            throw new Error(data.error || "Verification failed");
+          }
+        } catch (error) {
+          document.getElementById("verificationTitle").textContent =
+            "Verification Failed";
+          document.getElementById("resultMessage").textContent = error.message;
+          document
+            .getElementById("resultMessage")
+            .classList.add("text-red-600");
+
+          // Set the verification failure state
+          localStorage.setItem("verificationFailed", "true");
+
+          // Clear the pending verification state
+          localStorage.removeItem("verificationPending");
+
+          // Redirect to signup page after a short delay
+          setTimeout(() => {
+            window.location.href = "/signup.html";
+          }, 2000);
+        }
+      }
+
+      // Extract token from URL and initiate verification
+      window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+        if (token) {
+          verifyEmail(token);
+        } else {
+          document.getElementById("verificationMessage").textContent =
+            "Invalid verification link.";
+          document.getElementById("loadingSpinner").classList.add("hidden");
+
+          // Set the verification failure state
+          localStorage.setItem("verificationFailed", "true");
+
+          // Clear the pending verification state
+          localStorage.removeItem("verificationPending");
+
+          // Redirect to signup page for invalid token after a short delay
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 2000);
+        }
+      };
+    </script>
+  </body>
+</html>

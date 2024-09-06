@@ -8,6 +8,7 @@
     "@arcware/webrtc-plugin": "^0.3.14",
     "@sendgrid/mail": "^8.1.3",
     "axios": "^1.7.2",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
