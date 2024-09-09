@@ -8936,8 +8936,12 @@
             if (response.ok) {
               messageElement.textContent = data.message;
               messageElement.className = "mt-4 text-sm text-green-600";
-              signupForm.classList.add("hidden");
-              verificationForm.classList.remove("hidden");
+              // signupForm.classList.add("hidden");
+
+              setTimeout(() => {
+                window.location.href = "/login.html";
+              }, 2000);
+              // verificationForm.classList.remove("hidden");
             } else {
               throw new Error(
                 data.error || "An error occurred during sign up."

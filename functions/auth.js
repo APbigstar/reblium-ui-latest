@@ -5,10 +5,17 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+
+const sgMail = require("@sendgrid/mail");
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
 const router = express.Router();
 app.use(express.json());
+app.use(passport.initialize());
 
 require("dotenv").config();
 // // Set up SendGrid
@@ -83,36 +90,32 @@ router.post("/signup", async (req, res) => {
       false,
     ]);
 
+    // const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
     // const msg = {
     //   to: email,
-    //   from: "your-verified-sender@example.com",
-    //   subject: "Verify Your Email",
-    //   text: `Hello ${name}, please verify your email by clicking on this link: ${process.env.FRONTEND_URL}/verify?token=${verificationToken} or use this code: ${verificationCode}`,
-    //   html: `<p>Hello ${name},</p><p>Please verify your email by clicking on this link: <a href="${process.env.FRONTEND_URL}/verify?token=${verificationToken}">Verify Email</a> or use this code: <strong>${verificationCode}</strong></p>`,
+    //   from: {
+    //     email: 'noreply@reblium.com',
+    //     name: 'Reblium'
+    //   },
+    //   subject: "Verify Your Reblium Account",
+    //   text: `Hello ${name}, please verify your email by clicking on this link: ${verificationUrl} or use this code: ${verificationCode}`,
+    //   html: `
+    //     <p>Hello ${name},</p>
+    //     <p>Please verify your email by clicking on this link:
+    //        <a href="${verificationUrl}">Verify Email</a>
+    //     </p>
+    //     <p>Or use this verification code: <strong>${verificationCode}</strong></p>
+    //   `,
     // };
 
     // await sgMail.send(msg);
 
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Verify Your Reblium Account",
-      text: `Hello ${name}, please verify your email by clicking on this link: ${verificationUrl} or use this code: ${verificationCode}`,
-      html: `
-        <p>Hello ${name},</p>
-        <p>Please verify your email by clicking on this link: 
-           <a href="${verificationUrl}">Verify Email</a>
-        </p>
-        <p>Or use this verification code: <strong>${verificationCode}</strong></p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-
+    // res.status(201).json({
+    //   message:
+    //     "User registered. Please check your email to verify your account.",
+    // });
     res.status(201).json({
-      message:
-        "User registered. Please check your email to verify your account.",
+      message: "User registered. You can login",
     });
   } catch (error) {
     console.error("Error executing database query:", error);
@@ -211,11 +214,11 @@ router.post("/signin", async (req, res) => {
 
     const user = users[0];
 
-    if (!user.is_verified) {
-      return res
-        .status(400)
-        .json({ error: "Please verify your email before signing in" });
-    }
+    // if (!user.is_verified) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "Please verify your email before signing in" });
+    // }
 
     // Check password
     // const isMatch = await bcrypt.compare(password, user.password);
@@ -327,6 +330,91 @@ router.get("/checkUserExists", async (req, res) => {
   } finally {
     connection.end();
   }
+});
+
+// Configure Google Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/google/callback`,
+    },
+    async function (accessToken, refreshToken, profile, cb) {
+      try {
+        const connection = await mysql.createConnection({
+          host: process.env.DB_HOST,
+          user: process.env.DB_USER,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_DATABASE,
+        });
+
+        const [users] = await connection.execute(
+          "SELECT * FROM Users WHERE google_id = ?",
+          [profile.id]
+        );
+
+        let user;
+        if (users.length === 0) {
+          // User doesn't exist, create a new user
+          const [result] = await connection.execute(
+            "INSERT INTO Users (google_id, email, name) VALUES (?, ?, ?)",
+            [profile.id, profile.emails[0].value, profile.displayName]
+          );
+          user = {
+            id: result.insertId,
+            email: profile.emails[0].value,
+            name: profile.displayName,
+          };
+        } else {
+          user = users[0];
+        }
+
+        connection.end();
+        return cb(null, user);
+      } catch (error) {
+        console.error("Error in Google Strategy:", error);
+        return cb(error);
+      }
+    }
+  )
+);
+
+// Google login route
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+// Google callback route
+router.get("/google/callback", (req, res, next) => {
+  passport.authenticate("google", { session: false }, (err, user, info) => {
+    if (err) {
+      console.error("Error in Google callback:", err);
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=authentication_failed`
+      );
+    }
+    if (!user) {
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=user_not_found`
+      );
+    }
+    try {
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+      // Redirect to frontend with the token
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+    } catch (error) {
+      console.error("Error creating token:", error);
+      res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=token_creation_failed`
+      );
+    }
+  })(req, res, next);
 });
 
 app.use(`/.netlify/functions/auth`, router);
