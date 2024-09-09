@@ -51,9 +51,17 @@ function showForgotPassword() {
 //   }
 // }
 
-document.getElementById('googleLoginBtn').addEventListener('click', function() {
-  // Redirect to the Google login route on your backend
-  window.location.href = '/.netlify/functions/auth/google';
+document.addEventListener("DOMContentLoaded", function () {
+  const socialLoginButtons = document.getElementById("socialLoginButtons");
+
+  socialLoginButtons.addEventListener("click", function (event) {
+    if (event.target.closest(".quick-login-button")) {
+      const button = event.target.closest(".quick-login-button");
+      const provider = button.dataset.provider;
+      button.disabled = true;
+      window.location.href = `/.netlify/functions/auth/${provider}`;
+    }
+  });
 });
 
 // Add click event listeners to the social login buttons
