@@ -18,13 +18,15 @@ require("dotenv").config();
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: parseInt(process.env.EMAIL_PORT),
-  secure: process.env.EMAIL_SECURE,
+  secure: process.env.EMAIL_SECURE === "true",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
   tls: {
     rejectUnauthorized: false,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
   },
 });
 
@@ -45,6 +47,9 @@ router.post("/signup", async (req, res) => {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
 
   try {
@@ -67,6 +72,7 @@ router.post("/signup", async (req, res) => {
 
     const insertUserQuery =
       "INSERT INTO Users (name, email, password, verification_token, verification_code, is_verified) VALUES (?, ?, ?, ?, ?, ?)";
+
     await connection.execute(insertUserQuery, [
       name,
       email,
@@ -120,6 +126,8 @@ router.post("/signup", async (req, res) => {
 
 // Verification endpoint
 router.post("/verify", async (req, res) => {
+  console.log("Verification Function");
+
   const { token, code } = req.body;
 
   const connection = await mysql.createConnection({
