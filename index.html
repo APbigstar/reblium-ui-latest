@@ -145,33 +145,6 @@
     </script>
   </head>
   <body>
-    <script>
-      let latestLoadAvatarCommand = null;
-
-      let newWebRTC;
-      function handleSendCommands(command) {
-        newWebRTC.emitUIInteraction(command);
-
-        // Check if the command includes a loadavatar command and store it
-        if (command.resetavatar) {
-          latestLoadAvatarCommand = command.resetavatar;
-        }
-
-        // Log the loadavatar command sent (replace with actual implementation)
-        console.log("Sending loadavatar command:", command.resetavatars);
-      }
-
-      // Function to update the slider value and call handleSendCommands
-      function updateSliderValue() {
-        const slider = document.getElementById("mySlider");
-
-        const sliderValue = parseFloat(slider.value);
-
-        // Call the handleSendCommands function with the command object
-        handleSendCommands(command);
-      }
-    </script>
-
     <div
       id="introModalOverlay"
       class="intro-modal-overlay modal-overlay"
@@ -586,7 +559,7 @@
           <div id="designButton" class="button active">Design</div>
         </div>
       </div>
-      <div id="chatbot" style="display: none" tabindex="0">
+      <div id="chatbot" style="display: none">
         <img
           id="chatbotLogo"
           src="src/yourlogopng.png"
@@ -904,12 +877,7 @@
         </div>
       </div>
 
-      <div
-        class="artist_mode"
-        id="artist_mode"
-        style="display: block"
-        tabindex="0"
-      >
+      <div class="artist_mode" id="artist_mode" style="display: block">
         <div class="loader-overlay">
           <div class="loader"></div>
         </div>
@@ -1025,6 +993,13 @@
 
         <div class="bottomMenu" id="bottomMenu">
           <div>
+            <button
+              class="menu-button"
+              id="reset"
+              onclick="handleResetButtonClick();"
+            >
+              <i class="fas fa-undo reset-ico"></i>Reset
+            </button>
             <button class="menu-button" id="randomizeButton">
               <i class="fas fa-door-open"></i>1 Generate
             </button>
@@ -8839,6 +8814,9 @@
     </div>
 
     <script>
+      let latestLoadAvatarCommand = null;
+      let newWebRTC;
+
       setInterval(() => {
         showSignUpModal();
       }, 60000);
@@ -8872,19 +8850,8 @@
             "Email verification failed. Please try signing up again.";
           messageElement.className = "mt-4 text-sm text-red-600";
 
-          // Clear the verification failure state
           localStorage.removeItem("verificationFailed");
         }
-
-        inputs.forEach((input, index) => {
-          input.addEventListener("keydown", function (e) {
-            if (e.key === "Tab") {
-              e.preventDefault();
-              const nextInput = inputs[index + 1] || inputs[0];
-              nextInput.focus();
-            }
-          });
-        });
 
         emailInput.addEventListener("blur", function () {
           if (!validateEmail(this.value)) {
@@ -8937,11 +8904,10 @@
               messageElement.textContent = data.message;
               messageElement.className = "mt-4 text-sm text-green-600";
               // signupForm.classList.add("hidden");
-
+              // verificationForm.classList.remove("hidden");
               setTimeout(() => {
                 window.location.href = "/login.html";
               }, 2000);
-              // verificationForm.classList.remove("hidden");
             } else {
               throw new Error(
                 data.error || "An error occurred during sign up."
@@ -9043,26 +9009,29 @@
 
       function checkDisplayStatus(element, status) {
         // If element is a string (i.e., an ID), get the actual element
-        if (typeof element === 'string') {
-            element = document.getElementById(element);
+        if (typeof element === "string") {
+          element = document.getElementById(element);
         }
-        
+
         // Check if the element exists
         if (!element) {
-            console.error('Element not found');
-            return false;
+          console.error("Element not found");
+          return false;
         }
 
         // Get the computed style of the element
         const style = window.getComputedStyle(element);
-        
+
         // Return true if the display matches the status, false otherwise
         return style.display === status;
-    }
+      }
 
       function showSignUpModal() {
-        if (checkDisplayStatus(modalOverlay, 'flex') && checkDisplayStatus(signUpFormSection, 'block')) {
-            return;
+        if (
+          checkDisplayStatus(modalOverlay, "flex") &&
+          checkDisplayStatus(signUpFormSection, "block")
+        ) {
+          return;
         } else {
           introModalOverlay.style.display = "none";
           modalOverlay.style.display = "flex";
@@ -9145,6 +9114,42 @@
             randomizationPromise.resolve = resolve;
           });
           return randomizationPromise.promise;
+        }
+      }
+
+      function handleSendCommands(command) {
+        newWebRTC.emitUIInteraction(command);
+
+        // Check if the command includes a loadavatar command and store it
+        if (command.resetavatar) {
+          latestLoadAvatarCommand = command.resetavatar;
+        }
+
+        // Log the loadavatar command sent (replace with actual implementation)
+        console.log("Sending loadavatar command:", command.resetavatars);
+      }
+
+      // Function to update the slider value and call handleSendCommands
+      function updateSliderValue() {
+        const slider = document.getElementById("mySlider");
+
+        const sliderValue = parseFloat(slider.value);
+
+        // Call the handleSendCommands function with the command object
+        handleSendCommands(command);
+      }
+
+      function handleResetButtonClick() {
+        console.log(latestLoadAvatarCommand);
+        if (latestLoadAvatarCommand) {
+          // Send the latest loadavatar command
+          handleSendCommands({ resetavatar: latestLoadAvatarCommand });
+          console.log(
+            "Reset button clicked with the latest loadavatar command:",
+            latestLoadAvatarCommand
+          );
+        } else {
+          console.log("No loadavatar command available to reset.");
         }
       }
 

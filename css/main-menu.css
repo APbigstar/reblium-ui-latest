@@ -2296,8 +2296,8 @@ loader::after,
 .call-button {
   margin-left: 0.5rem;
   padding: 0.5rem;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2305,7 +2305,6 @@ loader::after,
   border-radius: 0.375rem;
   overflow: hidden;
   transition: background-color 0.3s;
-  display: block;
 }
 
 .call-button:hover {

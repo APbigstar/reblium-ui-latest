@@ -25,20 +25,30 @@ require("dotenv").config();
 // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Create a Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT),
-  secure: process.env.EMAIL_SECURE === "true",
+// const transporter = nodemailer.createTransport({
+//   host: process.env.EMAIL_HOST,
+//   port: parseInt(process.env.EMAIL_PORT),
+//   secure: process.env.EMAIL_SECURE === "true",
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+//   tls: {
+//     rejectUnauthorized: false,
+//     minVersion: "TLSv1.2",
+//     maxVersion: "TLSv1.3",
+//   },
+// });
+let transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT),
+  secure: process.env.SMTP_SECURE === 'true',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-    minVersion: "TLSv1.2",
-    maxVersion: "TLSv1.3",
-  },
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
 });
+
 
 // Verify transporter
 transporter.verify(function (error, success) {
@@ -123,10 +133,7 @@ router.post("/signup", async (req, res) => {
     // const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
     // const msg = {
     //   to: email,
-    //   from: {
-    //     email: 'noreply@reblium.com',
-    //     name: 'Reblium'
-    //   },
+    //   from: process.env.EMAIL_FROM_ADDRESS,
     //   subject: "Verify Your Reblium Account",
     //   text: `Hello ${name}, please verify your email by clicking on this link: ${verificationUrl} or use this code: ${verificationCode}`,
     //   html: `
@@ -138,7 +145,8 @@ router.post("/signup", async (req, res) => {
     //   `,
     // };
 
-    // await sgMail.send(msg);
+    // // await sgMail.send(msg);
+    // await transporter.sendMail(msg);
 
     // res.status(201).json({
     //   message:
@@ -153,7 +161,7 @@ router.post("/signup", async (req, res) => {
       .status(500)
       .json({ error: "Error processing the request", details: error.message });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -202,7 +210,7 @@ router.post("/verify", async (req, res) => {
       .status(500)
       .json({ error: "Error processing the request", details: error.message });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -260,7 +268,7 @@ router.post("/signin", async (req, res) => {
       .json({ error: "Error processing the request", details: error.message });
   } finally {
     // Close the database connection
-    connection.end();
+    connection.release();
   }
 });
 
@@ -300,7 +308,7 @@ router.get("/validate-token", async (req, res) => {
     res.status(401).json({ error: "Invalid token" });
   } finally {
     if (connection) {
-      connection.end();
+      connection.release();
     }
   }
 });
@@ -335,7 +343,7 @@ router.get("/checkUserExists", async (req, res) => {
       .status(500)
       .json({ error: "Error processing the request", details: error.message });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -394,81 +402,81 @@ passport.use(new GoogleStrategy({
   }
 }));
 
-// Facebook Strategy
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/facebook/callback`,
-  profileFields: ['id', 'emails', 'name', 'picture.type(large)']
-}, async (accessToken, refreshToken, profile, cb) => {
-  let conn;
-  try {
-    conn = await getConnection();
-    const user = await socialLoginHandler(conn, {
-      id: profile.id,
-      email: profile.emails[0].value,
-      name: `${profile.name.givenName} ${profile.name.familyName}`,
-      picture: profile.photos[0].value
-    }, 'facebook_id');
-    return cb(null, user);
-  } catch (error) {
-    console.error("Error in Facebook Strategy:", error);
-    return cb(error);
-  } finally {
-    if (conn) conn.release();
-  }
-}));
+// // Facebook Strategy
+// passport.use(new FacebookStrategy({
+//   clientID: process.env.FACEBOOK_APP_ID,
+//   clientSecret: process.env.FACEBOOK_APP_SECRET,
+//   callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/facebook/callback`,
+//   profileFields: ['id', 'emails', 'name', 'picture.type(large)']
+// }, async (accessToken, refreshToken, profile, cb) => {
+//   let conn;
+//   try {
+//     conn = await getConnection();
+//     const user = await socialLoginHandler(conn, {
+//       id: profile.id,
+//       email: profile.emails[0].value,
+//       name: `${profile.name.givenName} ${profile.name.familyName}`,
+//       picture: profile.photos[0].value
+//     }, 'facebook_id');
+//     return cb(null, user);
+//   } catch (error) {
+//     console.error("Error in Facebook Strategy:", error);
+//     return cb(error);
+//   } finally {
+//     if (conn) conn.release();
+//   }
+// }));
 
-// Apple Strategy
-passport.use(new AppleStrategy({
-  clientID: process.env.APPLE_CLIENT_ID,
-  teamID: process.env.APPLE_TEAM_ID,
-  callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/apple/callback`,
-  keyID: process.env.APPLE_KEY_ID,
-  privateKeyLocation: process.env.APPLE_PRIVATE_KEY_LOCATION,
-}, async (req, accessToken, refreshToken, idToken, profile, cb) => {
-  let conn;
-  try {
-    conn = await getConnection();
-    const user = await socialLoginHandler(conn, {
-      id: idToken.sub,
-      email: idToken.email,
-      name: idToken.email.split('@')[0], // Apple doesn't provide name, using email username as fallback
-      picture: null // Apple doesn't provide profile picture
-    }, 'apple_id');
-    return cb(null, user);
-  } catch (error) {
-    console.error("Error in Apple Strategy:", error);
-    return cb(error);
-  } finally {
-    if (conn) conn.release();
-  }
-}));
+// // Apple Strategy
+// passport.use(new AppleStrategy({
+//   clientID: process.env.APPLE_CLIENT_ID,
+//   teamID: process.env.APPLE_TEAM_ID,
+//   callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/apple/callback`,
+//   keyID: process.env.APPLE_KEY_ID,
+//   privateKeyLocation: process.env.APPLE_PRIVATE_KEY_LOCATION,
+// }, async (req, accessToken, refreshToken, idToken, profile, cb) => {
+//   let conn;
+//   try {
+//     conn = await getConnection();
+//     const user = await socialLoginHandler(conn, {
+//       id: idToken.sub,
+//       email: idToken.email,
+//       name: idToken.email.split('@')[0], // Apple doesn't provide name, using email username as fallback
+//       picture: null // Apple doesn't provide profile picture
+//     }, 'apple_id');
+//     return cb(null, user);
+//   } catch (error) {
+//     console.error("Error in Apple Strategy:", error);
+//     return cb(error);
+//   } finally {
+//     if (conn) conn.release();
+//   }
+// }));
 
-// Discord Strategy
-passport.use(new DiscordStrategy({
-  clientID: process.env.DISCORD_CLIENT_ID,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/discord/callback`,
-  scope: ['identify', 'email']
-}, async (accessToken, refreshToken, profile, cb) => {
-  let conn;
-  try {
-    conn = await getConnection();
-    const user = await socialLoginHandler(conn, {
-      id: profile.id,
-      email: profile.email,
-      name: profile.username,
-      picture: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
-    }, 'discord_id');
-    return cb(null, user);
-  } catch (error) {
-    console.error("Error in Discord Strategy:", error);
-    return cb(error);
-  } finally {
-    if (conn) conn.release();
-  }
-}));
+// // Discord Strategy
+// passport.use(new DiscordStrategy({
+//   clientID: process.env.DISCORD_CLIENT_ID,
+//   clientSecret: process.env.DISCORD_CLIENT_SECRET,
+//   callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/discord/callback`,
+//   scope: ['identify', 'email']
+// }, async (accessToken, refreshToken, profile, cb) => {
+//   let conn;
+//   try {
+//     conn = await getConnection();
+//     const user = await socialLoginHandler(conn, {
+//       id: profile.id,
+//       email: profile.email,
+//       name: profile.username,
+//       picture: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
+//     }, 'discord_id');
+//     return cb(null, user);
+//   } catch (error) {
+//     console.error("Error in Discord Strategy:", error);
+//     return cb(error);
+//   } finally {
+//     if (conn) conn.release();
+//   }
+// }));
 
 // Google login route
 router.get(
@@ -507,53 +515,53 @@ router.get("/google/callback", (req, res, next) => {
   })(req, res, next);
 });
 
-router.get(
-  "/facebook",
-  passport.authenticate("facebook", { scope: ["email"] })
-);
+// router.get(
+//   "/facebook",
+//   passport.authenticate("facebook", { scope: ["email"] })
+// );
 
-router.get(
-  "/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
-  function (req, res) {
-    const token = jwt.sign(
-      { userId: req.user.id, email: req.user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
-  }
-);
+// router.get(
+//   "/facebook/callback",
+//   passport.authenticate("facebook", { failureRedirect: "/login" }),
+//   function (req, res) {
+//     const token = jwt.sign(
+//       { userId: req.user.id, email: req.user.email },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1h" }
+//     );
+//     res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+//   }
+// );
 
-router.get("/apple", passport.authenticate("apple"));
+// router.get("/apple", passport.authenticate("apple"));
 
-router.get(
-  "/apple/callback",
-  passport.authenticate("apple", { failureRedirect: "/login" }),
-  function (req, res) {
-    const token = jwt.sign(
-      { userId: req.user.id, email: req.user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
-  }
-);
+// router.get(
+//   "/apple/callback",
+//   passport.authenticate("apple", { failureRedirect: "/login" }),
+//   function (req, res) {
+//     const token = jwt.sign(
+//       { userId: req.user.id, email: req.user.email },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1h" }
+//     );
+//     res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+//   }
+// );
 
-router.get("/discord", passport.authenticate("discord"));
+// router.get("/discord", passport.authenticate("discord"));
 
-router.get(
-  "/discord/callback",
-  passport.authenticate("discord", { failureRedirect: "/login" }),
-  function (req, res) {
-    const token = jwt.sign(
-      { userId: req.user.id, email: req.user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
-  }
-);
+// router.get(
+//   "/discord/callback",
+//   passport.authenticate("discord", { failureRedirect: "/login" }),
+//   function (req, res) {
+//     const token = jwt.sign(
+//       { userId: req.user.id, email: req.user.email },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1h" }
+//     );
+//     res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+//   }
+// );
 
 app.use(`/.netlify/functions/auth`, router);
 
