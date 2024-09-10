@@ -260,7 +260,7 @@ router.post("/signin", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ message: "Sign-in successful", token });
+    res.json({ message: "Sign-in successful", token, userId: user.id });
   } catch (error) {
     console.error("Error during sign-in:", error);
     res
