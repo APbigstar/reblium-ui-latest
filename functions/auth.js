@@ -125,14 +125,7 @@ router.post("/signup", async (req, res) => {
             </div>
         </body>
         </html>
-      `,
-      attachments: [
-        {
-          filename: "reblium_logo.png",
-          path: path.join(__dirname, "../src/reblium_logo_black.png"),
-          cid: "reblium_logo",
-        },
-      ],
+      `
     };
 
     await transporter.sendMail(mailOptions);
@@ -208,14 +201,7 @@ router.post("/request-code", async (req, res) => {
             </div>
         </body>
         </html>
-      `,
-      attachments: [
-        {
-          filename: "reblium_logo.png",
-          path: path.join(__dirname, "../src/reblium_logo_black.png"),
-          cid: "reblium_logo",
-        },
-      ],
+      `
     };
 
     await transporter.sendMail(mailOptions);
