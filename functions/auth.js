@@ -313,7 +313,7 @@ router.post("/signin", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ message: "Sign-in successful", token, userId: user.id });
+    res.json({ message: "Sign-in successful", token, userId: user.id, email: user.email });
   } catch (error) {
     console.error("Error during sign-in:", error);
     res
@@ -524,30 +524,30 @@ passport.use(
 //   }
 // }));
 
-// // Discord Strategy
-// passport.use(new DiscordStrategy({
-//   clientID: process.env.DISCORD_CLIENT_ID,
-//   clientSecret: process.env.DISCORD_CLIENT_SECRET,
-//   callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/discord/callback`,
-//   scope: ['identify', 'email']
-// }, async (accessToken, refreshToken, profile, cb) => {
-//   let conn;
-//   try {
-//     conn = await getConnection();
-//     const user = await socialLoginHandler(conn, {
-//       id: profile.id,
-//       email: profile.email,
-//       name: profile.username,
-//       picture: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
-//     }, 'discord_id');
-//     return cb(null, user);
-//   } catch (error) {
-//     console.error("Error in Discord Strategy:", error);
-//     return cb(error);
-//   } finally {
-//     if (conn) conn.release();
-//   }
-// }));
+// Discord Strategy
+passport.use(new DiscordStrategy({
+  clientID: process.env.DISCORD_CLIENT_ID,
+  clientSecret: process.env.DISCORD_CLIENT_SECRET,
+  callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/discord/callback`,
+  scope: ['identify', 'email']
+}, async (accessToken, refreshToken, profile, cb) => {
+  let conn;
+  try {
+    conn = await getConnection();
+    const user = await socialLoginHandler(conn, {
+      id: profile.id,
+      email: profile.email,
+      name: profile.username,
+      picture: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
+    }, 'discord_id');
+    return cb(null, user);
+  } catch (error) {
+    console.error("Error in Discord Strategy:", error);
+    return cb(error);
+  } finally {
+    if (conn) conn.release();
+  }
+}));
 
 // Google login route
 router.get(
@@ -621,22 +621,22 @@ router.get("/google/callback", (req, res, next) => {
 //   }
 // );
 
-// // Discord login route
-// router.get("/discord", passport.authenticate("discord"));
+// Discord login route
+router.get("/discord", passport.authenticate("discord"));
 
-// // Discord callback route
-// router.get(
-//   "/discord/callback",
-//   passport.authenticate("discord", { failureRedirect: "/login" }),
-//   function (req, res) {
-//     const token = jwt.sign(
-//       { userId: req.user.id, email: req.user.email },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "1h" }
-//     );
-//     res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
-//   }
-// );
+// Discord callback route
+router.get(
+  "/discord/callback",
+  passport.authenticate("discord", { failureRedirect: "/login" }),
+  function (req, res) {
+    const token = jwt.sign(
+      { userId: req.user.id, email: req.user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+  }
+);
 
 app.use(`/.netlify/functions/auth`, router);
 

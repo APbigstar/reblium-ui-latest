@@ -277,21 +277,6 @@ document.getElementById("previewButton").addEventListener("click", function () {
   updateDisplayState("preview");
 });
 
-// Event listener for Tab key
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Tab") {
-    event.preventDefault(); // Prevent the default tab behavior
-    // Check which mode is currently active and switch to the other
-    const chatbot = document.getElementById("chatbot");
-    const artistMode = document.getElementById("artist_mode");
-    if (window.getComputedStyle(chatbot).display === "none") {
-      updateDisplayState("conversation");
-    } else {
-      updateDisplayState("design");
-    }
-  }
-});
-
 // Event listener to handle the click on the menuBar and toggle the sideMenu
 document.addEventListener("DOMContentLoaded", function () {
   const menuBar = document.getElementById("menuBar");

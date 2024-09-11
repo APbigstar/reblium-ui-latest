@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function redirectToLogin() {
-    window.location.href = "/login.html";
+    window.location.href = "/";
   }
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -866,7 +866,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (!userToken) {
         console.error("User token not found in URL.");
         // Redirect to login page if no token is present
-        window.location.href = "/login.html";
+        window.location.href = "/";
         return;
       }
 

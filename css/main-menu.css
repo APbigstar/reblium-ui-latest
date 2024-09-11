@@ -3152,3 +3152,7 @@ table th {
 .details-section {
   width: 50%;
 }
+
+.demo-button {
+  font-size: 1.8rem;
+}

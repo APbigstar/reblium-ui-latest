@@ -5,6 +5,7 @@
     <link rel="icon" type="image/x-icon" href="src/reblium_logo.png" />
     <link rel="stylesheet" type="text/css" href="../css/main-menu.css" />
     <link rel="stylesheet" type="text/css" href="../css/chat.css" />
+    <title>Reblium Demo</title>
 
     <!--Google ads link-->
     <script
@@ -58,10 +59,73 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css"
     />
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999999;
+      }
+      .signup-modal {
+        background: rgba(31, 31, 31, 0.78);
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: relative;
+        width: 70%;
+        height: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .signup-modal-close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        color: #666;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+      }
+      .main-text {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 30px;
+      }
+      .small-text {
+        font-size: 12px;
+        color: #fff;
+        margin-top: 10px;
+      }
+      .intro-text {
+        color: #fff;
+        font-family: Arial;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: 4.32px;
+        text-align: left;
+      }
+      #signUpCancel {
+        background: unset;
+        border: 1px solid white;
+      }
+    </style>
 
     <title>Reblium Avatar System</title>
     <!-- Hotjar Tracking Code for https://reblium.netlify.app/ -->
@@ -82,1211 +146,240 @@
     </script>
   </head>
   <body>
-    <script>
-      let latestLoadAvatarCommand = null;
-
-      let newWebRTC;
-      function handleSendCommands(command) {
-        newWebRTC.emitUIInteraction(command);
-
-        // Check if the command includes a loadavatar command and store it
-        if (command.resetavatar) {
-          latestLoadAvatarCommand = command.resetavatar;
-        }
-
-        // Log the loadavatar command sent (replace with actual implementation)
-        console.log("Sending loadavatar command:", command.resetavatars);
-      }
-
-      // Function to update the slider value and call handleSendCommands
-      function updateSliderValue() {
-        const slider = document.getElementById("mySlider");
-
-        const sliderValue = parseFloat(slider.value);
-
-        // Call the handleSendCommands function with the command object
-        handleSendCommands(command);
-      }
-
-      // function handleButtonClick() {
-      //   // Call the second function to reload the page
-      //   location.reload();
-      // }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("save-exit")
-          .addEventListener("click", function () {
-            const exitPopup = document.getElementById("exitConfirmation");
-            exitPopup.style.display = "none";
-          });
-      });
-
-      // Async function to load and send avatar data
-      async function loadAndSendAvatarData(jsonFilePath) {
-        await waitForVideoLoad(); // Wait for video to load
-
-        // Use the fetch API to load the JSON file
-        try {
-          const response = await fetch(jsonFilePath);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const jsonData = await response.json(); // Parse the JSON response
-
-          // Call your handleSendCommands function with the JSON data
-          handleSendCommands({ resetavatar: JSON.stringify(jsonData) });
-          // handleSendCommands({ cameraswitch: 'Head' });
-
-          // Extracting the persona data from the JSON file
-          const personaInfo = jsonData["Personas"];
-
-          // Display persona data in popup input
-          if (personaInfo) {
-            const personaInput = document.getElementById("personaInput");
-            personaInput.value = personaInfo; // Update the input field with the persona description
-          }
-        } catch (error) {
-          console.error("Error loading JSON:", error);
-        }
-      }
-
-      async function loadAndProcessJsonData(filePath) {
-        try {
-          const response = await fetch(filePath);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch ${filePath}`);
-          }
-          const jsonData = await response.json();
-          // Here you can add more processing logic as needed
-        } catch (error) {
-          console.error("Error loading JSON data:", error);
-        }
-      }
-
-      // Function to handle the reset button click
-      function handleResetButtonClick() {
-        if (latestLoadAvatarCommand) {
-          // Send the latest loadavatar command
-          handleSendCommands({ resetavatar: latestLoadAvatarCommand });
-          console.log(
-            "Reset button clicked with the latest loadavatar command:",
-            latestLoadAvatarCommand
-          );
-        } else {
-          console.log("No loadavatar command available to reset.");
-        }
-      }
-
-      // Event listener for the "reset" button
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("reset")
-          .addEventListener("click", handleResetButtonClick);
-      });
-    </script>
-
-    <nav class="navbar">
-      <img
-        src="/src/reblium_logo.png"
-        class="nav-logo"
-        onclick="showExitConfirmation();"
-        alt="Icon"
-      />
-
-      <div class="nav-user">
-        <div style="display: none">
-          <a>avatar-id: <span id="avatarId"></span></a><br />
-          <a>Persona Name: <span id="avatarName"></span></a> <br />
-        </div>
-
-        <div class="beta-text">Early Access</div>
-        <div
-          id="tier"
-          style="color: #00cdff; margin-right: 10px; cursor: pointer"
-          onclick="toggleSection('tier-section')"
-        ></div>
-
-        <div style="padding-right: 10px">
-          <a class="credits">
-            <span id="exportCredits"></span>
-            credits
-          </a>
-        </div>
-        <div>
-          <a><span style="display: none" id="userEmail"></span></a>
-          <img id="userImage" />
-        </div>
-      </div>
-    </nav>
-
-    <div id="creditsPopup" class="credits-popup" style="display: none">
-      <div class="popup-header" style="text-align: center">
-        <h2>Add Credits</h2>
-        <span class="close-button" style="color: white;/ ">&times;</span>
-      </div>
-      <div class="credits-options">
-        <!-- Bronze Tier -->
-        <div class="credit-plan">
-          <div class="bronzeContinue">100 (€12)</div>
-        </div>
-
-        <!-- Silver Tier -->
-        <div class="credit-plan">
-          <div class="silverContinue">250 (€30)</div>
-        </div>
-
-        <!-- Gold Tier -->
-        <div class="credit-plan">
-          <div class="goldContinue">500 (€60)</div>
-        </div>
-
-        <!-- Platinum Tier -->
-        <div class="credit-plan">
-          <div class="platinumContinue">800 (€96)</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal for Payment UI -->
-    <div id="paymentModal" class="paymentModal" style="display: none">
-      <div class="payment-content">
-        <button class="close" id="closePaymentModal">
-          <svg class="close-icon" viewBox="0 0 20 20">
-            <path
-              d="M14.85 6.15a0.5 0.5 0 0 0-0.71 0L10 10.29 6.15 6.15a0.5 0.5 0 0 0-.71 0.71L9.29 11l-3.85 3.85a0.5 0.5 0 0 0 .71.71L10 11.71l3.85 3.85a0.5 0.5 0 0 0 .71-.71L10.71 11l3.85-3.85a0.5 0.5 0 0 0 0-.71z"
-            />
-          </svg>
+    <div
+      id="introModalOverlay"
+      class="intro-modal-overlay modal-overlay"
+      style="display: flex"
+    >
+      <div class="signup-modal">
+        <button id="closeIntroModal" class="signup-modal-close-button">
+          &times;
         </button>
-        <iframe
-          id="paymentFrame"
-          style="width: 100%; height: 600px; border: none"
-          allowfullscreen
-        ></iframe>
-      </div>
-    </div>
-
-    <div class="dashboard" id="dashboard" style="display: block">
-      <div class="overlay-menu">
-        <div id="newButton" class="menu">
-          <a onclick="toggleSection('avatar-Discover')"
-            ><i class="fas fa-compass"></i> Discover</a
-          >
-          <a onclick="toggleSection('avatar-Templates')"
-            ><i class="fas fa-users"></i> Templates</a
-          >
-          <a onclick="toggleSection('avatar-Avatars')"
-            ><i class="fas fa-user"></i> My Avatars</a
-          >
-          <!-- <a href="#" onclick="toggleSection('webshop-inventory')"><i class="fas fa-cart-shopping"></i> Webshop</a> -->
-          <!-- <a href="#inventory" onclick="toggleSection('webshop-inventory')"><i class="fas fa-bag-shopping"></i> Inventory</a> -->
-          <a href="https://discord.gg/AA9tDP8Djg" target="_blank"
-            ><i class="fab fa-discord"></i> Discord</a
-          >
-          <a onclick="toggleSection('avatar-Pricing')"
-            ><i class="fas fa-tag"></i> Pricing</a
-          >
-          <a href="/"><i class="fas fa-sign-out-alt"></i> Logout</a>
-          <!-- <a href="https://discord.gg/AA9tDP8Djg" target="_blank"><i class="fas fa-cog"></i> Settings</a> -->
-        </div>
-      </div>
-      <div id="tier-section" style="display: none">
-        <div class="avatar-section" id="toggleAvatarSection">
-          <div id="discoverSection">
-            <h2 class="mb-4">Plan & Billing</h2>
-            <div class="flex item-start gap-2">
-              <div
-                class="details-section custom-border rounded-lg p-6 bg-black"
-              >
-                <h2 class="text-cyan-400 text-sm mb-4">Details</h2>
-                <div class="flex items-start mb-4">
-                  <img
-                    src="https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png"
-                    alt="User Avatar"
-                    class="rounded-full mr-4 w-24 h-24"
-                  />
-                  <div class="flex flex-col gap-2 w-full">
-                    <p class="font-semibold text-white">Mao Lin Liao</p>
-                    <p class="text-gray-400 text-sm">khlisns@gmail.com</p>
-                    <p class="text-gray-400 text-sm">Password: ••••••••••••</p>
-                    <button
-                      class="cyan-button w-full py-2 rounded-md text-sm font-semibold mb-2"
-                    >
-                      Change password
-                    </button>
-                    <button
-                      class="dark-button w-full py-2 rounded-md text-sm font-semibold"
-                    >
-                      Reset password
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="details-section custom-border rounded-lg p-6 bg-black"
-              >
-                <h2 class="text-cyan-400 text-sm mb-4">Details</h2>
-                <div class="mb-4">
-                  <p
-                    class="text-cyan-400 font-semibold mb-2"
-                    id="detail_premium_plan_type"
-                  ></p>
-                  <p class="text-gray-400 text-sm mb-4">
-                    Credits left: <span id="detail_page_credit_amount"></span>
-                  </p>
-                </div>
-                <p
-                  class="text-gray-400 text-sm mb-6"
-                  id="plan_created_date_p"
-                ></p>
-                <button
-                  class="cyan-button w-full py-2 rounded-md text-sm font-semibold mb-2"
-                  onclick="toggleSection('avatar-Pricing')"
-                >
-                  Change plan
-                </button>
-                <button
-                  class="dark-button w-full py-2 rounded-md text-sm font-semibold"
-                  onclick="cancelPremiumPriceSection()"
-                >
-                  Cancel plan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="avatar-Discover" style="display: block">
-        <div class="avatar-section" id="toggleAvatarSection">
-          <div class="avatar-header" id="discoverSection">
-            <h2>Discover</h2>
-            <div class="categories">
-              <div
-                class="category"
-                data-category="learning"
-                onclick="showCategory('learning', event)"
-              >
-                <i class="fas fa-graduation-cap"></i> Learning
-              </div>
-              <!-- <div class="category" data-category="apps" onclick="showCategory('apps', event)"><i class="fas fa-rocket"></i> Use Cases</div> -->
-              <!-- <div class="category" data-category="games" onclick="showCategory('games', event)"><i class="fas fa-gamepad"></i> Games</div> -->
-            </div>
-          </div>
-          <p style="color: white; padding-left: 14px">
-            Explore the world of Reblium
-          </p>
-
-          <!-- Learning Content -->
-          <div class="category-content" id="learning" style="display: none">
-            <div class="bottom-images">
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/concierge.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Clarissa - Virtual Concierge.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Hotel Receptionist"
-                />
-                <!-- <p class="category-title category-title-bottom">Virtual Concierge</p> -->
-              </div>
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/tutors.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Edubot - Virtual Tutor.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Virtual Tutor"
-                />
-                <!-- <p class="category-title category-title-bottom">Virtual Tutors</p> -->
-              </div>
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/guide.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Mallie - Virtual Guide.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Virtual Tutor"
-                />
-                <!-- <p class="category-title category-title-bottom">Virtual Guide</p> -->
-              </div>
-            </div>
-
-            <div class="bottom-images">
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/frontdesk.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Reggie - frontdesk asistent.DHS') + toggleDashboardAndArtistMode()"
-                  alt="GP Assistant"
-                />
-                <!-- <p class="category-title category-title-bottom">Virtual Frontdesk</p> -->
-              </div>
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/hostess.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Grace - Virtual Hostess.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Virtual Guide"
-                />
-                <!-- <p class="category-title category-title-bottom">Virtual Hostess</p> -->
-              </div>
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/Survey.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Quest - VIrtual Survey interviewer.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Virtual Guide"
-                />
-                <!-- <p class="category-title category-title-bottom">Virtual Survey</p> -->
-              </div>
-            </div>
-
-            <div class="bottom-images">
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/Dutch.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Maartje - Dutch teacher.DHS') + toggleDashboardAndArtistMode()"
-                  alt="GP Assistant"
-                />
-                <!-- <p class="category-title category-title-top">Learning <br /> Dutch</p> -->
-              </div>
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/Spanish.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Camila - Spanish teacher.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Virtual Guide"
-                />
-                <!-- <p class="category-title category-title-top">Learning<br /> Spanish</p> -->
-              </div>
-              <div class="bottom-image">
-                <img
-                  src="src/learning_content/Japanese.png"
-                  onclick="loadAndSendAvatarData('avatar_presets/json/Sora -  Japanese Language Teacher.DHS') + toggleDashboardAndArtistMode()"
-                  alt="Virtual Guide"
-                />
-                <!-- <p class="category-title category-title-top">Learning<br /> Japanese</p> -->
-              </div>
-            </div>
-          </div>
-
-          <!-- Apps Content -->
-
-          <div class="category-content" id="apps" style="display: none">
-            <div class="bottom-images">
-              <div class="bottom-image" style="width: 100%" id="sci-fi-world">
-                <img src="src/introtext.png" alt="Sci Fi World" />
-              </div>
-            </div>
-
-            <div class="bottom-images">
-              <div class="bottom-image" style="width: 100%" id="sci-fi-world">
-                <img src="src/chatgpt.png" alt="Sci Fi World" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="avatar-Templates" style="display: none">
-        <div class="avatar-section" id="toggleAvatarSection">
-          <div class="avatar-header" id="lookbookSection">
-            <h2>Templates showcase</h2>
-            <div class="categories">
-              <div class="category">
-                <svg
-                  height="15px"
-                  width="15px"
-                  version="1.1"
-                  id="Layer_1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                  viewBox="0 0 388.219 388.219"
-                  xml:space="preserve"
-                >
-                  <path
-                    style="fill: #ff793b"
-                    d="M160.109,182.619c0.8,6.8-6,11.6-12,8c-22-12.8-32.8-36.4-47.2-56.8c-23.2,36.8-40.8,72.4-40.8,110.4
-                  c0,77.2,54.8,136,132,136s136-58.8,136-136c0-96.8-101.2-113.6-100-236C187.309,37.019,148.909,101.419,160.109,182.619z"
-                  />
-                  <path
-                    style="fill: #c6490f"
-                    d="M192.109,388.219c-81.2,0-140-60.4-140-144c0-42,20.4-80,42-114.8c1.6-2.4,4-3.6,6.4-3.6
-                  c2.8,0,5.2,1.2,6.8,3.2c3.6,4.8,6.8,10,10,15.2c10,15.6,19.6,30.4,34.8,39.2l0,0c-11.6-82.8,27.6-151.2,71.2-182
-                  c2.4-1.6,5.6-2,8.4-0.4c2.8,1.2,4.4,4,4.4,7.2c-0.8,62,26.4,96,52.4,128.4c23.6,29.2,47.6,59.2,47.6,107.6
-                  C336.109,326.219,274.109,388.219,192.109,388.219z M101.309,148.619c-18,29.6-33.2,61.6-33.2,95.6c0,74,52,128,124,128
-                  c72.8,0,128-55.2,128-128c0-42.8-20.4-68-44-97.6c-24.4-30.4-51.6-64.4-55.6-122c-34.4,31.2-62,88.4-52.4,156.8l0,0
-                  c0.8,6.4-2,12.4-7.2,15.6c-5.2,3.2-11.6,3.2-16.8,0c-18.4-10.8-29.2-28-40-44.4C102.909,151.419,102.109,150.219,101.309,148.619z"
-                  />
-                  <path
-                    style="fill: #ff793b"
-                    d="M278.109,304.219c14-21.6,22-47.6,22-76"
-                  />
-                  <path
-                    style="fill: #c6490f"
-                    d="M278.109,312.219c-1.6,0-3.2-0.4-4.4-1.2c-3.6-2.4-4.8-7.2-2.4-11.2c13.6-20.8,20.8-45.6,20.8-71.6
-                  c0-4.4,3.6-8,8-8s8,3.6,8,8c0,29.2-8,56.8-23.2,80.4C283.309,311.019,280.909,312.219,278.109,312.219z"
-                  />
-                  <path
-                    style="fill: #ff793b"
-                    d="M253.709,332.219c2.8-2.4,6-5.2,8.4-8"
-                  />
-                  <path
-                    style="fill: #c6490f"
-                    d="M253.709,340.219c-2.4,0-4.4-0.8-6-2.8c-2.8-3.2-2.4-8.4,0.8-11.2c2.4-2.4,5.6-4.8,7.6-7.2
-                  c2.8-3.2,8-3.6,11.2-0.8c3.2,2.8,3.6,8,0.8,11.2c-2.8,3.2-6.4,6.4-9.2,8.8C257.309,339.419,255.709,340.219,253.709,340.219z"
-                  />
-                </svg>
-                Recent
-              </div>
-              <div class="category">
-                <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-                <svg
-                  width="15px"
-                  height="15px"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M11.2691 4.41115C11.5006 3.89177 11.6164 3.63208 11.7776 3.55211C11.9176 3.48263 12.082 3.48263 12.222 3.55211C12.3832 3.63208 12.499 3.89177 12.7305 4.41115L14.5745 8.54808C14.643 8.70162 14.6772 8.77839 14.7302 8.83718C14.777 8.8892 14.8343 8.93081 14.8982 8.95929C14.9705 8.99149 15.0541 9.00031 15.2213 9.01795L19.7256 9.49336C20.2911 9.55304 20.5738 9.58288 20.6997 9.71147C20.809 9.82316 20.8598 9.97956 20.837 10.1342C20.8108 10.3122 20.5996 10.5025 20.1772 10.8832L16.8125 13.9154C16.6877 14.0279 16.6252 14.0842 16.5857 14.1527C16.5507 14.2134 16.5288 14.2807 16.5215 14.3503C16.5132 14.429 16.5306 14.5112 16.5655 14.6757L17.5053 19.1064C17.6233 19.6627 17.6823 19.9408 17.5989 20.1002C17.5264 20.2388 17.3934 20.3354 17.2393 20.3615C17.0619 20.3915 16.8156 20.2495 16.323 19.9654L12.3995 17.7024C12.2539 17.6184 12.1811 17.5765 12.1037 17.56C12.0352 17.5455 11.9644 17.5455 11.8959 17.56C11.8185 17.5765 11.7457 17.6184 11.6001 17.7024L7.67662 19.9654C7.18404 20.2495 6.93775 20.3915 6.76034 20.3615C6.60623 20.3354 6.47319 20.2388 6.40075 20.1002C6.31736 19.9408 6.37635 19.6627 6.49434 19.1064L7.4341 14.6757C7.46898 14.5112 7.48642 14.429 7.47814 14.3503C7.47081 14.2807 7.44894 14.2134 7.41394 14.1527C7.37439 14.0842 7.31195 14.0279 7.18708 13.9154L3.82246 10.8832C3.40005 10.5025 3.18884 10.3122 3.16258 10.1342C3.13978 9.97956 3.19059 9.82316 3.29993 9.71147C3.42581 9.58288 3.70856 9.55304 4.27406 9.49336L8.77835 9.01795C8.94553 9.00031 9.02911 8.99149 9.10139 8.95929C9.16534 8.93081 9.2226 8.8892 9.26946 8.83718C9.32241 8.77839 9.35663 8.70162 9.42508 8.54808L11.2691 4.41115Z"
-                    stroke="#FFFF00"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                Top
-              </div>
-            </div>
-          </div>
-          <div class="avatar-container" id="template-container">
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_F_Alex.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/Alex.DHS')"
-              />
-              <span class="avatar-name">Alex</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_F_Xiao.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/Xiao.DHS')"
-              />
-              <span class="avatar-name">Xiao</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_F_Billie.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/Nour.DHS') "
-              />
-              <span class="avatar-name">Nour</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_F_Nour.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/Achaya.DHS') "
-              />
-              <span class="avatar-name">Achaya</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_M_Xiao.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/Lu.DHS') "
-              />
-              <span class="avatar-name">Lu</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_M_Alex.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/John.DHS') "
-              />
-              <span class="avatar-name">John</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_M_Nour.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/Richard.DHS') "
-              />
-              <span class="avatar-name">Richard</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Icon_Template_M_Billie.png"
-                onclick="loadAndSendAvatarData('avatar_presets/json/James.DHS') "
-              />
-              <span class="avatar-name">James</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/African_Female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/African_Female.DHS') "
-              />
-              <span class="avatar-name">African_female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/African_Male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/African_Male.DHS') "
-              />
-              <span class="avatar-name">African_male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Amfibian.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Amfibian.DHS') "
-              />
-              <span class="avatar-name">Amfibian</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Asian_Female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Asian_Female.DHS') "
-              />
-              <span class="avatar-name">Asian_Female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Asian_Male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Asian_Male.DHS') "
-              />
-              <span class="avatar-name">Asian_male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Avatar.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Avatar.DHS') "
-              />
-              <span class="avatar-name">Avatar</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Caucasian_Female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Caucasian_Female.DHS') "
-              />
-              <span class="avatar-name">Caucasian_female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Caucasian_Male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Caucasian_Male.DHS') "
-              />
-              <span class="avatar-name">Caucasian_Male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Cyberpunk_Female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Cyberpunk_Female.DHS') "
-              />
-              <span class="avatar-name">Cyberpunk_Female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Cyberpunk_Male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Cyberpunk_Male.DHS') "
-              />
-              <span class="avatar-name">Cyberpunk_Male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Dog.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Dog.DHS') "
-              />
-              <span class="avatar-name">Dog</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Dragon.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Dragon.DHS') "
-              />
-              <span class="avatar-name">Dragon</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Fantasy_Female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Fantasy_Female.DHS') "
-              />
-              <span class="avatar-name">Fantasy_Female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Fantasy_Male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Fantasy_Male.DHS') "
-              />
-              <span class="avatar-name">Fantasy_Male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Goat.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Goat.DHS') "
-              />
-              <span class="avatar-name">Goat</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Hispanic_female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Hispanic_female.DHS') "
-              />
-              <span class="avatar-name">Hispanic_female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Hispanic_male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Hispanic_male.DHS') "
-              />
-              <span class="avatar-name">Hispanic_male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Ox.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Ox.DHS') "
-              />
-              <span class="avatar-name">Ox</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Pig.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Pig.DHS') "
-              />
-              <span class="avatar-name">Pig</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Rat.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Rat.DHS') "
-              />
-              <span class="avatar-name">Rat</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Stylistic_Female.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Stylistic_Female.DHS') "
-              />
-              <span class="avatar-name">Stylistic_Female</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Stylistic_Male.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Stylistic_Male.DHS') "
-              />
-              <span class="avatar-name">Stylistic_Male</span>
-            </div>
-
-            <div class="preset-avatar">
-              <img
-                src="avatar_presets/img/Tiger.jpg"
-                onclick="loadAndSendAvatarData('avatar_presets/templates/Tiger.DHS') "
-              />
-              <span class="avatar-name">Tiger</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="avatar-Avatars" style="display: none">
-        <div class="avatar-section" id="toggleAvatarSection">
-          <div class="avatar-header" id="avatarSection">
-            <h2>My Avatars</h2>
-            <button
-              class="new-avatar"
-              id="create-new"
-              onclick="toggleDashboardAndArtistMode(true) + updateDisplayState('design')"
-            >
-              + Create New
+        <div class="intro-text" id="welcomeSection">
+          The Reblium Cloud by Reblika offers you the most robust set of
+          generative AI tools to produce stunning AI assistant featuring
+          realtime avatars. <br /><br />
+          See your AI portraits come to life in seconds. Give voice and
+          personality to your creations. Amaze your audience with your art. All
+          it takes is an idea and you can use the power of Unreal game engine to
+          generate a one-of-a-kind chatbot with a customized avatar.
+          <br /><br /><br />
+          Step 1: Generate a new avatar to start your journey!<br /><br />Step
+          2: Switch between conversation mode to test drive<br /><br />
+          Step 3: Describe your persona in simpel prompt<br /><br />Step 4: Save
+          & Share with your friends<br /><br /><br /><br />
+          <div class="text-center">
+            <button id="processSignUpProcess" class="demo-button menu-button m-auto">
+              Proceed
             </button>
           </div>
-          <p style="color: white; padding-left: 25px">User created avatars</p>
-
-          <div class="avatar-container" id="avatars-container">
-            <!-- Avatar components will be dynamically added here -->
-          </div>
-        </div>
-      </div>
-      <div
-        id="avatar-Pricing"
-        class="bg-black text-white"
-        style="display: none"
-      >
-        <div
-          class="avatar-section premium-selection-part"
-          id="toggleAvatarSection"
-        >
-          <div class="avatar-header" id="avatarSection">
-            <h2 class="text-5xl font-bold mb-8 text-blue-400">Pricing</h2>
-            <div class="flex justify-center mb-8 w-full">
-              <button
-                id="monthlyBtn"
-                class="bg-blue-starndard text-white px-6 py-2 rounded-l-full"
-              >
-                MONTHLY
-              </button>
-              <button
-                id="annuallyBtn"
-                class="bg-gray-800 text-white px-6 py-2 rounded-r-full"
-              >
-                ANNUALLY
-              </button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-              <!-- Free Plan -->
-              <div class="bg-gray-900 p-6 rounded-lg">
-                <h3 class="text-2xl font-bold mb-2">Free</h3>
-                <p class="text-blue-400 mb-4">
-                  <span id="freeCredits">0</span> credits
-                </p>
-                <p class="text-3xl font-bold mb-4">
-                  €0
-                  <span class="text-sm font-normal">/month</span>
-                </p>
-                <button
-                  id="free-plan-button"
-                  class="bg-gray-800 text-white px-4 py-2 rounded-full w-full mb-4"
-                >
-                  Current Plan
-                </button>
-                <ul class="space-y-2 text-gray-400">
-                  <li>• Cancel anytime</li>
-                  <li>• Watermarks</li>
-                  <li>• Standard avatars</li>
-                  <li class="font-bold">• Max 5 mins per session</li>
-                </ul>
-              </div>
-              <!-- Premium Plan -->
-              <div
-                class="bg-gray-900 p-6 rounded-lg"
-                style="position: relative"
-              >
-                <div
-                  id="premium-plan-selected"
-                  class="text-blue-starndard premium-selected"
-                  style="
-                    position: absolute;
-                    top: 10px;
-                    right: 20px;
-                    display: none;
-                  "
-                >
-                  <i class="fas fa-star"></i><span> Current</span>
-                </div>
-                <h3 class="text-2xl font-bold mb-2">Premium</h3>
-                <p class="text-blue-400 mb-4">
-                  <span id="premiumCredits">100</span> credits
-                </p>
-                <p class="text-3xl font-bold mb-4">
-                  €<span id="premiumPrice">15</span>
-                  <span class="text-sm font-normal">/month</span>
-                </p>
-                <button
-                  class="bg-blue-starndard text-white px-4 py-2 rounded-full w-full mb-4 premium-selection-start-button"
-                  id="premium-subscription-start-button"
-                >
-                  Start now
-                </button>
-                <ul class="space-y-2 text-gray-400">
-                  <li>• Cancel anytime</li>
-                  <li class="font-bold upgrade_plan">• No Watermarks</li>
-                  <li class="font-bold upgrade_plan">• Premium avatars</li>
-                  <li class="font-bold upgrade_plan">• 120 mins streaming</li>
-                </ul>
-              </div>
-              <!-- Pro Plan -->
-              <!-- <div
-                class="bg-gray-900 p-6 rounded-lg opacity-50"
-                style="position: relative"
-              >
-                <div
-                  class="text-blue-starndard premium-selected"
-                  style="
-                    position: absolute;
-                    top: 10px;
-                    right: 20px;
-                    display: none;
-                  "
-                >
-                  <i class="fas fa-star"></i><span> Current</span>
-                </div>
-                <h3 class="text-2xl font-bold mb-2">Pro</h3>
-                <p class="text-blue-400 mb-4">
-                  <span id="proCredits">200</span> credits
-                </p>
-                <p class="text-3xl font-bold mb-4">
-                  €<span id="proPrice">120</span>
-                  <span class="text-sm font-normal">/month</span>
-                </p>
-                <button
-                  class="bg-gray-800 text-white px-4 py-2 rounded-full w-full mb-4 premium-selection-start-button"
-                >
-                  Start now
-                </button>
-                <ul class="space-y-2 text-gray-400">
-                  <li>• Cancel anytime</li>
-                  <li class="font-bold">• Custom branding</li>
-                  <li class="font-bold">• Custom avatars</li>
-                  <li class="font-bold">• 500 mins streaming</li>
-                  <li class="font-bold">• Website embedding</li>
-                </ul>
-              </div> -->
-              <!-- Enterprise Plan -->
-              <!-- <div
-                class="bg-gray-900 p-6 rounded-lg opacity-50"
-                style="position: relative"
-              >
-                <div
-                  class="text-blue-starndard premium-selected"
-                  style="
-                    position: absolute;
-                    top: 10px;
-                    right: 20px;
-                    display: none;
-                  "
-                >
-                  <i class="fas fa-star"></i><span> Current</span>
-                </div>
-                <h3 class="text-2xl font-bold mb-2">Enterprise</h3>
-                <p class="text-blue-400 mb-4">Custom</p>
-                <p class="text-3xl font-bold mb-4">Let's talk</p>
-                <button
-                  class="bg-gray-800 text-white px-4 py-2 rounded-full w-full mb-4 premium-selection-start-button"
-                >
-                  Start now
-                </button>
-                <ul class="space-y-2 text-gray-400">
-                  <li>• Cancel anytime</li>
-                  <li>• Custom branding</li>
-                  <li>• Custom avatars</li>
-                  <li class="font-bold">• No time limit</li>
-                  <li class="font-bold">• Website embedding</li>
-                  <li class="font-bold">• Full Web API Access</li>
-                </ul>
-              </div> -->
-            </div>
-          </div>
-          <div
-            style="
-              background-color: #1f1f1f;
-              padding: 20px 80px;
-              border-radius: 10px;
-            "
-          >
-            <table class="w-full border-collapse">
-              <thead>
-                <tr class="border-b border-gray-700">
-                  <th class="py-2 text-gray-400"></th>
-                  <th class="py-2 text-gray-400">FREE</th>
-                  <th class="py-2 text-gray-400">PREMIUM</th>
-                  <!-- <th class="py-2 text-gray-700">PRO</th> -->
-                  <!-- <th class="py-2 text-gray-700">ENTERPRISE</th> -->
-                </tr>
-              </thead>
-              <tbody class="text-sm">
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">License</td>
-                  <td class="py-2">Personal</td>
-                  <td class="py-2">Personal</td>
-                  <!-- <td class="py-2 text-gray-700">Commercial</td> -->
-                  <!-- <td class="py-2 text-gray-700">Commercial</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Watermarks / Pop ups</td>
-                  <td class="py-2">✓</td>
-                  <td class="py-2">No</td>
-                  <!-- <td class="py-2 text-gray-700">No</td> -->
-                  <!-- <td class="py-2 text-gray-700">No</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Support</td>
-                  <td class="py-2">No</td>
-                  <td class="py-2">Yes</td>
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Credits</td>
-                  <td class="py-2">0</td>
-                  <td class="py-2">100</td>
-                  <!-- <td class="py-2 text-gray-700">200</td> -->
-                  <!-- <td class="py-2 text-gray-700">Custom plan</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Re-useable credits</td>
-                  <td class="py-2">No</td>
-                  <td class="py-2">Yes</td>
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Your own scanned avatar</td>
-                  <td class="py-2">No</td>
-                  <td class="py-2">No</td>
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Voices</td>
-                  <td class="py-2">4</td>
-                  <td class="py-2">4</td>
-                  <!-- <td class="py-2 text-gray-700">8</td> -->
-                  <!-- <td class="py-2 text-gray-700">16</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Language</td>
-                  <td class="py-2">
-                    English, Spanish, Dutch,French, German,Chinese,Arabic,
-                    Japanese
-                  </td>
-                  <td class="py-2">
-                    English, Spanish, Dutch,French, German,Chinese,Arabic,
-                    Japanese
-                  </td>
-                  <!-- <td class="py-2 text-gray-700">
-                    English, Spanish, Dutch,French, German,Chinese,Arabic,
-                    Japanese
-                  </td>
-                  <td class="py-2 text-gray-700">
-                    English, Spanish, Dutch,French, German,Chinese,Arabic,
-                    Japanese
-                  </td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Uploading knowledge</td>
-                  <td class="py-2">Text/Prompt</td>
-                  <td class="py-2">PDF/DOC</td>
-                  <!-- <td class="py-2 text-gray-700">PDF/DOC</td> -->
-                  <!-- <td class="py-2 text-gray-700">PDF/DOC</td> -->
-                </tr>
-                <tr class="border-b border-gray-800">
-                  <td class="py-2">Website embedding</td>
-                  <td class="py-2">No</td>
-                  <td class="py-2">No</td>
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                  <!-- <td class="py-2 text-gray-700">Yes</td> -->
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div
-          class="avatar-section premium-pay-part"
-          id="toggleAvatarSection"
-          style="display: none"
-        >
-          <div class="" id="avatarSection">
-            <h2 class="text-5xl font-bold mb-8 text-blue-400">Pricing</h2>
-            <div
-              id="account-credit-deposit"
-              class="bg-white rounded-lg shadow-md mt-8 max-w-md mx-auto"
-            >
-              <div class="p-6">
-                <div class="mb-4">
-                  <label
-                    for="premium-card-element"
-                    class="block text-sm font-medium text-gray-700"
-                    >Card details</label
-                  >
-                  <div
-                    id="premium-card-element"
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                  ></div>
-                  <div
-                    id="premium-card-errors"
-                    class="mt-2 text-red-600 text-sm"
-                  ></div>
-                </div>
-                <div class="mt-6 grid grid-cols-2 gap-4">
-                  <button
-                    class="save-exit menu-button"
-                    id="premium-start-button"
-                    onclick="handlePremiumPay()"
-                  >
-                    Start Now
-                  </button>
-                  <button
-                    class="exit cancel-premium-pay-button"
-                    onclick="cancelPremiumPay()"
-                    style="color: black"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="webshop-inventory" class="avatar-section" style="display: none">
-        <div class="avatar-header" id="storeSection">
-          <h2>Store</h2>
-
-          <div id="dropdown-container" class="my-4">
-            <!-- The dropdown will be dynamically inserted here by the JavaScript -->
-          </div>
-        </div>
-
-        <div
-          id="itemList"
-          class="grid mx-8 gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6"
-        >
-          <!-- Items will be added here -->
-        </div>
-
-        <div class="avatar-header" id="storeSection">
-          <h2>Inventory</h2>
-        </div>
-
-        <div
-          id="inventory-container"
-          class="grid mx-8 gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-6"
-        >
-          <!-- Items will be added here -->
-        </div>
-      </div>
-
-      <div class="background"></div>
-    </div>
-
-    <!-- Popup for both artist and chatbot -->
-    <div id="exitConfirmation" class="modal-exit" style="display: none">
-      <div class="modal-content-exit">
-        <h3>Are you sure you want to exit?</h3>
-        <div class="modal-buttons-exit">
-          <button
-            id="save-exit"
-            class="save-exit"
-            onclick="toggleDashboardAndArtistMode()"
-          >
-            Yes
-          </button>
-          <!--button class="cancel-exit" onclick="location.reload();">Exit</!--button> -->
-          <button class="exit" onclick="cancelExit();">No</button>
         </div>
       </div>
     </div>
-
     <div
-      id="saveAvatarConfirmation"
-      class="modal-exit px-8"
+      id="modalOverlay"
+      class="signup-modal-overlay modal-overlay"
       style="display: none"
     >
-      <div class="modal-content-exit">
-        <h2 class="text-white" style="font-size: 25px">Charged Credits</h2>
-        <ul
-          class="charged_credit_list mb-4"
-          style="list-style-type: disc; text-align: left"
-        >
-          <li class="hair_credit_element" style="display: none">
-            HAIR Credit Amount: 2
-          </li>
-          <li class="body_credit_element" style="display: none">
-            WARDROBE Credit Amount: 3
-          </li>
-          <!-- <hr />
-      <li class="total_credit_element" style="display: none;"></li> -->
-        </ul>
-        <div class="grid grid-cols-2 gap-4">
-          <button
-            class="save-exit menu-button"
-            onclick="handleSaveCustomizedAvatar()"
-            id="openPopup"
-          >
-            Save
-          </button>
-          <!--button class="cancel-exit" onclick="location.reload();">Exit</!--button> -->
-          <button class="exit" onclick="cancelSaveAvatarExit();">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <div
-      id="buyCreditsConfirmation"
-      class="modal-exit"
-      style="display: none; width: 60%; background-color: unset"
-    >
-      <div class="modal-content-exit credit_card_modal">
-        <div class="credit_amount_section credit_section">
-          <h3 class="credit_modal_title">BUY CREDITS</h3>
-          <button class="credit-button" onclick="setSelectedCreditAmount(12)">
-            100 (€12)
-          </button>
-          <button class="credit-button" onclick="setSelectedCreditAmount(30)">
-            250 (€30)
-          </button>
-          <button class="credit-button" onclick="setSelectedCreditAmount(60)">
-            500 (€60)
-          </button>
-          <button class="credit-button" onclick="setSelectedCreditAmount(96)">
-            800 (€96)
-          </button>
-          <button class="cancel-button" onclick="cancelBuyCredits();">
-            CANCEL
-          </button>
-        </div>
-        <div class="credit_amount_view_section credit_section">
-          <div>
-            <h2 class="total-price">€12</h2>
-            <div class="price-breakdown">
-              <span>Buy credit</span>
-              <span class="credit-amount">€12</span>
-            </div>
-            <div class="price-breakdown">
-              <span>Subtotal</span>
-              <span class="sub-credit-amount">€12</span>
-            </div>
-            <button class="promo-code-button">Add promo code</button>
-            <div class="total-due">
-              <span>Total due</span>
-              <span class="total-credit-amount">€12</span>
-            </div>
+      <div class="signup-modal">
+        <button id="closeSignUpModal" class="signup-modal-close-button">
+          &times;
+        </button>
+        <div id="signupOption" style="display: block">
+          <h1 class="text-white">
+            Reblium's Beta is now free and open for everyone
+          </h1>
+          <p class="main-text">SIGN UP TO SAVE <br />YOUR AVATAR</p>
+          <div class="flex item-center justify-center gap-2">
+            <button id="signUpFormBtn" class="demo-button menu-button">Sign up</button>
+            <button
+              id="signUpCancel"
+              class="menu-button demo-button"
+              onclick="cancelSignUpOption()"
+            >
+              Cancel
+            </button>
           </div>
-          <p class="powered-by">Powered by Stripe</p>
+          <p class="small-text">Reblium Beta is free.</p>
         </div>
-        <div class="credit_card_detail_section credit_section">
-          <h3 class="section-title">Pay with card</h3>
-          <div class="card-input">
-            <input
-              id="credit_card_user_email"
-              type="email"
-              placeholder="Email"
-            />
+        <div id="signUpFormSection" style="display: none">
+          <div
+            class="bg-white rounded-lg shadow-xl flex max-w-5xl w-full overflow-hidden"
+          >
+            <!-- Left side with background image and text -->
             <div
-              id="card-element"
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-            ></div>
-            <div id="card-errors" class="mt-2 text-red-600 text-sm"></div>
+              class="w-1/2 bg-black text-white p-12 flex flex-col justify-between relative hidden md:block"
+            >
+              <!-- Left side content remains the same -->
+              <div class="absolute top-8 left-8" style="width: 95px">
+                <img src="./src/Reblium_Icon.ico" alt="log" />
+              </div>
+              <div class="mt-24">
+                <h2 class="text-4xl font-bold mb-12">CREATE YOUR ACCOUNT</h2>
+                <ul class="space-y-4 text-lg">
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    Generate your avatar using AI
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    Endless Personalisation
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    Connect to your own ChatGPT
+                  </li>
+                  <li class="flex items-center">
+                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    Share with your network
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Right side with form -->
+            <div class="w-full md:w-1/2 p-12" id="signupForm">
+              <h2 class="text-2xl font-semibold mb-8">Create your account</h2>
+              <form id="signupFormElement" class="space-y-6 text-left">
+                <div>
+                  <label
+                    for="name"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Full Name</label
+                  >
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+                    placeholder="Enter your full name"
+                    required
+                    tabindex="1"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="email"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+                    placeholder="demo@reblium.com"
+                    required
+                    tabindex="2"
+                  />
+                  <p id="emailError" class="mt-1 text-sm text-red-600 hidden">
+                    Please enter a valid email address.
+                  </p>
+                </div>
+                <div>
+                  <label
+                    for="password"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Password</label
+                  >
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+                    required
+                    tabindex="2"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="confirmPassword"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Confirm Password</label
+                  >
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+                    required
+                    tabindex="3"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="w-full py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Sign Up
+                </button>
+              </form>
+              <p id="signupMessage" class="mt-4 text-sm"></p>
+              <p class="mt-4 text-xs text-gray-500">
+                By creating an account, you agree to our Privacy Policy, Terms
+                and Conditions and End User License Agreement.
+              </p>
+              <p class="mt-4 text-sm text-gray-600">
+                Already have an account?
+                <a href="/" class="text-blue-600 hover:text-blue-500"
+                  >Log in</a
+                >
+              </p>
+            </div>
+
+            <div id="verificationLinkSent" class="w-full md:w-1/2 p-12 hidden">
+              <h2 class="text-2xl font-semibold mb-8">Verify Your Email</h2>
+              <p class="mb-4">
+                We've sent a verification link to your email. Please check your
+                inbox and click the link to verify your account.
+              </p>
+              <p class="mb-4">
+                Didn't receive the email? Check your spam folder or click the
+                button below to receive a verification code instead.
+              </p>
+              <button
+                id="requestCodeButton"
+                class="w-full py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Request Verification Code
+              </button>
+            </div>
+
+            <div id="verificationForm" class="w-full md:w-1/2 p-12 hidden">
+              <h2 class="text-2xl font-semibold mb-6">
+                Enter Verification Code
+              </h2>
+              <p class="mb-4">
+                Please enter the 5-digit code sent to your email.
+              </p>
+              <form id="verificationFormElement" class="space-y-4 text-left">
+                <div>
+                  <label
+                    for="verificationCode"
+                    class="block text-sm font-medium text-gray-700 mb-1"
+                    >Verification Code</label
+                  >
+                  <input
+                    type="text"
+                    id="verificationCode"
+                    name="verificationCode"
+                    class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
+                    placeholder="Enter 5-digit code"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  class="w-full py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Verify
+                </button>
+              </form>
+              <p id="verificationMessage" class="mt-4 text-sm"></p>
+            </div>
           </div>
-          <button
-            id="deposit-button"
-            class="pay-button"
-            onclick="handleDeposit()"
-          >
-            Pay now
-          </button>
-          <p class="terms">
-            By providing your card information, you allow [YOUR STRIPE ACCOUNT
-            NAME] to charge your card for future payments in accordance with
-            their terms*.
-          </p>
         </div>
       </div>
     </div>
 
-    <!-- Pop-up -->
     <div id="popup" class="popup" style="display: none">
       <form id="avatarForm">
         <span class="close-button">&times;</span>
@@ -1473,13 +566,6 @@
     </div>
 
     <div id="sizeContainer" style="display: none; position: relative">
-      <div id="watermarkContainer">
-        <canvas class="watermark_item"></canvas>
-        <canvas class="watermark_item"></canvas>
-        <canvas class="watermark_item"></canvas>
-        <canvas class="watermark_item"></canvas>
-        <canvas class="watermark_item"></canvas>
-      </div>
       <div id="videoContainer" style="display: none">
         <audio id="audioRef"></audio>
 
@@ -1491,7 +577,7 @@
           <div id="designButton" class="button active">Design</div>
         </div>
       </div>
-      <div id="chatbot" style="display: none" tabindex="0">
+      <div id="chatbot" style="display: none">
         <img
           id="chatbotLogo"
           src="src/yourlogopng.png"
@@ -1800,30 +886,16 @@
         </div>
 
         <div class="bottomMenu" id="bottomMenu">
-          <button class="menu-button" onclick="showExitConfirmation()">
-            <i class="fas fa-door-open"></i>Exit
-          </button>
           <button class="menu-button" id="shareButton">
             <i class="fas fa-share"></i>Publish
           </button>
-          <button
-            class="menu-button"
-            id="ChatopenPopup"
-            onclick="handleSendCommands({ saveavatar: parseFloat(document.getElementById('avatarId').textContent) })"
-          >
+          <button class="menu-button" onclick="showSignUpModal()">
             <i class="fas fa-save save-ico"></i>Save
           </button>
-
-          <!-- <button class="menu-button" id="downloadButton" ><i class="fas fa-download"></i>Export/ Download</button> -->
         </div>
       </div>
 
-      <div
-        class="artist_mode"
-        id="artist_mode"
-        style="display: none"
-        tabindex="0"
-      >
+      <div class="artist_mode" id="artist_mode" style="display: block">
         <div class="loader-overlay">
           <div class="loader"></div>
         </div>
@@ -1877,53 +949,6 @@
           >
             Background
           </button>
-        </div>
-        <div id="introPopup" class="popup-container" style="display: flex">
-          <div class="popup-content">
-            <h2>Welcome to Reblium Cloud!</h2>
-            <br />
-            <p>
-              Unlock the ultimate Avatar Creation experience with our
-              cutting-edge tools, designed to bring your AI assistant to life
-              with real-time 3D avatars.
-            </p>
-            <br />
-            <p>Here's how to get started:</p>
-            <ul>
-              <li>
-                Create Your Avatar: Generate a unique 3D avatar in seconds and
-                kickstart your journey.
-              </li>
-              <li>
-                Define Your Persona: Use simple prompts to shape and customize
-                your avatar's personality.
-              </li>
-              <li>
-                Test It Out: Seamlessly switch to conversation mode & design
-                mode and interact with your creation.
-              </li>
-              <li>
-                Save your masterpiece—save and share it with your friends in the
-                future (not working atm).
-              </li>
-            </ul>
-            <br />
-            <p>
-              Note: This is a beta version, and some features might change in
-              the final release.
-            </p>
-            <br />
-            <p>Current limitations:</p>
-            <ul>
-              <li>Background saving not working.</li>
-              <li>Changing language overwrites prompt.</li>
-              <li>Sharing links not working atm.</li>
-            </ul>
-            <br />
-            <div style="text-align: center">
-              <button class="menu-button" id="introcontinue">Proceed</button>
-            </div>
-          </div>
         </div>
 
         <div id="downloadConfirmation" class="modal-exit" style="display: none">
@@ -1985,72 +1010,14 @@
         </div>
 
         <div class="bottomMenu" id="bottomMenu">
-          <div style="margin-bottom: 10px; margin-right: 10px">
-            <button
-              class="menu-button"
-              id="randomizeButton"
-              style="width: 100%"
-            >
-              <svg
-                version="1.1"
-                id="Icons"
-                style="
-                  width: 22px;
-                  height: 22px;
-                  margin: -5px;
-                  padding-right: 8px;
-                "
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 0 32 32"
-                xml:space="preserve"
-              >
-                <style type="text/css">
-                  .st0 {
-                    fill: none;
-                    stroke: #ffffff;
-                    stroke-width: 2;
-                    stroke-linecap: round;
-                    stroke-linejoin: round;
-                    stroke-miterlimit: 10;
-                  }
-                </style>
-                <g>
-                  <path
-                    class="st0"
-                    d="M17.9,9.9c-4.6,0.9-6,2.3-6.9,6.9c-0.9-4.6-2.3-6-6.9-6.9C8.7,9,10.1,7.6,11,3C11.9,7.6,13.3,9,17.9,9.9z"
-                  />
-                </g>
-                <g>
-                  <path
-                    class="st0"
-                    d="M21.8,25c-3.2,0.6-4.1,1.6-4.8,4.8c-0.6-3.2-1.6-4.1-4.8-4.8c3.2-0.6,4.1-1.6,4.8-4.8
-                      C17.6,23.4,18.6,24.4,21.8,25z"
-                  />
-                </g>
-                <g>
-                  <path
-                    class="st0"
-                    d="M29,15c-2.6,0.5-3.4,1.3-3.9,3.9c-0.5-2.6-1.3-3.4-3.9-3.9c2.6-0.5,3.4-1.3,3.9-3.9C25.6,13.7,26.4,14.5,29,15
-                      z"
-                  />
-                </g>
-              </svg>
-              1 Generate
-            </button>
-          </div>
           <div>
-            <button class="menu-button" onclick="showExitConfirmation();">
+            <button class="menu-button" onclick="window.location.href='/signup.html'">
               <i class="fas fa-door-open"></i>Exit
             </button>
-            <button
-              class="menu-button"
-              id="reset"
-              onclick="handleResetButtonClick();"
-            >
-              <i class="fas fa-undo reset-ico"></i>Reset
+            <button class="menu-button" id="randomizeButton">
+              <i class="fas fa-door-open"></i>1 Generate
             </button>
-            <button class="menu-button" onclick="showSaveAvatarExit()">
+            <button class="menu-button" onclick="showSignUpModal()">
               <i class="fas fa-save save-ico"></i>Save
             </button>
           </div>
@@ -9861,7 +8828,13 @@
     </div>
 
     <script>
-      // Add event listeners to gender buttons
+      let latestLoadAvatarCommand = null;
+      let newWebRTC;
+
+      setInterval(() => {
+        showSignUpModal();
+      }, 60000);
+
       document
         .getElementById("femaleBtn")
         .addEventListener("click", function () {
@@ -9870,6 +8843,97 @@
       document.getElementById("maleBtn").addEventListener("click", function () {
         filterItemsByGender("male");
       });
+
+      const closeModalBtn = document.getElementById("closeSignUpModal");
+
+      const introModalOverlay = document.getElementById("introModalOverlay");
+      const closeIntroModalBtn = document.getElementById("closeIntroModal");
+      const signUpLoginBtn = document.getElementById("signUpLogin");
+      const modalOverlay = document.getElementById("modalOverlay");
+      const signupOption = document.getElementById("signupOption");
+      const processSignUpProcess = document.getElementById(
+        "processSignUpProcess"
+      );
+      const welcomeSection = document.getElementById("welcomeSection");
+      const signUpFormBtn = document.getElementById("signUpFormBtn");
+      const signUpFormSection = document.getElementById("signUpFormSection");
+
+      signUpFormBtn.addEventListener("click", () => {
+        signUpFormSection.style.display = "block";
+        signupOption.style.display = "none";
+      });
+
+      closeModalBtn.addEventListener("click", () => {
+        modalOverlay.style.display = "none";
+        signupOption.style.display = "none";
+        signUpFormSection.style.display = "none";
+      });
+
+      closeIntroModalBtn.addEventListener("click", () => {
+        introModalOverlay.style.display = "none";
+      });
+
+      processSignUpProcess.addEventListener("click", () => {
+        introModalOverlay.style.display = "none";
+      });
+
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) {
+          modalOverlay.style.display = "none";
+        }
+      });
+
+      introModalOverlay.addEventListener("click", (e) => {
+        if (e.target === introModalOverlay) {
+          introModalOverlay.style.display = "none";
+        }
+      });
+
+      function cancelSignUpOption() {
+        signupOption.style.display = "none";
+        modalOverlay.style.display = "none";
+      }
+
+      function checkDisplayStatus(element, status) {
+        // If element is a string (i.e., an ID), get the actual element
+        if (typeof element === "string") {
+          element = document.getElementById(element);
+        }
+
+        // Check if the element exists
+        if (!element) {
+          console.error("Element not found");
+          return false;
+        }
+
+        // Get the computed style of the element
+        const style = window.getComputedStyle(element);
+
+        // Return true if the display matches the status, false otherwise
+        return style.display === status;
+      }
+
+      function showSignUpModal() {
+        if (
+          checkDisplayStatus(modalOverlay, "flex") &&
+          checkDisplayStatus(signUpFormSection, "block")
+        ) {
+          return;
+        } else {
+          introModalOverlay.style.display = "none";
+          modalOverlay.style.display = "flex";
+          signupOption.style.display = "block";
+          signUpFormSection.style.display = "none";
+        }
+      }
+
+      function setSelectedHair(assetName) {
+        handleSendCommands({ assetname: assetName });
+      }
+
+      function setSelectedBody(assetName) {
+        handleSendCommands({ assetname: assetName });
+      }
 
       // Function to filter and display items based on the selected gender
       function filterItemsByGender(gender) {
@@ -9893,44 +8957,6 @@
           }
         });
       }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const creditCardEmail = document.getElementById(
-          "credit_card_user_email"
-        );
-        creditCardEmail.value = localStorage.getItem("user_email");
-
-        const canvases = document.querySelectorAll(".watermark_item");
-
-        canvases.forEach((canvas) => {
-          canvas.width = 200; // Set width
-          canvas.height = 60; // Set height
-          const ctx = canvas.getContext("2d");
-
-          // Optional: Set background
-          ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
-
-          // Draw text
-          ctx.font = "2.5rem Arial";
-          ctx.fillStyle = "rgba(136, 136, 136, 0.5)";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText("Reblium", canvas.width / 2, canvas.height / 2);
-        });
-
-        const menuItems = document.querySelectorAll(".overlay-menu a");
-
-        // Function to handle scrolling to a section
-        const scrollToSection = (sectionId) => {
-          const section = document.querySelector(sectionId);
-          if (section) {
-            window.scrollTo({
-              top: section.offsetTop - section.offsetHeight * 0.1, // Adjust if there's a fixed header or other offsets
-              behavior: "smooth",
-            });
-          }
-        };
-      });
 
       // Function that detects when the pixelstreaming video is loaded
       let videoLoaded = false;
@@ -9978,6 +9004,28 @@
         }
       }
 
+      function handleSendCommands(command) {
+        newWebRTC.emitUIInteraction(command);
+
+        // Check if the command includes a loadavatar command and store it
+        if (command.resetavatar) {
+          latestLoadAvatarCommand = command.resetavatar;
+        }
+
+        // Log the loadavatar command sent (replace with actual implementation)
+        console.log("Sending loadavatar command:", command.resetavatars);
+      }
+
+      // Function to update the slider value and call handleSendCommands
+      function updateSliderValue() {
+        const slider = document.getElementById("mySlider");
+
+        const sliderValue = parseFloat(slider.value);
+
+        // Call the handleSendCommands function with the command object
+        handleSendCommands(command);
+      }
+
       let backgroundAssets = [
         "Back1",
         "Back2",
@@ -9994,8 +9042,6 @@
       document.addEventListener("DOMContentLoaded", function () {
         const randomizeForm = document.getElementById("randomizeForm");
         const randomizeButton = document.getElementById("randomizeButton");
-        const createNew = document.getElementById("create-new");
-        let createNewClicked = false; // Flag to track if the "create-new" button was clicked
 
         // Function to handle randomization
         function handleRandomization() {
@@ -10041,12 +9087,6 @@
           randomizeSliders();
         });
 
-        createNew.addEventListener("click", function (event) {
-          event.preventDefault();
-          createNewClicked = true; // Set the flag when "create-new" is clicked
-          handleRandomization();
-        });
-
         // Define the event listener function
         function handleSpaceKey(event) {
           if (event.key === " ") {
@@ -10063,14 +9103,7 @@
         // document.addEventListener('keydown', handleSpaceKey);
 
         // Usage example:
-        waitForVideoLoad().then(() => {
-          if (createNewClicked) {
-            // Check if "create-new" was clicked before video load
-            handleRandomization();
-
-            console.log("Ready to randomize.");
-          }
-        });
+        waitForVideoLoad().then(() => {});
       });
 
       // Define the list of asset names
@@ -10098,14 +9131,6 @@
         handleSendCommands({ assetname: newAssetName });
       }
 
-      // // Event listener to handle the Tab key press
-      // document.addEventListener('keydown', function (event) {
-      //   if (event.key === 'l' || event.key === 'L') {
-      //     toggleAssetName();
-      //   }
-      // });
-
-      // animation // remove some of the animatons
       const animationNames = [
         "Idle",
         "Catwalk_Female",
@@ -10130,64 +9155,8 @@
         handleSendCommands({ assetname: newAnimationName });
       }
 
-      // // Event listener to handle the Tab key press
-      // document.addEventListener('keydown', function (event) {
-      //   if (event.key === 'ArrowLeft') {
-      //     toggleAnimationName(-1);
-      //   }
-      // });
+      let isPlaying = true;
 
-      // // Event listener to handle the Tab key press
-      // document.addEventListener('keydown', function (event) {
-      //   if (event.key === 'ArrowRight') {
-      //     toggleAnimationName(1);
-      //   }
-      // });
-
-      // JavaScript to show/hide the shortcuts table when the button is clicked
-      // const showShortcutsBtn = document.getElementById('showShortcutsBtn');
-      // const shortcutsTable = document.getElementById('shortcutsTable');
-
-      // showShortcutsBtn.addEventListener('click', () => {
-      //   if (shortcutsTable.style.display === 'none' || !shortcutsTable.style.display) {
-      //     shortcutsTable.style.display = 'block';
-      //   } else {
-      //     shortcutsTable.style.display = 'none';
-      //   }
-      // });
-
-      // Define a variable to keep track of the playback state
-      let isPlaying = true; // Assuming it starts as "playing"
-
-      // // Event listener to handle the ArrowDown key press
-      // document.addEventListener('keydown', function (event) {
-      //   if (event.key === 'ArrowDown') {
-      //     // Toggle the playback state
-      //     isPlaying = !isPlaying;
-
-      //     // Update the button visibility based on the playback state
-      //     const playButton = document.getElementById('playButton');
-      //     const pauseButton = document.getElementById('pauseButton');
-
-      //     if (isPlaying) {
-      //       // Show the play button and hide the pause button
-      //       playButton.style.display = 'inline-block';
-      //       pauseButton.style.display = 'none';
-
-      //       // Send the "Play" command
-      //       handleSendCommands({ player: 'Play' });
-      //     } else {
-      //       // Show the pause button and hide the play button
-      //       playButton.style.display = 'none';
-      //       pauseButton.style.display = 'inline-block';
-
-      //       // Send the "Pause" command
-      //       handleSendCommands({ player: 'Pause' });
-      //     }
-      //   }
-      // });
-
-      // Function to toggle between play and pause buttons
       function togglePlayback() {
         // Get references to the play and pause buttons
         const playButton = document.getElementById("playButton");
@@ -10209,13 +9178,6 @@
           handleSendCommands({ player: "Pause" });
         }
       }
-
-      // Event listener to handle the Tab key press
-      // document.addEventListener('keydown', function (event) {
-      //     if (event.key === 'f') {
-      //       handleSendCommands({ cameraswitch: 'head' });
-      //     }
-      //   });
 
       function toggleImages() {
         var image1 = document.getElementById("image1");
@@ -10251,16 +9213,6 @@
         }
       }
 
-      // document.addEventListener("DOMContentLoaded", () => {
-      //   const hotelReceptionistImage = document.querySelector(
-      //     "#hotelReceptionist img"
-      //   );
-
-      //   hotelReceptionistImage.addEventListener("click", () => {
-      //     window.open("chatwithohad.html", "_blank");
-      //   });
-      // });
-
       function toggleFullScreen() {
         var fullScreenIcon = document.getElementById("fullScreenIcon");
 
@@ -10285,17 +9237,6 @@
           fullScreenIcon.classList.add("fa-maximize");
         }
       }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        // Lazy load images
-        const lazyImages = document.querySelectorAll(".lazyload");
-        lazyImages.forEach((img) => {
-          img.src = img.getAttribute("data-src");
-          img.onload = () => {
-            img.removeAttribute("data-src");
-          };
-        });
-      });
 
       document.addEventListener("DOMContentLoaded", () => {
         const chatbotLogo = document.getElementById("chatbotLogo");
@@ -10452,11 +9393,11 @@
       });
     </script>
 
+    <script src="javascript/signup.js"></script>
+
     <script src="javascript/chatbot_dashboard.js"></script>
 
     <script src="main.js"></script>
-    <script src="javascript/credit.js"></script>
-    <script src="javascript/premium.js"></script>
     <script src="javascript/randomize.js"></script>
 
     <script src="javascript/frondend.js"></script>
@@ -10495,18 +9436,6 @@
       integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
       crossorigin="anonymous"
     ></script>
-
-    <!-- <script>
-      // Example to subscribe to range changes
-      document.getElementById("inputPieces").addEventListener(
-        "rangechange",
-        function (e) {
-          document.getElementById("displaySelectedRange").innerText =
-            e.detail.join(" - ");
-        },
-        true
-      );
-    </script> -->
 
     <script src="javascript/range-slider.js"></script>
     <script>

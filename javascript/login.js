@@ -99,6 +99,7 @@ document
 
         // Store the token in localStorage
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user_email", data.email);
 
         // Redirect to dashboard or home page after successful login
         setTimeout(() => {
