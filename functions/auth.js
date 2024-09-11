@@ -10,10 +10,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const AppleStrategy = require("passport-apple").Strategy;
 const DiscordStrategy = require("passport-discord").Strategy;
-
-const sgMail = require("@sendgrid/mail");
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const path = require('path');
 
 const app = express();
 const router = express.Router();
@@ -21,43 +18,6 @@ app.use(express.json());
 app.use(passport.initialize());
 
 require("dotenv").config();
-// // Set up SendGrid
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-// Create a Nodemailer transporter
-// const transporter = nodemailer.createTransport({
-//   host: process.env.EMAIL_HOST,
-//   port: parseInt(process.env.EMAIL_PORT),
-//   secure: process.env.EMAIL_SECURE === "true",
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-//   tls: {
-//     rejectUnauthorized: false,
-//     minVersion: "TLSv1.2",
-//     maxVersion: "TLSv1.3",
-//   },
-// });
-let transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
-
-
-// Verify transporter
-transporter.verify(function (error, success) {
-  if (error) {
-    console.log("Transporter verification error:", error);
-  } else {
-    console.log("Server is ready to take our messages");
-  }
-});
 
 // Create a connection pool
 const pool = mysql.createPool({
@@ -65,9 +25,6 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
 });
 
 // Helper function to get a connection from the pool
@@ -75,24 +32,30 @@ const getConnection = async () => {
   return await pool.getConnection();
 };
 
-const configureStrategy = (Strategy, options, verifyFunction) => {
-  return new Strategy(
-    options,
-    async (accessToken, refreshToken, profile, cb) => {
-      let conn;
-      try {
-        conn = await getConnection();
-        const user = await verifyFunction(conn, profile);
-        return cb(null, user);
-      } catch (error) {
-        console.error(`Error in ${Strategy.name}:`, error);
-        return cb(error);
-      } finally {
-        if (conn) conn.release();
-      }
-    }
-  );
-};
+// Create a transporter using Mailtrap credentials
+// let transporter = nodemailer.createTransport({
+//   host: process.env.MAILTRAP_HOST,
+//   port: process.env.MAILTRAP_PORT,
+//   auth: {
+//     user: process.env.MAILTRAP_USER,
+//     pass: process.env.MAILTRAP_PASS,
+//   },
+// });
+
+let transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST, // Replace with your SMTP server
+  port: process.env.SMTP_PORT,
+  secure: process.env.EMAIL_SECURE === "true",
+  auth: {
+    user: process.env.SMTP_USER, // Replace with your email
+    pass: process.env.SMTP_PASS, // Replace with your password
+  },
+  tls: {
+    rejectUnauthorized: false,
+    minVersion: "TLSv1.2",
+    maxVersion: "TLSv1.3",
+  },
+});
 
 router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
@@ -109,51 +72,73 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ error: "Email already in use" });
     }
 
-    // const salt = await bcrypt.genSalt(10);
-    // const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const verificationToken = crypto.randomBytes(20).toString("hex");
-    const verificationCode = Math.floor(
-      10000 + Math.random() * 90000
-    ).toString();
 
     const insertUserQuery =
-      "INSERT INTO Users (name, email, password, verification_token, verification_code, is_verified) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO Users (name, email, password, verification_token, is_verified) VALUES (?, ?, ?, ?, ?)";
 
     await connection.execute(insertUserQuery, [
       name,
       email,
-      //   hashedPassword,
+      // hashedPassword,
       password,
       verificationToken,
-      verificationCode,
       false,
     ]);
 
-    // const verificationUrl = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
-    // const msg = {
-    //   to: email,
-    //   from: process.env.EMAIL_FROM_ADDRESS,
-    //   subject: "Verify Your Reblium Account",
-    //   text: `Hello ${name}, please verify your email by clicking on this link: ${verificationUrl} or use this code: ${verificationCode}`,
-    //   html: `
-    //     <p>Hello ${name},</p>
-    //     <p>Please verify your email by clicking on this link:
-    //        <a href="${verificationUrl}">Verify Email</a>
-    //     </p>
-    //     <p>Or use this verification code: <strong>${verificationCode}</strong></p>
-    //   `,
-    // };
+    const verificationLink = `${process.env.FRONTEND_URL}/verify?token=${verificationToken}`;
 
-    // // await sgMail.send(msg);
-    // await transporter.sendMail(msg);
+    let mailOptions = {
+      from: '"Reblium Cloud" <noreply@reblium.com>',
+      to: email,
+      subject: "Verify Your Reblium Cloud Account",
+      text: `Hello ${name}, please verify your email by clicking on this link: ${verificationLink}`,
+      html: `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Verify your email for Reblium Cloud</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <main>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="cid:reblium_logo" alt="Reblium Logo" style="max-width: 100px;">
+                    </div>
+                    <h2 style="text-align: center;">Verify your email for Reblium Cloud</h2>
+                    <p>Hello ${name},</p>
+                    <p>Click below to verify your email address. If you didn't request this verification, you can ignore this email.</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <a href="${verificationLink}" style="background-color: #00b8d4; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verify Email</a>
+                    </div>
+                    <p>Thanks,<br>Reblium Assistant</p>
+                </main>
+                <footer style="text-align: center; margin-top: 30px; font-size: 0.9em;">
+                    <p>We're here to help!</p>
+                    <p>Visit our help center to learn more about our service and to leave feedback and suggestions.</p>
+                </footer>
+            </div>
+        </body>
+        </html>
+      `,
+      attachments: [
+        {
+          filename: "reblium_logo.png",
+          path: path.join(__dirname, "../src/reblium_logo_black.png"),
+          cid: "reblium_logo",
+        },
+      ],
+    };
 
-    // res.status(201).json({
-    //   message:
-    //     "User registered. Please check your email to verify your account.",
-    // });
-    res.status(201).json({
-      message: "User registered. You can login",
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({
+      message: "Signup successful. Please check your email for verification.",
     });
   } catch (error) {
     console.error("Error executing database query:", error);
@@ -161,14 +146,93 @@ router.post("/signup", async (req, res) => {
       .status(500)
       .json({ error: "Error processing the request", details: error.message });
   } finally {
-    connection.release();
+    if (connection) connection.release();
   }
 });
 
-// Verification endpoint
-router.post("/verify", async (req, res) => {
-  console.log("Verification Function");
+router.post("/request-code", async (req, res) => {
+  const { email, name } = req.body;
 
+  let connection;
+  try {
+    connection = await getConnection();
+    const [users] = await connection.execute(
+      "SELECT * FROM Users WHERE email = ?",
+      [email]
+    );
+
+    if (users.length === 0) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    const verificationCode = Math.floor(
+      10000 + Math.random() * 90000
+    ).toString();
+    const expirationTime = new Date(Date.now() + 15 * 60 * 1000);
+
+    await connection.execute(
+      "UPDATE Users SET verification_code = ?, verification_code_expires = ? WHERE email = ?",
+      [verificationCode, expirationTime, email]
+    );
+
+    let mailOptions = {
+      from: '"Reblium Cloud" <noreply@reblium.com>',
+      to: email,
+      subject: "Your Verification Code for Reblium Cloud",
+      text: `Your verification code is: ${verificationCode}. This code will expire in 15 minutes.`,
+      html: `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Verify your email for Reblium Cloud</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <main>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="cid:reblium_logo" alt="Reblium Logo" style="max-width: 100px;">
+                    </div>
+                    <h2 style="text-align: center;">Confirm your code for Reblium Cloud</h2>
+                    <p>Hello ${name},</p>
+                    <p>Enter the code ${verificationCode} to confirm your email.</p>
+                    <p><strong>This code will expire in 15 minutes.</strong></p>
+                    <p>If you didn't request this code, please ignore this email or contact our support team if you have concerns.</p>
+                    <p>Thanks,<br>Reblium Cloud Team</p>
+                </main>
+                <footer style="text-align: center; margin-top: 30px; font-size: 0.9em;">
+                    <p>We're here to help!</p>
+                    <p>Visit our help center to learn more about our service and to leave feedback and suggestions.</p>
+                </footer>
+            </div>
+        </body>
+        </html>
+      `,
+      attachments: [
+        {
+          filename: "reblium_logo.png",
+          path: path.join(__dirname, "../src/reblium_logo_black.png"),
+          cid: "reblium_logo",
+        },
+      ],
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Verification code sent successfully" });
+  } catch (error) {
+    console.error("Error sending verification code:", error);
+    res.status(500).json({
+      error: "Error sending verification code",
+      details: error.message,
+    });
+  } finally {
+    if (connection) connection.release();
+  }
+});
+
+router.post("/verify", async (req, res) => {
   const { token, code } = req.body;
 
   let connection;
@@ -180,6 +244,7 @@ router.post("/verify", async (req, res) => {
       params = [token];
     } else if (code) {
       query = "SELECT * FROM Users WHERE verification_code = ?";
+      // query = "SELECT * FROM Users WHERE verification_code = ? AND verification_code_expires > NOW()";
       params = [code];
     } else {
       return res
@@ -190,13 +255,15 @@ router.post("/verify", async (req, res) => {
     const [users] = await connection.execute(query, params);
 
     if (users.length === 0) {
-      return res
-        .status(400)
-        .json({ error: "Invalid verification token or code" });
+      if (code) {
+        return res.status(400).json({ error: "Invalid or expired verification code" });
+      } else {
+        return res.status(400).json({ error: "Invalid verification token" });
+      }
     }
 
     await connection.execute(
-      "UPDATE Users SET is_verified = true WHERE id = ?",
+      "UPDATE Users SET is_verified = true, verification_token = NULL, verification_code = NULL WHERE id = ?",
       [users[0].id]
     );
 
@@ -210,7 +277,7 @@ router.post("/verify", async (req, res) => {
       .status(500)
       .json({ error: "Error processing the request", details: error.message });
   } finally {
-    connection.release();
+    if (connection) connection.release();
   }
 });
 
@@ -240,11 +307,11 @@ router.post("/signin", async (req, res) => {
 
     const user = users[0];
 
-    // if (!user.is_verified) {
-    //   return res
-    //     .status(400)
-    //     .json({ error: "Please verify your email before signing in" });
-    // }
+    if (!user.is_verified) {
+      return res
+        .status(400)
+        .json({ error: "Please verify your email before signing in" });
+    }
 
     // Check password
     // const isMatch = await bcrypt.compare(password, user.password);
@@ -379,55 +446,73 @@ const socialLoginHandler = async (conn, profile, socialIdField) => {
 };
 
 // Google Strategy
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/google/callback`,
-}, async (accessToken, refreshToken, profile, cb) => {
-  let conn;
-  try {
-    conn = await getConnection();
-    const user = await socialLoginHandler(conn, {
-      id: profile.id,
-      email: profile.emails[0].value,
-      name: profile.displayName,
-      picture: profile.photos[0].value
-    }, 'google_id');
-    return cb(null, user);
-  } catch (error) {
-    console.error("Error in Google Strategy:", error);
-    return cb(error);
-  } finally {
-    if (conn) conn.release();
-  }
-}));
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/google/callback`,
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      let conn;
+      try {
+        conn = await getConnection();
+        const user = await socialLoginHandler(
+          conn,
+          {
+            id: profile.id,
+            email: profile.emails[0].value,
+            name: profile.displayName,
+            picture: profile.photos[0].value,
+          },
+          "google_id"
+        );
+        return cb(null, user);
+      } catch (error) {
+        console.error("Error in Google Strategy:", error);
+        return cb(error);
+      } finally {
+        if (conn) conn.release();
+      }
+    }
+  )
+);
 
-// // Facebook Strategy
-// passport.use(new FacebookStrategy({
-//   clientID: process.env.FACEBOOK_APP_ID,
-//   clientSecret: process.env.FACEBOOK_APP_SECRET,
-//   callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/facebook/callback`,
-//   profileFields: ['id', 'emails', 'name', 'picture.type(large)']
-// }, async (accessToken, refreshToken, profile, cb) => {
-//   let conn;
-//   try {
-//     conn = await getConnection();
-//     const user = await socialLoginHandler(conn, {
-//       id: profile.id,
-//       email: profile.emails[0].value,
-//       name: `${profile.name.givenName} ${profile.name.familyName}`,
-//       picture: profile.photos[0].value
-//     }, 'facebook_id');
-//     return cb(null, user);
-//   } catch (error) {
-//     console.error("Error in Facebook Strategy:", error);
-//     return cb(error);
-//   } finally {
-//     if (conn) conn.release();
-//   }
-// }));
+// Facebook Strategy
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: process.env.FACEBOOK_APP_ID,
+      clientSecret: process.env.FACEBOOK_APP_SECRET,
+      callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/facebook/callback`,
+      profileFields: ["id", "emails", "name", "picture.type(large)"],
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      let conn;
+      try {
+        conn = await getConnection();
+        const user = await socialLoginHandler(
+          conn,
+          {
+            id: profile.id,
+            email: profile.emails[0].value,
+            name: `${profile.name.givenName} ${profile.name.familyName}`,
+            picture: profile.photos[0].value,
+          },
+          "facebook_id"
+        );
+        return cb(null, user);
+      } catch (error) {
+        console.error("Error in Facebook Strategy:", error);
+        return cb(error);
+      } finally {
+        if (conn) conn.release();
+      }
+    }
+  )
+);
 
-// // Apple Strategy
+// Apple Strategy
 // passport.use(new AppleStrategy({
 //   clientID: process.env.APPLE_CLIENT_ID,
 //   teamID: process.env.APPLE_TEAM_ID,
@@ -515,23 +600,23 @@ router.get("/google/callback", (req, res, next) => {
   })(req, res, next);
 });
 
-// router.get(
-//   "/facebook",
-//   passport.authenticate("facebook", { scope: ["email"] })
-// );
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["email"] })
+);
 
-// router.get(
-//   "/facebook/callback",
-//   passport.authenticate("facebook", { failureRedirect: "/login" }),
-//   function (req, res) {
-//     const token = jwt.sign(
-//       { userId: req.user.id, email: req.user.email },
-//       process.env.JWT_SECRET,
-//       { expiresIn: "1h" }
-//     );
-//     res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
-//   }
-// );
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  function (req, res) {
+    const token = jwt.sign(
+      { userId: req.user.id, email: req.user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+  }
+);
 
 // router.get("/apple", passport.authenticate("apple"));
 

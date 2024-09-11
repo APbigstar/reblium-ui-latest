@@ -324,14 +324,31 @@
                 >
               </p>
             </div>
-            <div
-              id="verificationForm"
-              class="bg-white rounded-lg shadow-xl max-w-md w-full p-8 hidden"
-            >
-              <h2 class="text-2xl font-semibold mb-6">Verify Your Email</h2>
+
+            <div id="verificationLinkSent" class="w-full md:w-1/2 p-12 hidden">
+              <h2 class="text-2xl font-semibold mb-8">Verify Your Email</h2>
               <p class="mb-4">
-                Please enter the 5-digit code sent to your email or use the
-                verification link in the email.
+                We've sent a verification link to your email. Please check your
+                inbox and click the link to verify your account.
+              </p>
+              <p class="mb-4">
+                Didn't receive the email? Check your spam folder or click the
+                button below to receive a verification code instead.
+              </p>
+              <button
+                id="requestCodeButton"
+                class="w-full py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Request Verification Code
+              </button>
+            </div>
+
+            <div id="verificationForm" class="w-full md:w-1/2 p-12 hidden">
+              <h2 class="text-2xl font-semibold mb-6">
+                Enter Verification Code
+              </h2>
+              <p class="mb-4">
+                Please enter the 5-digit code sent to your email.
               </p>
               <form id="verificationFormElement" class="space-y-4 text-left">
                 <div>
@@ -8868,7 +8885,9 @@
           e.preventDefault();
 
           const signupForm = document.getElementById("signupForm");
-          const verificationForm = document.getElementById("verificationForm");
+          const verificationLinkSent = document.getElementById(
+            "verificationLinkSent"
+          );
 
           const name = document.getElementById("name").value;
           const email = document.getElementById("email").value;
@@ -8901,13 +8920,8 @@
             const data = await response.json();
 
             if (response.ok) {
-              messageElement.textContent = data.message;
-              messageElement.className = "mt-4 text-sm text-green-600";
-              // signupForm.classList.add("hidden");
-              // verificationForm.classList.remove("hidden");
-              setTimeout(() => {
-                window.location.href = "/login.html";
-              }, 2000);
+              signupForm.classList.add("hidden");
+              verificationLinkSent.classList.remove("hidden");
             } else {
               throw new Error(
                 data.error || "An error occurred during sign up."
@@ -8916,6 +8930,43 @@
           } catch (error) {
             messageElement.textContent = error.message;
             messageElement.className = "mt-4 text-sm text-red-600";
+          }
+        });
+
+      document
+        .getElementById("requestCodeButton")
+        .addEventListener("click", async function () {
+          const email = document.getElementById("email").value;
+          const name = document.getElementById("name").value;
+          const verificationLinkSent = document.getElementById(
+            "verificationLinkSent"
+          );
+          const verificationForm = document.getElementById("verificationForm");
+
+          try {
+            const response = await fetch(
+              "/.netlify/functions/auth/request-code",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, name }),
+              }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              verificationLinkSent.classList.add("hidden");
+              verificationForm.classList.remove("hidden");
+            } else {
+              throw new Error(
+                data.error || "Failed to send verification code."
+              );
+            }
+          } catch (error) {
+            alert(error.message);
           }
         });
 
@@ -8954,8 +9005,8 @@
             messageElement.className = "mt-4 text-sm text-red-600";
           }
         });
-
       const closeModalBtn = document.getElementById("closeSignUpModal");
+
       const introModalOverlay = document.getElementById("introModalOverlay");
       const closeIntroModalBtn = document.getElementById("closeIntroModal");
       const signUpLoginBtn = document.getElementById("signUpLogin");
