@@ -149,10 +149,10 @@ function setSelectedCreditAmount(amount) {
   const subCreditAmountEle = document.querySelector("div.credit_amount_view_section span.sub-credit-amount")
   const totalCreditAmountEle = document.querySelector("div.credit_amount_view_section span.total-credit-amount")
 
-  creditPriceEle.textContent =amount
-  creditAmountEle.textContent = creditData[amount]
-  subCreditAmountEle.textContent = creditData[amount]
-  totalCreditAmountEle.textContent = creditData[amount]
+  creditPriceEle.textContent = '€'+amount
+  creditAmountEle.textContent = creditData[amount] + ' credits'
+  subCreditAmountEle.textContent = creditData[amount] + ' credits'
+  totalCreditAmountEle.textContent = creditData[amount] + ' credits'
 }
 
 function showSaveAvatarExit() {

@@ -108,7 +108,7 @@ router.post("/signup", async (req, res) => {
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                 <main>
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <img src="https://drive.google.com/file/d/1OpxTYLWNlsVT5BKuwJ7FmsNI0PoB04JN/view?usp=sharing/reblium_logo_black.png" alt="Reblium Logo" style="max-width: 100px;">
+                        <img src="https://reblikabucket.s3.eu-west-2.amazonaws.com/reblium_logo_black.png" alt="Reblium Logo" style="max-width: 100px;">
                     </div>
                     <h2 style="text-align: center;">Verify your email for Reblium Cloud</h2>
                     <p>Hello ${name},</p>
@@ -185,7 +185,7 @@ router.post("/request-code", async (req, res) => {
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
                 <main>
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <img src="https://drive.google.com/file/d/1OpxTYLWNlsVT5BKuwJ7FmsNI0PoB04JN/view?usp=sharing/reblium_logo_black.png" alt="Reblium Logo" style="max-width: 100px;">
+                        <img src="https://reblikabucket.s3.eu-west-2.amazonaws.com/reblium_logo_black.png" alt="Reblium Logo" style="max-width: 100px;">
                     </div>
                     <h2 style="text-align: center;">Confirm your code for Reblium Cloud</h2>
                     <p>Hello ${name},</p>

@@ -2912,9 +2912,9 @@ loader::after,
 }
 
 .selected-credit {
-  background-color: #2563eb;
-  border: 2px solid #ffffff;
-  box-shadow: 0 0 0 2px #3b82f6;
+  background-color: #2563eb !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 0 0 2px #3b82f6 !important;
 }
 
 table td,
