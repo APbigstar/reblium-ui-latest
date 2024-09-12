@@ -10,7 +10,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const AppleStrategy = require("passport-apple").Strategy;
 const DiscordStrategy = require("passport-discord").Strategy;
-const path = require('path');
+const path = require("path");
 
 const app = express();
 const router = express.Router();
@@ -125,7 +125,7 @@ router.post("/signup", async (req, res) => {
             </div>
         </body>
         </html>
-      `
+      `,
     };
 
     await transporter.sendMail(mailOptions);
@@ -201,7 +201,7 @@ router.post("/request-code", async (req, res) => {
             </div>
         </body>
         </html>
-      `
+      `,
     };
 
     await transporter.sendMail(mailOptions);
@@ -242,7 +242,9 @@ router.post("/verify", async (req, res) => {
 
     if (users.length === 0) {
       if (code) {
-        return res.status(400).json({ error: "Invalid or expired verification code" });
+        return res
+          .status(400)
+          .json({ error: "Invalid or expired verification code" });
       } else {
         return res.status(400).json({ error: "Invalid verification token" });
       }
@@ -313,7 +315,12 @@ router.post("/signin", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.json({ message: "Sign-in successful", token, userId: user.id, email: user.email });
+    res.json({
+      message: "Sign-in successful",
+      token,
+      userId: user.id,
+      email: user.email,
+    });
   } catch (error) {
     console.error("Error during sign-in:", error);
     res
@@ -525,29 +532,38 @@ passport.use(
 // }));
 
 // Discord Strategy
-passport.use(new DiscordStrategy({
-  clientID: process.env.DISCORD_CLIENT_ID,
-  clientSecret: process.env.DISCORD_CLIENT_SECRET,
-  callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/discord/callback`,
-  scope: ['identify', 'email']
-}, async (accessToken, refreshToken, profile, cb) => {
-  let conn;
-  try {
-    conn = await getConnection();
-    const user = await socialLoginHandler(conn, {
-      id: profile.id,
-      email: profile.email,
-      name: profile.username,
-      picture: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`
-    }, 'discord_id');
-    return cb(null, user);
-  } catch (error) {
-    console.error("Error in Discord Strategy:", error);
-    return cb(error);
-  } finally {
-    if (conn) conn.release();
-  }
-}));
+passport.use(
+  new DiscordStrategy(
+    {
+      clientID: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
+      callbackURL: `${process.env.BACKEND_URL}/.netlify/functions/auth/discord/callback`,
+      scope: ["identify", "email"],
+    },
+    async (accessToken, refreshToken, profile, cb) => {
+      let conn;
+      try {
+        conn = await getConnection();
+        const user = await socialLoginHandler(
+          conn,
+          {
+            id: profile.id,
+            email: profile.email,
+            name: profile.username,
+            picture: `https://cdn.discordapp.com/avatars/${profile.id}/${profile.avatar}.png`,
+          },
+          "discord_id"
+        );
+        return cb(null, user);
+      } catch (error) {
+        console.error("Error in Discord Strategy:", error);
+        return cb(error);
+      } finally {
+        if (conn) conn.release();
+      }
+    }
+  )
+);
 
 // Google login route
 router.get(
@@ -625,18 +641,35 @@ router.get("/google/callback", (req, res, next) => {
 router.get("/discord", passport.authenticate("discord"));
 
 // Discord callback route
-router.get(
-  "/discord/callback",
-  passport.authenticate("discord", { failureRedirect: "/" }),
-  function (req, res) {
-    const token = jwt.sign(
-      { userId: req.user.id, email: req.user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
-  }
-);
+router.get("/discord/callback", (req, res, next) => {
+  passport.authenticate("discord", { session: false }, (err, user, info) => {
+    if (err) {
+      console.error("Error in Discord callback:", err);
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=authentication_failed`
+      );
+    }
+    if (!user) {
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=user_not_found`
+      );
+    }
+    try {
+      const token = jwt.sign(
+        { userId: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+      // Redirect to frontend with the token
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+    } catch (error) {
+      console.error("Error creating token:", error);
+      res.redirect(
+        `${process.env.FRONTEND_URL}/login?error=token_creation_failed`
+      );
+    }
+  })(req, res, next);
+});
 
 app.use(`/.netlify/functions/auth`, router);
 
