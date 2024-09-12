@@ -627,7 +627,7 @@ router.get("/discord", passport.authenticate("discord"));
 // Discord callback route
 router.get(
   "/discord/callback",
-  passport.authenticate("discord", { failureRedirect: "/login" }),
+  passport.authenticate("discord", { failureRedirect: "/" }),
   function (req, res) {
     const token = jwt.sign(
       { userId: req.user.id, email: req.user.email },
