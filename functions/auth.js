@@ -577,12 +577,12 @@ router.get("/google/callback", (req, res, next) => {
     if (err) {
       console.error("Error in Google callback:", err);
       return res.redirect(
-        `${process.env.FRONTEND_URL}/login?error=authentication_failed`
+        `${process.env.FRONTEND_URL}`
       );
     }
     if (!user) {
       return res.redirect(
-        `${process.env.FRONTEND_URL}/login?error=user_not_found`
+        `${process.env.FRONTEND_URL}`
       );
     }
     try {
@@ -596,7 +596,7 @@ router.get("/google/callback", (req, res, next) => {
     } catch (error) {
       console.error("Error creating token:", error);
       res.redirect(
-        `${process.env.FRONTEND_URL}/login?error=token_creation_failed`
+        `${process.env.FRONTEND_URL}`
       );
     }
   })(req, res, next);
@@ -646,12 +646,12 @@ router.get("/discord/callback", (req, res, next) => {
     if (err) {
       console.error("Error in Discord callback:", err);
       return res.redirect(
-        `${process.env.FRONTEND_URL}/login?error=authentication_failed`
+        `${process.env.FRONTEND_URL}`
       );
     }
     if (!user) {
       return res.redirect(
-        `${process.env.FRONTEND_URL}/login?error=user_not_found`
+        `${process.env.FRONTEND_URL}`
       );
     }
     try {
