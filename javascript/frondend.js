@@ -261,6 +261,7 @@ document
   .getElementById("conversationButton")
   .addEventListener("click", function () {
     updateDisplayState("conversation");
+    getUserPromps();
   });
 
 document.querySelectorAll(".bottom-image img").forEach((img) => {

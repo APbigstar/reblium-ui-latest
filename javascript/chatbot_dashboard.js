@@ -482,6 +482,27 @@ document.getElementById("signupImage").addEventListener("click", function () {
   this.style.display = "none"; // Hide the image when it is clicked
 });
 
+async function getUserPromps() {
+  let personaInput = document.getElementById("personaInput");
+  console.log(globalUserInfoId);
+  try {
+    const response = await fetch(
+      `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}`
+    );
+    const { success, data } = await response.json();
+    console.log(data);
+    if (!success) {
+      throw new Error("Network response was not ok");
+    } else {
+      console.log(data.propmts);
+      personaInput.value = data.prompts;
+    }
+  } catch (error) {
+    console.error("Error fetching user prompt data:", error);
+    return null;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // Select the Persona button and popup elements
   const personaButton = document.getElementById("personaButton");
@@ -492,7 +513,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Open the persona popup when the Persona button is clicked
   personaButton.addEventListener("click", function () {
-    personaPopup.style.display = "block"; // Use 'flex' to align content as in CSS
+    personaPopup.style.display = "block"; 
+    getUserPromps()
   });
 
   // Close the persona popup when the close button is clicked
@@ -501,7 +523,37 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Handle the confirm button click
-  personaConfirmButton.addEventListener("click", function () {
+  personaConfirmButton.addEventListener("click", async function () {
+    try {
+      const response = await fetch(
+        "/.netlify/functions/UserPrompts/insertUserPrompts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompts: personaInput.value,
+            user_id: globalUserInfoId,
+          }),
+        }
+      );
+
+      const { success, message } = await response.json();
+
+      if (success) {
+        showNotification(message, "", "success");
+      } else {
+        showNotification(
+          "Failed to save prompts.",
+          "Please try again",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+
     const inputText = personaInput.value.trim(); // Get the value from the input field
     if (inputText !== "") {
       // Send the input text via handleSendCommands function
