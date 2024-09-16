@@ -125,7 +125,6 @@
 
       // Async function to load and send avatar data
       async function loadAndSendAvatarData(jsonFilePath) {
-        defaultAvatarPrompt = true
         await waitForVideoLoad(); // Wait for video to load
 
         // Use the fetch API to load the JSON file
@@ -148,6 +147,8 @@
             const personaInput = document.getElementById("personaInput");
             personaInput.value = personaInfo; // Update the input field with the persona description
           }
+
+          defaultAvatarPrompt = true;
         } catch (error) {
           console.error("Error loading JSON:", error);
         }
