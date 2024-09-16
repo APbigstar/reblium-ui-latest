@@ -25,11 +25,11 @@ router.get("/getUserPrompts", async (req, res) => {
 
     connection = await getConnection();
 
-    const { user_id } = req.query;
+    const { user_id, avatar_id } = req.query;
 
     // Perform the database query to add the avatar details to the Avatar table
-    const getUserPromptQuery = "SELECT * FROM User_Prompts WHERE user_id = ?";
-    const [result] = await connection.execute(getUserPromptQuery, [user_id]);
+    const getUserPromptQuery = "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?";
+    const [result] = await connection.execute(getUserPromptQuery, [user_id, avatar_id]);
 
     if (result.length > 0) {
       res.json({ success: true, data: result[0] });
@@ -47,27 +47,27 @@ router.get("/getUserPrompts", async (req, res) => {
 });
 
 router.post("/insertUserPrompts", async (req, res) => {
-  const { user_id, prompts } = req.body;
+  const { user_id, prompts, avatar_id } = req.body;
 
-  console.log(user_id, prompts)
+  console.log(user_id, prompts, avatar_id)
 
   let connection;
   try {
     connection = await getConnection();
     const [existingUsers] = await connection.execute(
-      "SELECT * FROM User_Prompts WHERE user_id = ?",
-      [user_id]
+      "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?",
+      [user_id, avatar_id]
     );
 
     if (existingUsers.length > 0) {
       await connection.execute(
-        `UPDATE User_Prompts SET prompts = ? WHERE user_id = ?`,
-        [prompts, user_id]
+        `UPDATE User_Prompts SET prompts = ? WHERE user_id = ? AND avatar_id = ?`,
+        [prompts, user_id, avatar_id]
       );
     } else {
       await connection.execute(
-        `INSERT INTO User_Prompts (user_id, prompts, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)`,
-        [user_id, prompts]
+        `INSERT INTO User_Prompts (user_id, prompts, avatar_id, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+        [user_id, prompts, avatar_id]
       );
     }
 

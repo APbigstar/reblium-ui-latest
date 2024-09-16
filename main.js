@@ -3,6 +3,7 @@ let globalUserEmail = localStorage.getItem("user_email");
 let userCreditAmount = 0;
 let selectedSubscription = null;
 let selectedUserPlanId = null;
+let selectedUserAvatarId = null;
 
 async function getUserCredits() {
   const checkUserCreditAmount = await fetch(
@@ -494,6 +495,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       editButton.addEventListener("click", () => {
         toggleDashboardAndArtistMode(true); // Show artist_mode
         updateDisplayState("design");
+        selectedUserAvatarId = avatar.id;
       });
 
       const deleteButton = document.createElement("button");

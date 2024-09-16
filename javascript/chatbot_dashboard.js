@@ -487,7 +487,7 @@ async function getUserPromps() {
   console.log(globalUserInfoId);
   try {
     const response = await fetch(
-      `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}`
+      `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
     );
     const { success, data } = await response.json();
     console.log(data);
@@ -535,6 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify({
             prompts: personaInput.value,
             user_id: globalUserInfoId,
+            avatar_id: selectedUserAvatarId,
           }),
         }
       );
