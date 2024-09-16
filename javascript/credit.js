@@ -208,7 +208,7 @@ function showBuyCredits() {
 
 async function updateCreditAmount() {
   try {
-    const response = await fetch("/.netlify/functions/updateUserCreditAmount", {
+    const response = await fetch("/.netlify/functions/credit/updateUserCreditAmount", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

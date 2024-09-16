@@ -2,30 +2,34 @@ const express = require("express");
 const serverless = require("serverless-http");
 const mysql = require("mysql2/promise");
 const axios = require("axios"); // You'll need to install this package
-const { retrievePaymentIntent, createCustomer, createPaymentIntent } = require("./stripeLib"); // Adjust the path as needed
+const {
+  retrievePaymentIntent,
+  createCustomer,
+  createPaymentIntent,
+} = require("./stripeLib"); // Adjust the path as needed
 
 const app = express();
 const router = express.Router();
 app.use(express.json());
 
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
+
+// Helper function to get a connection from the pool
+const getConnection = async () => {
+  return await pool.getConnection();
+};
+
 router.post("/confirmCreditPaymentIntent", async (req, res) => {
   const creditData = { 12: 100, 30: 250, 60: 500, 96: 800 };
 
-  // Get the database connection details from environment variables
-  const host = process.env.DB_HOST;
-  const user = process.env.DB_USER;
-  const password = process.env.DB_PASSWORD;
-  const database = process.env.DB_DATABASE;
-
-  // Create a database connection
-  const connection = await mysql.createConnection({
-    host: host,
-    user: user,
-    password: password,
-    database: database,
-  });
-
+  let connection;
   try {
+    connection = await getConnection();
     const { payment_intent_id, amount, userId } = req.body;
 
     if (!payment_intent_id || !amount) {
@@ -87,21 +91,9 @@ router.post("/confirmCreditPaymentIntent", async (req, res) => {
 });
 
 router.post("/createCreditPaymentIntent", async (req, res) => {
-  // Get the database connection details from environment variables
-  const host = process.env.DB_HOST;
-  const user = process.env.DB_USER;
-  const password = process.env.DB_PASSWORD;
-  const database = process.env.DB_DATABASE;
-
-  // Create a database connection
-  const connection = await mysql.createConnection({
-    host: host,
-    user: user,
-    password: password,
-    database: database,
-  });
-
+  let connection;
   try {
+    connection = await getConnection();
     const { amount, userId, userEmail } = req.body;
 
     if (!amount) {
@@ -146,21 +138,9 @@ router.post("/createCreditPaymentIntent", async (req, res) => {
 });
 
 router.get("/getUserCreditAmount", async (req, res) => {
-  // Retrieve environment variables
-  const host = process.env.DB_HOST;
-  const user = process.env.DB_USER;
-  const password = process.env.DB_PASSWORD;
-  const database = process.env.DB_DATABASE;
-
-  // Create a database connection
-  const connection = await mysql.createConnection({
-    host: host,
-    user: user,
-    password: password,
-    database: database,
-  });
-
+  let connection;
   try {
+    connection = await getConnection();
     const { user_id } = req.query;
     const checkUserExistingCredits =
       "SELECT amount FROM User_Credits WHERE user_id = ?";
@@ -179,14 +159,18 @@ router.get("/getUserCreditAmount", async (req, res) => {
 
     const [planRows] = await connection.execute(getCurrentUserPlan, [user_id]);
 
-    console.log(planRows)
+    console.log(planRows);
 
     if (rows.length === 0) {
       res.json({ exists: false });
     } else {
       const creditAmount = rows[0].amount;
       if (planRows.length > 0) {
-        res.json({ exists: true, amount: creditAmount, createdAt: planRows[0].created_at });
+        res.json({
+          exists: true,
+          amount: creditAmount,
+          createdAt: planRows[0].created_at,
+        });
       } else {
         res.json({ exists: true, amount: creditAmount });
       }
@@ -200,20 +184,9 @@ router.get("/getUserCreditAmount", async (req, res) => {
 });
 
 router.post("/updateUserCreditAmount", async (req, res) => {
-  // Retrieve environment variables
-  const host = process.env.DB_HOST;
-  const user = process.env.DB_USER;
-  const password = process.env.DB_PASSWORD;
-  const database = process.env.DB_DATABASE;
-
-  const connection = await mysql.createConnection({
-    host: host,
-    user: user,
-    password: password,
-    database: database,
-  });
-
+  let connection;
   try {
+    connection = await getConnection();
     const { user_id, amount, premium } = req.body;
     let premuim_value = "";
 
