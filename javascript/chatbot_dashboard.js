@@ -485,21 +485,23 @@ document.getElementById("signupImage").addEventListener("click", function () {
 async function getUserPromps() {
   let personaInput = document.getElementById("personaInput");
   console.log(globalUserInfoId);
-  try {
-    const response = await fetch(
-      `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
-    );
-    const { success, data } = await response.json();
-    console.log(data);
-    if (!success) {
-      throw new Error("Network response was not ok");
-    } else {
-      console.log(data.propmts);
-      personaInput.value = data.prompts;
+  console.log(defaultAvatarPrompt);
+  if (!defaultAvatarPrompt) {
+    try {
+      const response = await fetch(
+        `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
+      );
+      const { success, data } = await response.json();
+      if (!success) {
+        personaInput.value = "";
+        console.log("Not Found User Prompt");
+      } else {
+        personaInput.value = data.prompts;
+      }
+    } catch (error) {
+      console.error("Error fetching user prompt data:", error);
+      return null;
     }
-  } catch (error) {
-    console.error("Error fetching user prompt data:", error);
-    return null;
   }
 }
 
@@ -513,8 +515,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Open the persona popup when the Persona button is clicked
   personaButton.addEventListener("click", function () {
-    personaPopup.style.display = "block"; 
-    getUserPromps()
+    personaPopup.style.display = "block";
+    getUserPromps();
   });
 
   // Close the persona popup when the close button is clicked

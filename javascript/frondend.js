@@ -27,6 +27,7 @@ function toggleDashboardAndArtistMode() {
     }
     chatbot.style.display = "none";
   } else {
+    defaultAvatarPrompt = false;
     dashboard.style.display = "block";
     artistMode.style.display = "none";
     watermarkContainer.style.display = "none";

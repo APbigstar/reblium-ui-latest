@@ -84,6 +84,7 @@
   <body>
     <script>
       let latestLoadAvatarCommand = null;
+      let defaultAvatarPrompt = false;
 
       let newWebRTC;
       function handleSendCommands(command) {
@@ -124,6 +125,7 @@
 
       // Async function to load and send avatar data
       async function loadAndSendAvatarData(jsonFilePath) {
+        defaultAvatarPrompt = true
         await waitForVideoLoad(); // Wait for video to load
 
         // Use the fetch API to load the JSON file

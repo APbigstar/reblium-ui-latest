@@ -22,14 +22,19 @@ const getConnection = async () => {
 router.get("/getUserPrompts", async (req, res) => {
   let connection;
   try {
-
     connection = await getConnection();
 
     const { user_id, avatar_id } = req.query;
 
     // Perform the database query to add the avatar details to the Avatar table
-    const getUserPromptQuery = "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?";
-    const [result] = await connection.execute(getUserPromptQuery, [user_id, avatar_id]);
+    const getUserPromptQuery =
+      "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?";
+    const [result] = await connection.execute(getUserPromptQuery, [
+      user_id,
+      avatar_id,
+    ]);
+
+    console.log(result[0]);
 
     if (result.length > 0) {
       res.json({ success: true, data: result[0] });
@@ -42,14 +47,14 @@ router.get("/getUserPrompts", async (req, res) => {
       .status(500)
       .json({ error: "Error processing the request", details: error });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
 router.post("/insertUserPrompts", async (req, res) => {
   const { user_id, prompts, avatar_id } = req.body;
 
-  console.log(user_id, prompts, avatar_id)
+  console.log(user_id, prompts, avatar_id);
 
   let connection;
   try {
@@ -84,7 +89,6 @@ router.post("/insertUserPrompts", async (req, res) => {
     if (connection) connection.release();
   }
 });
-
 
 app.use(`/.netlify/functions/UserPrompts`, router);
 
