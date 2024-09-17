@@ -293,6 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event handler to start speech recognition
   callButton.addEventListener("click", () => {
+    console.log("Clicked Call Button")
     recognition.start();
     console.log("Speech recognition started.");
     toggleButtons(); // Show stop button
@@ -300,6 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event handler to stop speech recognition
   stopCallButton.addEventListener("click", () => {
+    console.log("Clicked Stop Button")
     recognition.stop();
     console.log("Speech recognition stopped.");
     toggleButtons(); // Show call button
@@ -512,6 +514,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const personaClose = document.getElementById("personaClose");
   const personaConfirmButton = document.getElementById("personaConfirmButton");
   const personaInput = document.getElementById("personaInput");
+  const ChatopenPopup = document.getElementById("ChatopenPopup");
 
   // Open the persona popup when the Persona button is clicked
   personaButton.addEventListener("click", function () {
@@ -549,7 +552,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         showNotification(
           "Failed to save prompts.",
-          "Please try again",
+          "Please try again after saving avatar.",
           "error"
         );
       }
@@ -570,20 +573,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // Handle the case where the input is empty
       alert("Please enter a persona before confirming.");
     }
-  });
-});
-
-/////////////////////////  mic and camera notivication //////////////////////////////
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Select the button and tooltip elements
-  const callButton = document.getElementById("call-button");
-  const tooltip = document.getElementById("tooltip");
-
-  // Add a click event listener to the call button
-  callButton.addEventListener("click", function () {
-    // Hide the tooltip
-    tooltip.style.display = "none";
   });
 });
 

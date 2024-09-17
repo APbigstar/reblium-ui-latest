@@ -2320,8 +2320,8 @@ loader::after,
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem; /* 40px if 1rem = 16px */
-  height: 1.5rem;
+  width: 2.5rem; /* 40px if 1rem = 16px */
+  height: 2.5rem;
   position: relative;
   display: none;
 }

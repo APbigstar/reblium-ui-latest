@@ -745,6 +745,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       handleSendCommands({ saveavatar: data.saveavatar });
 
       document.getElementById("avatarId").textContent = data.saveavatar;
+      selectedUserAvatarId = data.saveavatar;
 
       return true; // Return true to indicate success
     } catch (error) {

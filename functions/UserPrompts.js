@@ -26,6 +26,10 @@ router.get("/getUserPrompts", async (req, res) => {
 
     const { user_id, avatar_id } = req.query;
 
+    if (!user_id || !avatar_id) {
+      return res.json({ success: false });
+    }
+
     // Perform the database query to add the avatar details to the Avatar table
     const getUserPromptQuery =
       "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?";
@@ -33,8 +37,6 @@ router.get("/getUserPrompts", async (req, res) => {
       user_id,
       avatar_id,
     ]);
-
-    console.log(result[0]);
 
     if (result.length > 0) {
       res.json({ success: true, data: result[0] });
@@ -58,6 +60,14 @@ router.post("/insertUserPrompts", async (req, res) => {
 
   let connection;
   try {
+
+    if (!user_id || !avatar_id) {
+      return res.status(200).json({
+        success: false,
+        message: "Failed to save prompts",
+      });
+    }
+
     connection = await getConnection();
     const [existingUsers] = await connection.execute(
       "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?",
