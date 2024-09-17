@@ -1420,7 +1420,7 @@ input[type="range"]:focus {
 
 p.category-title {
   position: absolute;
-  color: #F6F6F6;
+  color: #f6f6f6;
   text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   font-family: Futura;
   font-size: 2.5rem;
@@ -2035,7 +2035,6 @@ input[type="number"] {
   margin: 0 auto;
 }
 
-
 .modal-buttons-delete button {
   margin: 0 5px;
   padding: 8px 12px;
@@ -2407,7 +2406,6 @@ loader::after,
   background-color: rgba(0, 0, 0, 0.8);
   position: relative;
   border-radius: 10px;
-  backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
   padding: 30px 35px;
@@ -2429,7 +2427,6 @@ loader::after,
   background-color: rgba(255, 255, 255, 0.128);
   border-radius: 3px;
   padding: 10px;
-  margin-top: 20px;
   font-size: 18px;
   font-weight: 300;
   color: #ffffff;
@@ -3018,7 +3015,8 @@ table th {
   margin-bottom: 20px;
 }
 
-.credit-button, .cancel-button {
+.credit-button,
+.cancel-button {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -3029,14 +3027,14 @@ table th {
 }
 
 .credit-button {
-  background-color: #00BFFF;
+  background-color: #00bfff;
   color: white;
 }
 
 .cancel-button {
   background-color: transparent;
-  border: 1px solid #00BFFF;
-  color: #00BFFF;
+  border: 1px solid #00bfff;
+  color: #00bfff;
 }
 
 .credit_amount_view_section {
@@ -3070,7 +3068,7 @@ table th {
 }
 
 .promo-code-button {
-  background-color: #1E40AF;
+  background-color: #1e40af;
   color: white;
   border: none;
   padding: 10px 15px;
@@ -3152,4 +3150,16 @@ table th {
 
 .demo-button {
   font-size: 1.8rem;
+}
+
+input#welcomeMessage {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.128);
+  border-radius: 3px;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: 300;
+  color: #ffffff;
+  resize: none;
+  overflow-y: auto;
 }

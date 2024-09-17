@@ -262,7 +262,7 @@ document
   .getElementById("conversationButton")
   .addEventListener("click", function () {
     updateDisplayState("conversation");
-    getUserPromps();
+    getUserPromps('prompt');
   });
 
 document.querySelectorAll(".bottom-image img").forEach((img) => {
@@ -277,6 +277,7 @@ document.getElementById("designButton").addEventListener("click", function () {
 
 document.getElementById("previewButton").addEventListener("click", function () {
   updateDisplayState("preview");
+  getUserPromps('welcome_message');
 });
 
 // Event listener to handle the click on the menuBar and toggle the sideMenu

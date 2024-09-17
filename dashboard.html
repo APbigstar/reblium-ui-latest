@@ -1440,25 +1440,31 @@
 
     <!-- Persona Pop-up -->
     <div id="personaPopup" class="personaPopup" style="display: none">
-      <form id="personaForm">
+      <form class="personaForm">
         <span
           id="personaClose"
           class="close-button"
           style="position: absolute; top: 10px; right: 20px; cursor: pointer"
           >&times;</span
         >
-        <h3 class="font-bold text-3xl mb-4">Enter Your Prompt</h3>
-        <p>
-          To save the prompt you need to click on the save button on the bottom
-          of the screen
+        <h3 class="font-bold text-3xl mb-4">Chat Setting</h3>
+        <p class="mb-4">
+          When creating the avatar, you need to save avatar first before saving the welcome message and prompt.
         </p>
-        <textarea
-          id="personaInput"
-          placeholder="Type your persona here"
-          rows="15"
-          cols="80"
-        ></textarea>
-        <button type="button" id="personaConfirmButton">Confirm</button>
+        <div class="welcome-section flex flex-col items-start w-full mb-3">
+          <label for="welcomeMessage">Enter your welcome message</label>
+          <input id="welcomeMessage" placeholder="Type your welcome message here" />
+        </div>
+        <div class="prompt-section flex flex-col items-start w-full">
+          <label for="personaInput">Enter your prompt</label>
+          <textarea
+            id="personaInput"
+            placeholder="Type your persona here"
+            rows="15"
+            cols="80"
+          ></textarea>
+        </div>
+        <button type="button" id="personaConfirmButton">Save</button>
       </form>
     </div>
 
@@ -1512,7 +1518,7 @@
 
         <div id="buttonsContainer" class="avatar-menu">
           <button id="personaButton" class="transparent-button-active">
-            Prompt
+            Chat Setting
           </button>
           <button id="apiButton" class="transparent-button-active">
             ChatGPT Key
@@ -1816,7 +1822,7 @@
             id="ChatopenPopup"
             onclick="handleSendCommands({ saveavatar: parseFloat(document.getElementById('avatarId').textContent) })"
           >
-            <i class="fas fa-save save-ico"></i>Save
+            <i class="fas fa-save save-ico"></i>Save Avatar
           </button>
 
           <!-- <button class="menu-button" id="downloadButton" ><i class="fas fa-download"></i>Export/ Download</button> -->
@@ -2023,7 +2029,7 @@
               <i class="fas fa-undo reset-ico"></i>Reset
             </button>
             <button class="menu-button" onclick="showSaveAvatarExit()">
-              <i class="fas fa-save save-ico"></i>Save
+              <i class="fas fa-save save-ico"></i>Save Avatar
             </button>
           </div>
         </div>

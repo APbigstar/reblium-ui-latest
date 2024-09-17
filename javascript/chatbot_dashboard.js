@@ -484,21 +484,31 @@ document.getElementById("signupImage").addEventListener("click", function () {
   this.style.display = "none"; // Hide the image when it is clicked
 });
 
-async function getUserPromps() {
+async function getUserPromps(type) {
   let personaInput = document.getElementById("personaInput");
-  console.log(globalUserInfoId);
-  console.log(defaultAvatarPrompt);
+  let welcomeMessage = document.getElementById("welcomeMessage");
   if (!defaultAvatarPrompt) {
     try {
       const response = await fetch(
         `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
       );
       const { success, data } = await response.json();
+      console.log(data)
       if (!success) {
-        personaInput.value = "";
-        console.log("Not Found User Prompt");
+        if (type == 'prompt') {
+          personaInput.value = "";
+          console.log("Not Found User Prompt");
+        } else {
+          handleSendCommands({ texttospeech: 'Hi, I am a Rebelium assistant. How can I help you?' });
+        }
       } else {
-        personaInput.value = data.prompts;
+        if (type == 'prompt') {
+          personaInput.value = data.prompts;
+          welcomeMessage.value = data.welcome_message
+        } else {
+          console.log(data.welcome_message)
+          handleSendCommands({ texttospeech: data.welcome_message });
+        }
       }
     } catch (error) {
       console.error("Error fetching user prompt data:", error);
@@ -514,12 +524,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const personaClose = document.getElementById("personaClose");
   const personaConfirmButton = document.getElementById("personaConfirmButton");
   const personaInput = document.getElementById("personaInput");
-  const ChatopenPopup = document.getElementById("ChatopenPopup");
+  const welcomeMessage = document.getElementById("welcomeMessage");
 
   // Open the persona popup when the Persona button is clicked
   personaButton.addEventListener("click", function () {
     personaPopup.style.display = "block";
-    getUserPromps();
+    getUserPromps('prompt');
   });
 
   // Close the persona popup when the close button is clicked
@@ -541,6 +551,7 @@ document.addEventListener("DOMContentLoaded", function () {
             prompts: personaInput.value,
             user_id: globalUserInfoId,
             avatar_id: selectedUserAvatarId,
+            welcomeMessage: welcomeMessage.value,
           }),
         }
       );
@@ -551,7 +562,7 @@ document.addEventListener("DOMContentLoaded", function () {
         showNotification(message, "", "success");
       } else {
         showNotification(
-          "Failed to save prompts.",
+          "Failed to save chat setting.",
           "Please try again after saving avatar.",
           "error"
         );

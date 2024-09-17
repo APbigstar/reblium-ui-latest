@@ -32,7 +32,7 @@ router.get("/getUserPrompts", async (req, res) => {
 
     // Perform the database query to add the avatar details to the Avatar table
     const getUserPromptQuery =
-      "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?";
+      "SELECT * FROM User_Chat_Setting WHERE user_id = ? AND avatar_id = ?";
     const [result] = await connection.execute(getUserPromptQuery, [
       user_id,
       avatar_id,
@@ -54,9 +54,7 @@ router.get("/getUserPrompts", async (req, res) => {
 });
 
 router.post("/insertUserPrompts", async (req, res) => {
-  const { user_id, prompts, avatar_id } = req.body;
-
-  console.log(user_id, prompts, avatar_id);
+  const { user_id, prompts, avatar_id, welcomeMessage } = req.body;
 
   let connection;
   try {
@@ -70,25 +68,25 @@ router.post("/insertUserPrompts", async (req, res) => {
 
     connection = await getConnection();
     const [existingUsers] = await connection.execute(
-      "SELECT * FROM User_Prompts WHERE user_id = ? AND avatar_id = ?",
+      "SELECT * FROM User_Chat_Setting WHERE user_id = ? AND avatar_id = ?",
       [user_id, avatar_id]
     );
 
     if (existingUsers.length > 0) {
       await connection.execute(
-        `UPDATE User_Prompts SET prompts = ? WHERE user_id = ? AND avatar_id = ?`,
-        [prompts, user_id, avatar_id]
+        `UPDATE User_Chat_Setting SET prompts = ?, welcome_message = ? WHERE user_id = ? AND avatar_id = ?`,
+        [prompts, welcomeMessage, user_id, avatar_id]
       );
     } else {
       await connection.execute(
-        `INSERT INTO User_Prompts (user_id, prompts, avatar_id, created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
-        [user_id, prompts, avatar_id]
+        `INSERT INTO User_Chat_Setting (user_id, prompts, welcome_message, avatar_id, created_at) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+        [user_id, prompts, welcomeMessage, avatar_id]
       );
     }
 
     res.status(200).json({
       success: true,
-      message: "Saved Prompts successfully",
+      message: "Saved your chat settings successfully",
     });
   } catch (error) {
     console.error("Error executing database query:", error);
@@ -102,6 +100,5 @@ router.post("/insertUserPrompts", async (req, res) => {
 
 app.use(`/.netlify/functions/UserPrompts`, router);
 
-// Export the app wrapped with serverless-http
 module.exports = app;
 module.exports.handler = serverless(app);
