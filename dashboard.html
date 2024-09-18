@@ -810,7 +810,7 @@
             <button
               class="new-avatar"
               id="create-new"
-              onclick="toggleDashboardAndArtistMode(true) + updateDisplayState('design')"
+              onclick="handleCreateAvatarMode()"
             >
               + Create New
             </button>
@@ -1895,7 +1895,7 @@
         </div>
         <div id="introPopup" class="popup-container" style="display: flex">
           <div class="popup-content">
-            <h2>Welcome to Reblium Cloud!</h2>
+            <h2 class="text-center" style="font-size: 2.8rem;">Welcome to Reblium Cloud!</h2>
             <br />
             <p>
               Unlock the ultimate Avatar Creation experience with our
@@ -1935,8 +1935,10 @@
               <li>Sharing links not working atm.</li>
             </ul>
             <br />
+            <br />
+            <br />
             <div style="text-align: center">
-              <button class="menu-button" id="introcontinue">Proceed</button>
+              <button class="menu-button" id="introcontinue" style="font-size: 1.8rem;">Proceed</button>
             </div>
           </div>
         </div>

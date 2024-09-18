@@ -11,6 +11,24 @@
   src: url(../src/Fonts/futura/Futura\ Bold\ font.ttf);
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
 body {
   overflow: hidden;
   position: relative;
@@ -2646,9 +2664,9 @@ loader::after,
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: auto;
-  height: auto;
-  z-index: 1001;
+  width: 70%;
+  height: 90%;
+  z-index: 999999;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2657,10 +2675,10 @@ loader::after,
 
 .popup-content {
   background: #1a1a1a;
-  padding: 20px 30px;
+  padding: 42px 30px;
   border-radius: 10px;
   width: 100%;
-  max-width: 600px;
+  height: 89%;
   color: white;
   text-align: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -2672,7 +2690,7 @@ loader::after,
 }
 
 .popup-content p {
-  font-size: 16px;
+  font-size: 1.5rem;
   line-height: 1.6;
 }
 

@@ -964,6 +964,7 @@ confirmButton.addEventListener("click", function (event) {
 function showExitConfirmation() {
   const exitConfirmation = document.getElementById("exitConfirmation");
   exitConfirmation.style.display = "block";
+  createMode = false;
 }
 
 // Function to hide the exit confirmation modal

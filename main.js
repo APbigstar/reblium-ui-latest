@@ -4,6 +4,7 @@ let userCreditAmount = 0;
 let selectedSubscription = null;
 let selectedUserPlanId = null;
 let selectedUserAvatarId = null;
+let createMode = false;
 
 async function getUserCredits() {
   const checkUserCreditAmount = await fetch(
@@ -49,6 +50,18 @@ async function getSelectedSubscription() {
   } else {
     selectedSubscription = null;
     selectedUserPlanId = null;
+  }
+}
+
+function handleCreateAvatarMode() {
+  toggleDashboardAndArtistMode(true);
+  updateDisplayState('design');
+  createMode = true;
+  const introPopup = document.getElementById('introPopup');
+  if (selectedSubscription) {
+    introPopup.style.display = 'none'
+  } else {
+    introPopup.style.display = 'flex'
   }
 }
 
@@ -495,7 +508,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       editButton.addEventListener("click", () => {
         toggleDashboardAndArtistMode(true); // Show artist_mode
         updateDisplayState("design");
+        createMode = false;
         selectedUserAvatarId = avatar.id;
+        console.log(selectedSubscription, createMode)
+        const intropopup = document.getElementById("introPopup");
+        if (selectedSubscription && !createMode) {
+          intropopup.style.display = 'none'
+        }
       });
 
       const deleteButton = document.createElement("button");
@@ -982,4 +1001,6 @@ function closeNotification() {
       notification.remove();
     }, 300);
   }
+
+
 }

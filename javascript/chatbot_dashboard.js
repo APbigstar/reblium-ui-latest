@@ -506,8 +506,11 @@ async function getUserPromps(type) {
           personaInput.value = data.prompts;
           welcomeMessage.value = data.welcome_message
         } else {
-          console.log(data.welcome_message)
-          handleSendCommands({ texttospeech: data.welcome_message });
+          const welcomeMessage = data.welcome_message
+          setTimeout(() => {
+            console.log('Call Command')
+            handleSendCommands({ texttospeech: welcomeMessage });
+          }, 1000);
         }
       }
     } catch (error) {
