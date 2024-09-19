@@ -8710,8 +8710,6 @@
       }
 
       function decryptAvatarId(encryptedAvatarId) {
-        console.log("Input encryptedAvatarId:", encryptedAvatarId);
-
         const decoded = customDecode(encryptedAvatarId);
 
         let decrypted = "";
@@ -8722,7 +8720,6 @@
           decrypted += String.fromCharCode(decryptedChar);
         }
 
-        console.log("Decrypted result:", decrypted);
         return decrypted;
       }
       async function fetchAndDisplayAvatar() {
@@ -9103,6 +9100,8 @@
         });
       });
     </script>
+    <script src="javascript/env.js"></script>
+
 
     <script src="javascript/chatbot_dashboard.js"></script>
 
