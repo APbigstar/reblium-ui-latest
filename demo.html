@@ -250,7 +250,7 @@
             Step 1: Generate a new avatar to start your journey!
           </h3>
           <div class="flex items-start justify-between w-full h-full">
-            <video id="tutorialVideo" class="w-4/6 h-4/5" controls>
+            <video id="tutorialVideo" class="w-4/6 h-4/5" autoplay muted controls>
               <source src="./src/videos/step1_generator.mp4" type="video/mp4" />
             </video>
             <p
@@ -9002,6 +9002,8 @@
         tutorialVideo.querySelector("source").src =
           tutorialSteps[step].videoSrc;
         tutorialVideo.load();
+        tutorialVideo.autoplay = true;
+        tutorialVideo.muted = true;
 
         descriptionElement.textContent = tutorialSteps[step].description;
 

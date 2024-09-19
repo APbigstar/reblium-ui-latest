@@ -61,8 +61,6 @@ function addUserMessage(message) {
   chatbox.scrollTop = chatbox.scrollHeight;
 
   handleSendCommands({ usermessege: message });
-
-  console.log(avatarResponse)
 }
 
 function addBotMessage(message) {
@@ -81,6 +79,8 @@ function addBotMessage(message) {
     messageElement.appendChild(pElement);
     chatbox.appendChild(messageElement);
     chatbox.scrollTop = chatbox.scrollHeight;
+
+    selectedCommand = null;
   }
 }
 
