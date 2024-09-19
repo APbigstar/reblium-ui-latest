@@ -1192,7 +1192,7 @@
       style="display: none"
     >
       <div class="modal-content-exit">
-        <h2 class="text-white" style="font-size: 25px">Charged Credits</h2>
+        <h2 class="" style="font-size: 25px">Charged Credits</h2>
         <ul
           class="charged_credit_list mb-4"
           style="list-style-type: disc; text-align: left"
@@ -1828,7 +1828,7 @@
           <button
             class="menu-button"
             id="ChatopenPopup"
-            onclick="handleSendCommands({ saveavatar: parseFloat(document.getElementById('avatarId').textContent) })"
+            onclick="handleSendCommands({ saveavatar: selectedUserAvatarId })"
           >
             <i class="fas fa-save save-ico"></i>Save Avatar
           </button>
@@ -2103,7 +2103,6 @@
                                   type="checkbox"
                                   name="Female"
                                   class="checkbox_inp"
-                                  checked
                                 />
                                 <span class="checkbox_mark"></span>
                               </label>

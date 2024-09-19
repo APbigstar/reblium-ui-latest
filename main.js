@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function fetchAvatarData(user_info_id) {
     try {
       const response = await fetch(
-        `/.netlify/functions/getUserAvatars?user_info_id=${user_info_id}`
+        `/.netlify/functions/avatar/getUserAvatars?user_info_id=${user_info_id}`
       );
       const data = await response.json();
       return data;
@@ -578,7 +578,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           avatarDiv.classList.add("selected");
 
           // Ensure these updates are not inside a conditional block that could be skipped
-          document.getElementById("avatarId").textContent = selectedAvatar.id;
+          selectedUserAvatarId = selectedAvatar.id
           document.getElementById("avatarName").textContent =
             selectedAvatar.Avatar_Name;
 
@@ -635,12 +635,13 @@ document.addEventListener("DOMContentLoaded", async function () {
   async function deleteAvatar(selectedAvatarId) {
     try {
       const response = await fetch(
-        `/.netlify/functions/deleteAvatar/${selectedAvatarId}`,
+        `/.netlify/functions/avatar/deleteAvatar/${selectedAvatarId}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ userId: globalUserInfoId })
         }
       );
 
@@ -658,7 +659,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Function to add a new avatar name to the database and send a command
   async function addAvatarToDatabase(username, user_info_id) {
     try {
-      const response = await fetch(`/.netlify/functions/addAvatar`, {
+      const response = await fetch(`/.netlify/functions/avatar/addAvatar`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -684,7 +685,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Send the 'saveavatar' command with the newly obtained avatar ID
       handleSendCommands({ saveavatar: data.saveavatar });
 
-      document.getElementById("avatarId").textContent = data.saveavatar;
       selectedUserAvatarId = data.saveavatar;
 
       return true; // Return true to indicate success
@@ -922,6 +922,4 @@ function closeNotification() {
       notification.remove();
     }, 300);
   }
-
-
 }

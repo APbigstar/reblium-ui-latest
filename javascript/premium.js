@@ -42,17 +42,20 @@ async function handlePremiumPay() {
 
   try {
     // Create PaymentIntent on your server
-    const response = await fetch("/.netlify/functions/premium/createSubscription", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        plan_id: planID[selectedPlan][selectedPeriod],
-        userId: globalUserInfoId,
-        userEmail: globalUserEmail,
-      }), // Convert to cents
-    });
+    const response = await fetch(
+      "/.netlify/functions/premium/createSubscription",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan_id: planID[selectedPlan][selectedPeriod],
+          userId: globalUserInfoId,
+          userEmail: globalUserEmail,
+        }), // Convert to cents
+      }
+    );
     const result = await response.json();
 
     if (!result.success) {
@@ -112,6 +115,7 @@ async function handlePremiumPay() {
       setTimeout(async () => {
         await getSelectedSubscription();
         await setCurrentPremium();
+        await updateCreditAmount("premium");
       }, 0);
     } else if (confirmResult.paymentIntent.status === "requires_action") {
       // Handle 3D Secure authentication if needed
@@ -130,7 +134,7 @@ async function setCurrentPremium() {
   const premiumButton = document.getElementById(
     "premium-subscription-start-button"
   );
-  const freePlanButton = document.getElementById('free-plan-button');
+  const freePlanButton = document.getElementById("free-plan-button");
   const currentSelectedPlanShow = document.getElementById(
     "premium-plan-selected"
   );
@@ -147,64 +151,37 @@ async function setCurrentPremium() {
     premiumButton.addEventListener("click", cancelPremiumPriceSection);
     currentSelectedPlanShow.style.display = "block";
     premiumButton.textContent = "Cancel";
-    freePlanButton.style.display = 'none'
+    freePlanButton.style.display = "none";
     tilerElement.textContent = `Reblium: Premium`;
-    premiumPlanType.textContent = "Premium Plan"
-    try {
-      const response = await fetch(
-        "/.netlify/functions/credit/updateUserCreditAmount",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_id: globalUserInfoId,
-            amount: 100,
-            premium: "premium",
-          }),
-        }
-      );
-
-      const res = await response.json();
-
-      if (res.success) {
-        chargedCreditAmount = 0;
-        selectedHair = "";
-        selectedBody = "";
-        await getUserCredits();
-      } else {
-        console.error("Failed to update credit amount:", res.error);
-      }
-    } catch (error) {
-      console.error("Error updating credit amount:", error);
-    }
+    premiumPlanType.textContent = "Premium Plan";
   } else {
     premiumButton.addEventListener("click", () =>
       showPremiumPriceSection("premium")
     );
     currentSelectedPlanShow.style.display = "none";
     premiumButton.textContent = "Start now";
-    freePlanButton.style.display = "block"
+    freePlanButton.style.display = "block";
     tilerElement.textContent = `Reblium: Free`;
     premiumPlanType.textContent = "Free Plan";
-  document.getElementById("plan_created_date_p").textContent = "No Plan";
-
+    document.getElementById("plan_created_date_p").textContent = "No Plan";
   }
 }
 
 async function cancelPremiumPriceSection() {
   try {
-    const response = await fetch("/.netlify/functions/premium/cancelSubscription", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_plan_id: selectedUserPlanId,
-        userId: globalUserInfoId
-      }),
-    });
+    const response = await fetch(
+      "/.netlify/functions/premium/cancelSubscription",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_plan_id: selectedUserPlanId,
+          userId: globalUserInfoId,
+        }),
+      }
+    );
 
     const res = await response.json();
 

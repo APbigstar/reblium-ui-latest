@@ -144,15 +144,23 @@ function setSelectedCreditAmount(amount) {
 
   const creditData = { 12: 100, 30: 250, 60: 500, 96: 800 };
 
-  const creditPriceEle = document.querySelector("div.credit_amount_view_section h2.total-price")
-  const creditAmountEle = document.querySelector("div.credit_amount_view_section span.credit-amount")
-  const subCreditAmountEle = document.querySelector("div.credit_amount_view_section span.sub-credit-amount")
-  const totalCreditAmountEle = document.querySelector("div.credit_amount_view_section span.total-credit-amount")
+  const creditPriceEle = document.querySelector(
+    "div.credit_amount_view_section h2.total-price"
+  );
+  const creditAmountEle = document.querySelector(
+    "div.credit_amount_view_section span.credit-amount"
+  );
+  const subCreditAmountEle = document.querySelector(
+    "div.credit_amount_view_section span.sub-credit-amount"
+  );
+  const totalCreditAmountEle = document.querySelector(
+    "div.credit_amount_view_section span.total-credit-amount"
+  );
 
-  creditPriceEle.textContent = '€'+amount
-  creditAmountEle.textContent = creditData[amount] + ' credits'
-  subCreditAmountEle.textContent = creditData[amount] + ' credits'
-  totalCreditAmountEle.textContent = creditData[amount] + ' credits'
+  creditPriceEle.textContent = "€" + amount;
+  creditAmountEle.textContent = creditData[amount] + " credits";
+  subCreditAmountEle.textContent = creditData[amount] + " credits";
+  totalCreditAmountEle.textContent = creditData[amount] + " credits";
 }
 
 function showSaveAvatarExit() {
@@ -175,7 +183,7 @@ function showSaveAvatarExit() {
     }
   } else {
     handleSendCommands({
-      saveavatar: parseFloat(document.getElementById("avatarId").textContent),
+      saveavatar: parseFloat(selectedUserAvatarId),
     });
   }
   // const totalCreditElement = document.getElementsByClassName('total_credit_element')[0];
@@ -202,23 +210,28 @@ function showBuyCredits() {
     "Please try to buy credits",
     "error"
   );
-  const firstCreditAmountButton =  document.querySelector(`#buyCreditsConfirmation button.credit-button:nth-of-type(1)`);
+  const firstCreditAmountButton = document.querySelector(
+    `#buyCreditsConfirmation button.credit-button:nth-of-type(1)`
+  );
   firstCreditAmountButton.click();
 }
 
-async function updateCreditAmount() {
+async function updateCreditAmount(type = "") {
   try {
-    const response = await fetch("/.netlify/functions/credit/updateUserCreditAmount", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: globalUserInfoId,
-        amount: -chargedCreditAmount,
-        premium: "",
-      }),
-    });
+    const response = await fetch(
+      "/.netlify/functions/credit/updateUserCreditAmount",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: globalUserInfoId,
+          amount: type == "premium" ? 100 : -chargedCreditAmount,
+          premium: type,
+        }),
+      }
+    );
 
     const res = await response.json();
 
@@ -228,7 +241,7 @@ async function updateCreditAmount() {
       selectedBody = "";
       await getUserCredits();
       handleSendCommands({
-        saveavatar: parseFloat(document.getElementById("avatarId").textContent),
+        saveavatar: parseFloat(selectedUserAvatarId),
       });
     } else {
       console.error("Failed to update credit amount:", res.error);

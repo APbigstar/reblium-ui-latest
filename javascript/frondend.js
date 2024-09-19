@@ -14,7 +14,7 @@ const presetAvatars = document.querySelectorAll(".preset-avatar");
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
   // Toggle the 'display' property for dashboard and artist_mode
-  document.getElementById("avatarId").textContent = ""; // Clears the avatar ID display
+  selectedUserAvatarId = '' // Clears the avatar ID display
   document.getElementById("avatarName").textContent = ""; // Clears the avatar ID display
 
   if (dashboard.style.display !== "none") {
@@ -926,13 +926,10 @@ const popup = document.getElementById("popup");
 const closeButton = popup.querySelector(".close-button");
 const confirmButton = popup.querySelector("#confirmButton"); // Get the Confirm button element
 
-// Get the avatarId span element
-const avatarIdSpan = document.getElementById("avatarId");
-
 // Add event listener to the "New Avatar" button
 openPopup.addEventListener("click", function () {
   console.log("Open popup button clicked");
-  if (!avatarIdSpan.textContent.trim()) {
+  if (!selectedUserAvatarId) {
     console.log("Avatar ID is empty. Opening the pop-up.");
     popup.style.display = "block"; // Show the pop-up only if avatarId is empty
   }
@@ -941,7 +938,7 @@ openPopup.addEventListener("click", function () {
 // Add event listener to the "New Avatar" button
 ChatopenPopup.addEventListener("click", function () {
   console.log("Open popup button clicked");
-  if (!avatarIdSpan.textContent.trim()) {
+  if (!selectedUserAvatarId) {
     console.log("Avatar ID is empty. Opening the pop-up.");
     popup.style.display = "block"; // Show the pop-up only if avatarId is empty
   }
