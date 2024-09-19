@@ -548,7 +548,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // Add the event listener for both click and double-click on an avatar
       avatarDiv.addEventListener("click", async () => {
-        console.log("Showing Selected Avatar")
         await waitForVideoLoad(); // Ensures the video or related content is fully loaded
 
         const selectedAvatarId = avatar.id;
@@ -556,8 +555,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const selectedAvatar = avatars.find((av) => av.id === selectedAvatarId);
         if (selectedAvatar) {
           const avatarJsonData = selectedAvatar.Avatar;
-
-          handleSendCommands(avatarJsonData);
 
           const previouslySelectedAvatar =
             document.querySelector(".avatar.selected");

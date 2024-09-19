@@ -455,8 +455,6 @@ function customEncode(input) {
 }
 
 function encryptAvatarId(avatarId) {
-  console.log("Input avatarId:", avatarId);
-
   if (typeof avatarId !== "string") {
     avatarId = String(avatarId);
   }
@@ -470,7 +468,6 @@ function encryptAvatarId(avatarId) {
   }
 
   const result = customEncode(encrypted);
-  console.log("Encrypted result:", result);
   return result;
 }
 
@@ -482,7 +479,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Open popup on share button click
   shareButton.addEventListener("click", function () {
     sharePopup.style.display = "flex";
-    console.log(selectedUserAvatarId);
     shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?avatar=${encryptAvatarId(
       selectedUserAvatarId
     )}`; // Preset or fetch link
