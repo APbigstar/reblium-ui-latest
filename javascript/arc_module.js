@@ -17,7 +17,9 @@ newWebRTC = new WebRTCClient({
     },
   
     applicationResponse: (new_user_connected) => {
-        console.log("response", new_user_connected); // Logging the response
+        if (new_user_connected) {
+            addBotMessage(new_user_connected.split(":")[1].trim());
+        }
     },
   
     sizeContainer: document.getElementById("sizeContainer"),

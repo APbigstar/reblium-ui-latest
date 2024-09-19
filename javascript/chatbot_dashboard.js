@@ -38,9 +38,7 @@ sendButton.addEventListener("click", function () {
 
 userInput.addEventListener("keyup", function (event) {
   if (event.key === "Enter") {
-    const userMessage = userInput.value;
-    addUserMessage(userMessage);
-    userInput.value = "";
+    sendButton.click()
   }
 });
 
@@ -63,23 +61,27 @@ function addUserMessage(message) {
   chatbox.scrollTop = chatbox.scrollHeight;
 
   handleSendCommands({ usermessege: message });
+
+  console.log(avatarResponse)
 }
 
 function addBotMessage(message) {
-  const messageElement = document.createElement("div");
-  messageElement.style.marginBottom = "8px";
-
-  const pElement = document.createElement("p");
-  pElement.style.background = "rgba(0, 0, 0, 0.2)";
-  pElement.style.color = "white";
-  pElement.style.borderRadius = "12px";
-  pElement.style.padding = "8px 16px";
-  pElement.style.display = "inline-block";
-  pElement.innerText = message;
-
-  messageElement.appendChild(pElement);
-  chatbox.appendChild(messageElement);
-  chatbox.scrollTop = chatbox.scrollHeight;
+  if (selectedCommand == "usermessege") {
+    const messageElement = document.createElement("div");
+    messageElement.style.marginBottom = "8px";
+  
+    const pElement = document.createElement("p");
+    pElement.style.background = "rgba(0, 0, 0, 0.2)";
+    pElement.style.color = "white";
+    pElement.style.borderRadius = "12px";
+    pElement.style.padding = "8px 16px";
+    pElement.style.display = "inline-block";
+    pElement.innerText = message;
+  
+    messageElement.appendChild(pElement);
+    chatbox.appendChild(messageElement);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
 }
 
 // Automatically open the chatbox on page load

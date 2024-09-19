@@ -86,7 +86,7 @@ router.post("/confirmCreditPaymentIntent", async (req, res) => {
     res.status(500).json({ success: false, error: "Internal server error" });
   } finally {
     // Close the database connection
-    connection.end();
+    connection.release();
   }
 });
 
@@ -133,7 +133,7 @@ router.post("/createCreditPaymentIntent", async (req, res) => {
     res.status(500).json({ success: false, error: "Internal server error" });
   } finally {
     // Close the database connection
-    connection.end();
+    connection.release();
   }
 });
 
@@ -159,8 +159,6 @@ router.get("/getUserCreditAmount", async (req, res) => {
 
     const [planRows] = await connection.execute(getCurrentUserPlan, [user_id]);
 
-    console.log(planRows);
-
     if (rows.length === 0) {
       res.json({ exists: false });
     } else {
@@ -179,7 +177,7 @@ router.get("/getUserCreditAmount", async (req, res) => {
     console.error("Error executing database query:", error);
     res.status(500).json({ error: "Error processing the request" });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 
@@ -216,12 +214,14 @@ router.post("/updateUserCreditAmount", async (req, res) => {
       if (premium == "") {
         newAmount = currentAmount + amount;
         premuim_value = "free";
-      }
-      if (
+      } else if (
         currentCredits[0].premium_status == "free" &&
         (premium == "premium" || premium == "pro")
       ) {
         newAmount = currentAmount + amount;
+        premuim_value = premium;
+      } else {
+        newAmount = currentAmount;
         premuim_value = premium;
       }
 
@@ -241,7 +241,7 @@ router.post("/updateUserCreditAmount", async (req, res) => {
     console.error("Error executing database query:", error);
     res.status(500).json({ error: "Error processing the request" });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 

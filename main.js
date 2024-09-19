@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         return userData;
       } else {
+        window.location.href = '/'
         throw new Error("Invalid user token");
       }
     } catch (error) {
@@ -138,77 +139,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const urlParams = new URLSearchParams(window.location.search);
   const userToken = urlParams.get("token");
 
-  // Function to fetch user's export credits
-  async function fetchExportCredits(userToken) {
-    const query = new URLSearchParams({ platform: "xsolla" }).toString();
-    const projectId = "218213";
-
-    try {
-      const resp = await fetch(
-        `https://store.xsolla.com/api/v2/project/${projectId}/user/virtual_currency_balance?${query}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
-
-      if (resp.ok) {
-        const data = await resp.json();
-        if (data.items && data.items.length > 0) {
-          const exportCredits = data.items[0].amount;
-          // document.getElementById("exportCredits").textContent = exportCredits; // Display credits in the HTML element
-        }
-      } else {
-        console.error("Failed to fetch export credits data");
-      }
-    } catch (error) {
-      console.error("Error fetching export credits data:", error);
-    }
-  }
-
-  window.fetchExportCredits = fetchExportCredits;
-
-  // Function to consume credits and update the display
-  async function consumeCredits(userToken, sku, quantity) {
-    const query = new URLSearchParams({ platform: "xsolla" }).toString();
-    const projectId = "218213";
-
-    try {
-      const resp = await fetch(
-        `https://store.xsolla.com/api/v2/project/${projectId}/user/inventory/item/consume?${query}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userToken}`,
-          },
-          body: JSON.stringify({
-            sku: sku,
-            quantity: quantity,
-          }),
-        }
-      );
-
-      if (resp.ok) {
-        // Add a delay of 500 milliseconds (adjust as needed)
-        // await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Update the display after consuming
-        await fetchExportCredits(userToken);
-      } else {
-        console.error("Failed to consume credits");
-      }
-    } catch (error) {
-      console.error("Error consuming credits:", error);
-    }
-  }
-
   // Function to handle Export Avatar
   async function exportAvatar() {
     try {
-      await consumeCredits(userToken, "Reb-credit-01", 10); // Adjust SKU and quantity as needed
       console.log("Export Avatar completed");
     } catch (error) {
       console.error("Error exporting avatar:", error);
@@ -218,7 +151,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Function to handle Export Raw BaseMesh
   async function exportRawBaseMesh() {
     try {
-      await consumeCredits(userToken, "Reb-credit-01", 20); // Adjust SKU and quantity as needed
       console.log("Export Raw BaseMesh completed");
     } catch (error) {
       console.error("Error exporting raw base mesh:", error);
@@ -228,7 +160,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Function to handle Export Avatar (only head Mesh)
   async function exportAvatarHead() {
     try {
-      await consumeCredits(userToken, "Reb-credit-01", 5); // Adjust SKU and quantity as needed
       console.log("Export Avatar Head completed");
     } catch (error) {
       console.error("Error exporting avatar head:", error);
@@ -237,7 +168,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   async function generateAvatar() {
     try {
-      await consumeCredits(userToken, "Reb-credit-01", 1); // Adjust SKU and quantity as needed
       console.log("Export Avatar Head completed");
     } catch (error) {
       console.error("Error exporting avatar head:", error);
@@ -256,15 +186,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("randomizeButton")
     .addEventListener("click", generateAvatar);
-
-  // Call the function when the page loads
-  window.addEventListener("load", async () => {
-    try {
-      await fetchExportCredits(userToken);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  });
 
   // // Function to create a new user in the database
   // async function createUser(userId) {

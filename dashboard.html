@@ -85,9 +85,13 @@
     <script>
       let latestLoadAvatarCommand = null;
       let defaultAvatarPrompt = false;
+      let avatarResponse = null;
+      let selectedCommand = null;
 
       let newWebRTC;
       function handleSendCommands(command) {
+        selectedCommand = Object.keys(command)[0];
+
         newWebRTC.emitUIInteraction(command);
 
         // Check if the command includes a loadavatar command and store it
@@ -1755,7 +1759,7 @@
               <div class="input-wrapper">
                 <input
                   id="user-input"
-                  onfocus="clearThis(this)"
+                  onfocus="this.value=''"
                   type="text"
                   placeholder="Type a message..."
                   class="user-input-field"

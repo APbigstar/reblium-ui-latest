@@ -42,37 +42,6 @@ async function fetchGroupsAndCreateDropdown() {
     }
 }
 
-// Function to fetch user's export credits
-async function fetchExportCredits(userToken) {
-    const query = new URLSearchParams({ platform: 'xsolla' }).toString();
-    const projectId = '218213';
-  
-    try {
-      const resp = await fetch(
-        `https://store.xsolla.com/api/v2/project/${projectId}/user/virtual_currency_balance?${query}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${userToken}`
-          }
-        }
-      );
-  
-  
-      if (resp.ok) {
-        const data = await resp.json();
-        if (data.items && data.items.length > 0) {
-          const exportCredits = data.items[0].amount;
-          document.getElementById('exportCredits').textContent = exportCredits; // Display credits in the HTML element
-        }
-      } else {
-        console.error('Failed to fetch export credits data');
-      }
-    } catch (error) {
-      console.error('Error fetching export credits data:', error);
-    }
-  }
-
 // Function to fetch virtual items from the selected group
 async function fetchItemsByGroup(selectedGroup) {
     const projectId = '218213';
@@ -197,7 +166,6 @@ async function purchaseFreeItem(projectId, itemSku, userToken) {
         const data = await response.json();
         console.log('Free item claimed successfully:', data);
         alert('Free item added to your inventory!');
-        fetchUserInventory(userToken); // Optionally refresh inventory
     } catch (error) {
         console.error('Error during claiming free item:', error);
         alert('Failed to claim free item: ' + error.message);
@@ -228,9 +196,6 @@ async function purchaseItemWithCredits(projectId, itemSku, virtualCurrencySku, u
         }
 
         const data = await response.json();
-        fetchUserInventory(userToken);
-        // alert('item added to your inventory!');
-        await window.fetchExportCredits(userToken); 
     } catch (error) {
         console.error('Error during purchase:', error);
         alert('Purchase failed: ' + error.message);
@@ -332,9 +297,3 @@ function displayInventory(data) {
         inventoryContainer.appendChild(emptyMessage);
     }
   }
-
-
-
-
-// Example usage
-fetchUserInventory(userToken);
