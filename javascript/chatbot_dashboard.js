@@ -38,7 +38,7 @@ sendButton.addEventListener("click", function () {
 
 userInput.addEventListener("keyup", function (event) {
   if (event.key === "Enter") {
-    sendButton.click()
+    sendButton.click();
   }
 });
 
@@ -67,7 +67,7 @@ function addBotMessage(message) {
   if (selectedCommand == "usermessege") {
     const messageElement = document.createElement("div");
     messageElement.style.marginBottom = "8px";
-  
+
     const pElement = document.createElement("p");
     pElement.style.background = "rgba(0, 0, 0, 0.2)";
     pElement.style.color = "white";
@@ -75,7 +75,7 @@ function addBotMessage(message) {
     pElement.style.padding = "8px 16px";
     pElement.style.display = "inline-block";
     pElement.innerText = message;
-  
+
     messageElement.appendChild(pElement);
     chatbox.appendChild(messageElement);
     chatbox.scrollTop = chatbox.scrollHeight;
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event handler to start speech recognition
   callButton.addEventListener("click", () => {
-    console.log("Clicked Call Button")
+    console.log("Clicked Call Button");
     recognition.start();
     console.log("Speech recognition started.");
     toggleButtons(); // Show stop button
@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Event handler to stop speech recognition
   stopCallButton.addEventListener("click", () => {
-    console.log("Clicked Stop Button")
+    console.log("Clicked Stop Button");
     recognition.stop();
     console.log("Speech recognition stopped.");
     toggleButtons(); // Show call button
@@ -436,6 +436,44 @@ voiceOptions.forEach((option) => {
   });
 });
 
+function customEncode(input) {
+  let output = "";
+  let bits = 0;
+  let bitsLength = 0;
+  for (let i = 0; i < input.length; i++) {
+    bits = (bits << 8) | input.charCodeAt(i);
+    bitsLength += 8;
+    while (bitsLength >= 6) {
+      bitsLength -= 6;
+      output += CHAR_SET[(bits >> bitsLength) & 63];
+    }
+  }
+  if (bitsLength > 0) {
+    output += CHAR_SET[(bits << (6 - bitsLength)) & 63];
+  }
+  return output;
+}
+
+function encryptAvatarId(avatarId) {
+  console.log("Input avatarId:", avatarId);
+
+  if (typeof avatarId !== "string") {
+    avatarId = String(avatarId);
+  }
+
+  let encrypted = "";
+  for (let i = 0; i < avatarId.length; i++) {
+    const avatarChar = avatarId.charCodeAt(i);
+    const keyChar = ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length);
+    const encryptedChar = avatarChar ^ keyChar;
+    encrypted += String.fromCharCode(encryptedChar);
+  }
+
+  const result = customEncode(encrypted);
+  console.log("Encrypted result:", result);
+  return result;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const shareButton = document.getElementById("shareButton"); // Correct ID
   const sharePopup = document.getElementById("sharePopup"); // Ensure this ID exists
@@ -444,7 +482,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Open popup on share button click
   shareButton.addEventListener("click", function () {
     sharePopup.style.display = "flex";
-    shareLinkInput.value = "https://Reblium.com"; // Preset or fetch link
+    console.log(selectedUserAvatarId);
+    shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?avatar=${encryptAvatarId(
+      selectedUserAvatarId
+    )}`; // Preset or fetch link
   });
 
   // Close popup
@@ -495,22 +536,24 @@ async function getUserPromps(type) {
         `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
       );
       const { success, data } = await response.json();
-      console.log(data)
+      console.log(data);
       if (!success) {
-        if (type == 'prompt') {
+        if (type == "prompt") {
           personaInput.value = "";
           console.log("Not Found User Prompt");
         } else {
-          handleSendCommands({ texttospeech: 'Hi, I am a Rebelium assistant. How can I help you?' });
+          handleSendCommands({
+            texttospeech: "Hi, I am a Rebelium assistant. How can I help you?",
+          });
         }
       } else {
-        if (type == 'prompt') {
+        if (type == "prompt") {
           personaInput.value = data.prompts;
-          welcomeMessage.value = data.welcome_message
+          welcomeMessage.value = data.welcome_message;
         } else {
-          const welcomeMessage = data.welcome_message
+          const welcomeMessage = data.welcome_message;
           setTimeout(() => {
-            console.log('Call Command')
+            console.log("Call Command");
             handleSendCommands({ texttospeech: welcomeMessage });
           }, 1000);
         }
@@ -534,7 +577,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Open the persona popup when the Persona button is clicked
   personaButton.addEventListener("click", function () {
     personaPopup.style.display = "block";
-    getUserPromps('prompt');
+    getUserPromps("prompt");
   });
 
   // Close the persona popup when the close button is clicked

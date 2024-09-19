@@ -119,11 +119,11 @@ router.get('/getUserAvatar/:id', async (req, res) => {
   let connection;
   try {
     connection = await getConnection();
-    const fetchAvatarQuery = 'SELECT data FROM Avatar WHERE id = ?';
+    const fetchAvatarQuery = 'SELECT * FROM Avatar WHERE id = ?';
     const [rows] = await connection.execute(fetchAvatarQuery, [id]);
     
     if (rows.length > 0) {
-      res.json({ avatarData: rows[0].data });
+      res.json({ avatarData: rows[0] });
     } else {
       res.status(404).send('Avatar not found');
     }
