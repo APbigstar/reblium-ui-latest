@@ -4,28 +4,31 @@ const chatbox = document.getElementById("chatbox");
 const chatContainer = document.getElementById("chat-container");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
+const clearChatHistoryBtn = document.getElementById("clear-chat-history-icon");
 const openChatButton = document.getElementById("open-chat");
 const closeChatButton = document.getElementById("close-chat");
-const toggleIcon = document.getElementById("toggle-icon");
+// const toggleIcon = document.getElementById("toggle-icon");
 
-// Function to toggle the chatbox visibility
-function toggleChatbox() {
-  if (chatbox.style.display === "none") {
-    // Show the chatbox if it's currently hidden
-    chatbox.style.display = "block"; // Set display to block to show it
-    chatContainer.classList.remove("chat-collapsed");
-    toggleIcon.textContent = "—"; // Set the toggle icon to indicate collapsing
-  } else {
-    // Hide the chatbox if it's currently shown
-    chatbox.style.display = "none"; // Set display to none to hide it
-    chatContainer.classList.add("chat-collapsed");
-    toggleIcon.textContent = "+"; // Set the toggle icon to indicate expanding
-  }
-}
+// // Function to toggle the chatbox visibility
+// function toggleChatbox() {
+//   if (chatbox.style.display === "none") {
+//     // Show the chatbox if it's currently hidden
+//     chatbox.style.display = "block"; // Set display to block to show it
+//     chatContainer.classList.remove("chat-collapsed");
+//     toggleIcon.textContent = "—"; // Set the toggle icon to indicate collapsing
+//   } else {
+//     // Hide the chatbox if it's currently shown
+//     chatbox.style.display = "none"; // Set display to none to hide it
+//     chatContainer.classList.add("chat-collapsed");
+//     toggleIcon.textContent = "+"; // Set the toggle icon to indicate expanding
+//   }
+// }
 
-chatbox.style.display = "none";
+// closeChatButton.addEventListener("click", toggleChatbox);
 
-closeChatButton.addEventListener("click", toggleChatbox);
+clearChatHistoryBtn.addEventListener('click', () => {
+  chatbox.textContent = ''
+})
 
 // Add an event listener to the send button
 sendButton.addEventListener("click", function () {
@@ -48,12 +51,11 @@ function addUserMessage(message) {
   messageElement.style.textAlign = "right";
 
   const pElement = document.createElement("p");
-  pElement.style.background = "rgba(0, 0, 0, 0.2)";
+  pElement.style.background = "#00cdff";
   pElement.style.color = "white";
   pElement.style.borderRadius = "12px";
   pElement.style.padding = "8px 16px";
   pElement.style.display = "inline-block";
-  pElement.style.border = "white solid 1px";
   pElement.innerText = message;
 
   messageElement.appendChild(pElement);
@@ -83,55 +85,6 @@ function addBotMessage(message) {
     selectedCommand = null;
   }
 }
-
-// Automatically open the chatbox on page load
-toggleChatbox();
-
-// document.addEventListener("DOMContentLoaded", function () {
-//   const modal = document.getElementById("popupModal");
-//   const audioPlayer = document.getElementById("audioPlayer");
-//   modal.style.display = "flex"; // Show modal on page load
-
-//   document.getElementById("closeButton").addEventListener("click", function () {
-//     modal.style.display = "none"; // Hide modal
-//     audioPlayer.muted = false; // Unmute the audio
-//   });
-// });
-
-// Mute button
-let hasEnabledSound = false; // Flag to track if the user has enabled sound
-
-document.addEventListener("DOMContentLoaded", function () {
-  const audioRef = document.getElementById("audioRef");
-  audioRef.muted = true; // Ensure audio is muted initially
-
-  // const soundEnablePopup = document.getElementById("sound-enable-popup");
-  // if (!hasEnabledSound) {
-  //   soundEnablePopup.classList.remove("hidden"); // Show the pop-up on page load
-  // }
-
-  // Add event listener for enabling sound
-  // document
-  //   .getElementById("enable-sound-button")
-  //   .addEventListener("click", function () {
-  //     handleMute();
-  //     hasEnabledSound = true;
-  //     soundEnablePopup.classList.add("hidden");
-  //   });
-});
-window.handleMute = function () {
-  const audioRef = document.getElementById("audioRef");
-  const icon = document.getElementById("muteButton").firstElementChild;
-
-  if (audioRef.muted) {
-    audioRef.play();
-    audioRef.muted = false;
-    icon.className = "fas fa-volume-up";
-    icon.style.color = "";
-    // pElement.style.display = "none";
-    // soundEnablePopup.classList.add("hidden");
-  }
-};
 
 document.addEventListener("DOMContentLoaded", function () {
   var languageOptions = document.querySelectorAll(".language-option");
@@ -358,8 +311,16 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 });
 
+function removeAllPopUps() {
+  let popupElems = document.getElementsByClassName('assitant-popup');
+  for (let item of popupElems) {
+    item.style.display = 'none';
+  }
+}
+
 // This function will show the API pop-up
 document.getElementById("apiButton").addEventListener("click", function () {
+  removeAllPopUps()
   document.getElementById("apiPopup").style.display = "block";
 });
 
@@ -386,6 +347,7 @@ document
 document
   .getElementById("languageButton")
   .addEventListener("click", function () {
+    removeAllPopUps()
     document.getElementById("languagePopup").style.display = "block"; // Show the language popup
   });
 
@@ -417,6 +379,7 @@ languageOptions.forEach((option) => {
 });
 
 document.getElementById("voiceButton").addEventListener("click", function () {
+  removeAllPopUps()
   document.getElementById("voicePopup").style.display = "block";
 });
 
@@ -478,6 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Open popup on share button click
   shareButton.addEventListener("click", function () {
+    removeAllPopUps()
     sharePopup.style.display = "flex";
     shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?avatar=${encryptAvatarId(
       selectedUserAvatarId
@@ -572,6 +536,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Open the persona popup when the Persona button is clicked
   personaButton.addEventListener("click", function () {
+    removeAllPopUps()
     personaPopup.style.display = "block";
     getUserPromps("prompt");
   });

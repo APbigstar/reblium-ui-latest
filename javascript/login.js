@@ -95,13 +95,12 @@ document
 
       if (response.ok) {
         loginMessage.textContent = "Login successful!";
-        loginMessage.className = "mt-4 text-sm text-green-600 text-center";
+        loginMessage.className = "mt-4 text-sm text-blue-starndard text-center";
 
         // Store the token in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user_email", data.email);
 
-        // Redirect to dashboard or home page after successful login
         setTimeout(() => {
           window.location.href = `/dashboard.html?token=${data.token}`;
         }, 1000);

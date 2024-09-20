@@ -38,6 +38,7 @@ body {
 :root {
   --primary-color: #bcbcbc;
   --secondary-color: #00cdff;
+  --secondary-hover-color: hsl(192, 92%, 62%);
   --text-color: #000;
 }
 
@@ -1661,7 +1662,7 @@ p.category-title-top {
 
 /* Change background color on hover */
 .avatar-buttons button:hover {
-  background-color: #007bff;
+  background-color: var(--secondary-color);
 }
 
 /* Style for the individual avatar buttons */
@@ -2243,11 +2244,6 @@ loader::after,
 
 .muteButton,
 .close-chat {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 2rem;
-  width: 2rem;
   cursor: pointer;
 }
 
@@ -2264,7 +2260,7 @@ loader::after,
 .message-text {
   background-color: rgba(0, 0, 0, 0.2);
   color: white;
-  border: 1px solid; /* Tailwind class 'border' assumes a default color, usually border-gray-200, you might want to set a specific border color */
+  border: 1px solid var(--secondary-color); /* Tailwind class 'border' assumes a default color, usually border-gray-200, you might want to set a specific border color */
   border-radius: 0.5rem; /* 'rounded-lg' in Tailwind */
   padding: 0.5rem 1rem; /* 'py-2 px-4' in Tailwind */
   display: inline-block; /* 'inline-block' in Tailwind */
@@ -2731,7 +2727,7 @@ loader::after,
 
 .apiPopup form {
   height: auto; /* Adjusted height for smaller form */
-  width: 300px;
+  width: 500px;
   background-color: rgba(0, 0, 0, 0.8);
   position: relative;
   border-radius: 10px;
@@ -2751,7 +2747,7 @@ loader::after,
 
 .apiPopup form input {
   height: 50px;
-  width: calc(100% - 20px);
+  width: 100%;
   background-color: rgba(255, 255, 255, 0.128);
   border-radius: 3px;
   padding: 0 10px;
@@ -2788,7 +2784,6 @@ loader::after,
 }
 
 .dhs-popup form {
-  height: 260px;
   width: 300px;
   background-color: rgba(0, 0, 0, 0.8);
   position: relative;
@@ -2910,12 +2905,33 @@ loader::after,
   object-fit: cover; /* Cover the area completely, allowing for cropping */
 }
 
+.second-button-style {
+  background: none;
+  border: 1px solid var(--secondary-color);
+  color: black;
+}
+
+.focus\:border-blue-500:focus {
+  border-color: var(--secondary-hover-color) !important;
+}
+
+.hover\:text-blue-700:hover {
+  color: var(--secondary-hover-color) !important;
+}
+
 .bg-blue-starndard {
   background-color: var(--secondary-color);
 }
 
+.bg-blue-starndard:hover {
+  background-color: var(--secondary-hover-color);
+}
+
 .text-blue-starndard {
   color: var(--secondary-color);
+}
+.text-blue-starndard:hover {
+  color: var(--secondary-hover-color);
 }
 
 .selected-credit {

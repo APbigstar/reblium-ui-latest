@@ -124,7 +124,7 @@
       }
       #signUpCancel {
         background: unset;
-        border: 1px solid white;
+        border: 1px solid #00cdff;
       }
     </style>
 
@@ -322,19 +322,19 @@
                 <h2 class="text-4xl font-bold mb-12">CREATE YOUR ACCOUNT</h2>
                 <ul class="space-y-4 text-lg">
                   <li class="flex items-center">
-                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    <i class="fas fa-check text-blue-starndard mr-4"></i>
                     Generate your avatar using AI
                   </li>
                   <li class="flex items-center">
-                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    <i class="fas fa-check text-blue-starndard mr-4"></i>
                     Endless Personalisation
                   </li>
                   <li class="flex items-center">
-                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    <i class="fas fa-check text-blue-starndard mr-4"></i>
                     Connect to your own ChatGPT
                   </li>
                   <li class="flex items-center">
-                    <i class="fas fa-check text-blue-400 mr-4"></i>
+                    <i class="fas fa-check text-blue-starndard mr-4"></i>
                     Share with your network
                   </li>
                 </ul>
@@ -412,7 +412,7 @@
                 </div>
                 <button
                   type="submit"
-                  class="w-full py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                  class="w-full py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-blue-starndard"
                 >
                   Sign Up
                 </button>
@@ -424,7 +424,7 @@
               </p>
               <p class="mt-4 text-sm text-gray-600">
                 Already have an account?
-                <a href="/" class="text-blue-600 hover:text-blue-500">Log in</a>
+                <a href="/" class="text-blue-starndard">Log in</a>
               </p>
             </div>
 
@@ -629,25 +629,36 @@
       </form>
     </div>
 
-    <!-- Persona Pop-up -->
     <div id="personaPopup" class="personaPopup" style="display: none">
-      <form id="personaForm">
+      <form class="personaForm">
         <span
           id="personaClose"
           class="close-button"
           style="position: absolute; top: 10px; right: 20px; cursor: pointer"
           >&times;</span
         >
-        <h3>Enter Your Prompt</h3>
-        <p>
-          To save the prompt you need to click on the save button on the bottom
-          of the screen
+        <h3 class="font-bold text-3xl mb-4">Chat Setting</h3>
+        <p class="mb-4">
+          When creating the avatar, you need to save avatar first before saving
+          the welcome message and prompt.
         </p>
-        <textarea
-          id="personaInput"
-          placeholder="Type your persona here"
-        ></textarea>
-        <button type="button" id="personaConfirmButton">Confirm</button>
+        <div class="welcome-section flex flex-col items-start w-full mb-3">
+          <label for="welcomeMessage">Enter your welcome message</label>
+          <input
+            id="welcomeMessage"
+            placeholder="Type your welcome message here"
+          />
+        </div>
+        <div class="prompt-section flex flex-col items-start w-full">
+          <label for="personaInput">Enter your prompt</label>
+          <textarea
+            id="personaInput"
+            placeholder="Type your persona here"
+            rows="15"
+            cols="80"
+          ></textarea>
+        </div>
+        <button type="button" id="personaConfirmButton">Save</button>
       </form>
     </div>
 
@@ -694,7 +705,7 @@
 
         <div id="buttonsContainer" class="avatar-menu">
           <button id="personaButton" class="transparent-button-active">
-            Prompt
+            Chat Setting
           </button>
           <button id="apiButton" class="transparent-button-active">
             ChatGPT Key
@@ -5456,6 +5467,13 @@
                         </div>
                         <div class="image-cell" onclick="toggleActive(this)">
                           <img
+                            src="src/Ears/Icon_Afro_04_Ears.PNG"
+                            onclick="handleSendCommands({ assetname : 'Afro_04_Ears' })"
+                            alt="Latin_04_Ears"
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
                             src="src/Ears/Icon_Ear_Latin_05.png"
                             onclick="handleSendCommands({ assetname : 'Latin_05_Ears' })"
                             alt="Latin_05_Ears"
@@ -5495,6 +5513,20 @@
                           <img
                             src="src/Ears/Icon_Asian_11_Ears.png"
                             onclick="handleSendCommands({ assetname : 'Asian_11_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Icon_Asian_12_Ears.png"
+                            onclick="handleSendCommands({ assetname : 'Afro_12_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Icon_Afro_11_Ears.PNG"
+                            onclick="handleSendCommands({ assetname : 'Afro_11_Ears' })"
                             alt=""
                           />
                         </div>
@@ -5690,6 +5722,69 @@
                           <img
                             src="src/Ears/icon_Latin_09_Ears.png"
                             onclick="handleSendCommands({ assetname : 'Latin_09_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Amfibian_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Amfibian_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Dog_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Dog_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Goat_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Goat_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/HighElf_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'HighElf_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Mermaid_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Mermaid_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Ox_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Ox_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Pig_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Pig_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Rat_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Rat_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Tiger_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Tiger_Ears' })"
                             alt=""
                           />
                         </div>
@@ -7993,14 +8088,28 @@
                   <div class="content-container" style="display: block">
                     <div class="fullbody-container">
                       <div class="image-row">
+                        
                         <div
                           class="image-cell"
-                          data-gender="female"
+                          data-gender="male"
                           onclick="toggleActive(this)"
                         >
                           <img
-                            src="src/Outfits/Swimwear.PNG"
-                            onclick="setSelectedBody('SwimweareFemale')"
+                            src="src/Outfits/Icon_Male_Outfit_06.PNG"
+                            onclick="setSelectedBody('CyberMale')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+
+                        <div
+                          class="image-cell"
+                          data-gender="male"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Icon_Armor.PNG"
+                            onclick="setSelectedBody('M_Armor_01')"
                             alt=""
                           />
                           <p>3</p>
@@ -8047,8 +8156,8 @@
                           onclick="toggleActive(this)"
                         >
                           <img
-                            src="src/Outfits/Icon_CasualFemale01.png"
-                            onclick="setSelectedBody('CasualFemale01')"
+                            src="src/Outfits/F_MS_20SS_D004_Icon.PNG"
+                            onclick="setSelectedBody('F_MS_20SS_D004')"
                             alt=""
                           />
                           <p>3</p>
@@ -8059,21 +8168,8 @@
                           onclick="toggleActive(this)"
                         >
                           <img
-                            src="src/Outfits/Icon_CasualFemale02.png"
-                            onclick="setSelectedBody('CasualFemale02')"
-                            alt=""
-                          />
-                          <p>3</p>
-                        </div>
-
-                        <div
-                          class="image-cell"
-                          data-gender="female"
-                          onclick="toggleActive(this)"
-                        >
-                          <img
-                            src="src/Outfits/Icon_Casualfemale03.png"
-                            onclick="setSelectedBody('CasualFemale03')"
+                            src="src/Outfits/Icon_Alice.PNG"
+                            onclick="setSelectedBody('CyberMale')"
                             alt=""
                           />
                           <p>3</p>
@@ -8084,8 +8180,236 @@
                           onclick="toggleActive(this)"
                         >
                           <img
-                            src="src/Outfits/Layer_6.PNG"
-                            onclick="setSelectedBody('CasualFemale04')"
+                            src="src/Outfits/F_MS_20SS_D002_Icon.PNG"
+                            onclick="setSelectedBody('F_MS_20SS_D002')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_MS_20SS_D003_Icon.PNG"
+                            onclick="setSelectedBody('F_MS_20SS_D003')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_MS_20SS_B001_Icon.PNG"
+                            onclick="setSelectedBody('F_MS_20SS_B001')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_MS_20SS_D001_Icon.PNG"
+                            onclick="setSelectedBody('F_MS_20SS_D001')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_MIS_20SS_D006_Icon.PNG"
+                            onclick="setSelectedBody('F_MIS_20SS_D006')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_MS_19FW_B001_Icon.PNG"
+                            onclick="setSelectedBody('F_MS_19FW_B001')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_KOC_20SS_D004_Icon.PNG"
+                            onclick="setSelectedBody('F_KOC_20SS_D004')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_MIS_20SS_D002_Icon.PNG"
+                            onclick="setSelectedBody('F_MIS_20SS_D002')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_DIO_20SS_J001_Icon.PNG"
+                            onclick="setSelectedBody('F_DIO_20SS_J001')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_KOC_20SS_D003_Icon.PNG"
+                            onclick="setSelectedBody('F_KOC_20SS_D003')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_CLO_20SS_J001_Icon.PNG"
+                            onclick="setSelectedBody('F_CLO_20SS_J001')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_CLO_20SS_D005_Icon.PNG"
+                            onclick="setSelectedBody('F_CLO_20SS_D005')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_CLO_20SS_D006_Icon.PNG"
+                            onclick="setSelectedBody('F_CLO_20SS_D006')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_CLO_20SS_D003_Icon.PNG"
+                            onclick="setSelectedBody('F_CLO_20SS_D003')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_CLO_20SS_D004_Icon.PNG"
+                            onclick="setSelectedBody('F_CLO_20SS_D004')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_AR_20SS_D001_Icon.PNG"
+                            onclick="setSelectedBody('F_AR_20SS_D001')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/F_CLO_20SS_D002_Icon.PNG"
+                            onclick="setSelectedBody('F_CLO_20SS_D002')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="male"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/ConstructionWorker_Outfit_Male_Icon.PNG"
+                            onclick="setSelectedBody('ConstructionWorker_Outfit_Male')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/ConstructionWorker_Outfit_Icon.PNG"
+                            onclick="setSelectedBody('ConstructionWorker_Outfit')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Zen_Outfit_Icon.PNG"
+                            onclick="setSelectedBody('Zen_Outfit')"
                             alt=""
                           />
                           <p>3</p>
@@ -8129,6 +8453,102 @@
                         </div>
                         <div
                           class="image-cell"
+                          data-gender="male"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Police_Outfit_Male_Icon.PNG"
+                            onclick="setSelectedBody('Police_Outfit_Male')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Police_Outfit_Icon.PNG"
+                            onclick="setSelectedBody('Police_Outfit')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Paramedic_Outfit_Icon.PNG"
+                            onclick="setSelectedBody('Paramedic_Outfit')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="male"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Paramedic_Outfit_Male_Icon.PNG"
+                            onclick="setSelectedBody('Paramedic_Outfit_Male')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Medic_Outfit_Icon.PNG"
+                            onclick="setSelectedBody('Medic_Outfit')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="male"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Medic_Outfit_Male_Icon.PNG"
+                            onclick="setSelectedBody('Medic_Outfit_Male')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Max_Outfit_Icon.PNG"
+                            onclick="setSelectedBody('Max_Outfit')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="male"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Max_Outfit_Male_Icon.PNG"
+                            onclick="setSelectedBody('Max_Outfit_Male')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
                           data-gender="female"
                           onclick="toggleActive(this)"
                         >
@@ -8147,31 +8567,6 @@
                           <img
                             src="src/Outfits/Layer_1.PNG"
                             onclick="setSelectedBody('CyberFemale')"
-                            alt=""
-                          />
-                          <p>3</p>
-                        </div>
-                        <div
-                          class="image-cell"
-                          data-gender="male"
-                          onclick="toggleActive(this)"
-                        >
-                          <img
-                            src="src/Outfits/Icon_Male_Outfit_06.PNG"
-                            onclick="setSelectedBody('CyberMale')"
-                            alt=""
-                          />
-                          <p>3</p>
-                        </div>
-
-                        <div
-                          class="image-cell"
-                          data-gender="male"
-                          onclick="toggleActive(this)"
-                        >
-                          <img
-                            src="src/Outfits/Icon_Armor.PNG"
-                            onclick="setSelectedBody('M_Armor_01')"
                             alt=""
                           />
                           <p>3</p>
@@ -8212,7 +8607,6 @@
                           />
                           <p>3</p>
                         </div>
-
                         <div
                           class="image-cell"
                           data-gender="female"
@@ -8235,7 +8629,80 @@
                             onclick="setSelectedBody('Office_Outfit_01')"
                             alt=""
                           />
+                          <p>3</p>
                         </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Swimwear.PNG"
+                            onclick="setSelectedBody('SwimweareFemale')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Icon_CasualFemale01.png"
+                            onclick="setSelectedBody('CasualFemale01')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Icon_CasualFemale02.png"
+                            onclick="setSelectedBody('CasualFemale02')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Icon_Casualfemale03.png"
+                            onclick="setSelectedBody('CasualFemale03')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Layer_6.PNG"
+                            onclick="setSelectedBody('CasualFemale04')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <!-- <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
+                            src="src/Outfits/Icon_Erasmus_Outfit.PNG"
+                            onclick="setSelectedBody('Erasmus_Robe')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div> -->
                         <div
                           class="image-cell"
                           data-gender="female"
@@ -9502,6 +9969,7 @@
 
         // Show pop-up on button click
         uploadButton.addEventListener("click", () => {
+          removeAllPopUps()
           dhsPopup.style.display = "flex";
         });
 

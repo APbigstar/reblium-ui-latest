@@ -17,6 +17,7 @@ newWebRTC = new WebRTCClient({
     },
   
     applicationResponse: (new_user_connected) => {
+        console.log("Assistant Reply:", new_user_connected)
         if (new_user_connected) {
             addBotMessage(new_user_connected.split(":")[1].trim());
         }

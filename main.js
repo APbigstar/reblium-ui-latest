@@ -57,12 +57,6 @@ function handleCreateAvatarMode() {
   toggleDashboardAndArtistMode(true);
   updateDisplayState('design');
   createMode = true;
-  const introPopup = document.getElementById('introPopup');
-  if (selectedSubscription) {
-    introPopup.style.display = 'none'
-  } else {
-    introPopup.style.display = 'flex'
-  }
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -186,30 +180,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("randomizeButton")
     .addEventListener("click", generateAvatar);
-
-  // // Function to create a new user in the database
-  // async function createUser(userId) {
-  //   try {
-  //     const response = await fetch(`/.netlify/functions/addUser`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ user_id: userId }),
-  //     });
-
-  //     if (!response.ok) {
-  //       const errorMessage = await response.text();
-  //       throw new Error("Error creating new user: " + errorMessage);
-  //     }
-
-  //     const data = await response.json();
-  //     return data.user_info_id;
-  //   } catch (error) {
-  //     console.error("Error creating new user:", error);
-  //     throw error;
-  //   }
-  // }
 
   // Refactor Fetching and Displaying Avatars:
   async function updateAvatarSection(user_info_id) {
@@ -431,11 +401,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         updateDisplayState("design");
         createMode = false;
         selectedUserAvatarId = avatar.id;
-        console.log(selectedSubscription, createMode)
-        const intropopup = document.getElementById("introPopup");
-        if (selectedSubscription && !createMode) {
-          intropopup.style.display = 'none'
-        }
       });
 
       const deleteButton = document.createElement("button");

@@ -1316,7 +1316,7 @@
     />
 
     <!-- API Key Pop-up -->
-    <div id="apiPopup" class="apiPopup" style="display: none">
+    <div id="apiPopup" class="apiPopup assitant-popup" style="display: none">
       <form id="apiKeyForm">
         <span id="apiClose" class="close-button">&times;</span>
         <h3>Enter Your ChatGPT Key</h3>
@@ -1332,7 +1332,7 @@
     </div>
 
     <!-- Language Selection Pop-up -->
-    <div id="languagePopup" class="languagePopup" style="display: none">
+    <div id="languagePopup" class="languagePopup assitant-popup" style="display: none">
       <form id="languageForm">
         <span id="languageClose" class="close-button">&times;</span>
         <h3>Select a Language</h3>
@@ -1414,7 +1414,7 @@
     </div>
 
     <!-- Voice Settings Pop-up -->
-    <div id="voicePopup" class="voicePopup" style="display: none">
+    <div id="voicePopup" class="voicePopup assitant-popup" style="display: none">
       <form id="voiceForm">
         <span id="voiceClose" class="close-button">&times;</span>
         <h3>Choose a Voice</h3>
@@ -1428,7 +1428,7 @@
     </div>
 
     <!-- Share Pop-up -->
-    <div id="sharePopup" class="sharePopup" style="display: none">
+    <div id="sharePopup" class="sharePopup assitant-popup" style="display: none">
       <form id="shareForm">
         <span id="shareClose" class="close-button">&times;</span>
         <h3>Publish</h3>
@@ -1446,7 +1446,7 @@
     </div>
 
     <!-- Persona Pop-up -->
-    <div id="personaPopup" class="personaPopup" style="display: none">
+    <div id="personaPopup" class="personaPopup assitant-popup" style="display: none">
       <form class="personaForm">
         <span
           id="personaClose"
@@ -1480,7 +1480,7 @@
     </div>
 
     <!-- Pop-up for DHS file upload -->
-    <div id="dhsPopup" class="dhs-popup" style="display: none">
+    <div id="dhsPopup" class="dhs-popup assitant-popup" style="display: none">
       <form id="dhsForm">
         <span id="dhsClose" class="dhs-close-button">&times;</span>
         <h3>Upload Your DHS File</h3>
@@ -1730,7 +1730,7 @@
         </div>
 
         <div id="chat-container" class="chat-container">
-          <div id="chat-header" class="chat-header">
+          <div id="chat-header" class="chat-header pr-4">
             <div
               id="muteButton"
               class="muteButton"
@@ -1740,15 +1740,16 @@
               <i class="fas fa-volume-mute" style="color: #ef4444"></i>
             </div>
             <div>
-              <div id="close-chat" class="close-chat">
-                <span id="toggle-icon" style="color: black">+</span>
+              <div id="close-chat" class="close-chat flex items-center justify-center gap-3">
+                <i id="clear-chat-history-icon" class="fa fa-trash" aria-hidden="true"></i>
+                <!-- <span id="toggle-icon" style="color: black">+</span> -->
                 <!-- Assuming Font Awesome icons -->
               </div>
             </div>
           </div>
           <div
             id="chatbox"
-            class="chat-content"
+            class="chat-content pr-4"
             tyle="height: calc(100vh - 50vh);"
           >
             <div class="message-container">
@@ -1899,55 +1900,6 @@
           >
             Background
           </button>
-        </div>
-        <div id="introPopup" class="popup-container" style="display: flex">
-          <div class="popup-content">
-            <h2 class="text-center" style="font-size: 2.8rem;">Welcome to Reblium Cloud!</h2>
-            <br />
-            <p>
-              Unlock the ultimate Avatar Creation experience with our
-              cutting-edge tools, designed to bring your AI assistant to life
-              with real-time 3D avatars.
-            </p>
-            <br />
-            <p>Here's how to get started:</p>
-            <ul>
-              <li>
-                Create Your Avatar: Generate a unique 3D avatar in seconds and
-                kickstart your journey.
-              </li>
-              <li>
-                Define Your Persona: Use simple prompts to shape and customize
-                your avatar's personality.
-              </li>
-              <li>
-                Test It Out: Seamlessly switch to conversation mode & design
-                mode and interact with your creation.
-              </li>
-              <li>
-                Save your masterpiece—save and share it with your friends in the
-                future (not working atm).
-              </li>
-            </ul>
-            <br />
-            <p>
-              Note: This is a beta version, and some features might change in
-              the final release.
-            </p>
-            <br />
-            <p>Current limitations:</p>
-            <ul>
-              <li>Background saving not working.</li>
-              <li>Changing language overwrites prompt.</li>
-              <li>Sharing links not working atm.</li>
-            </ul>
-            <br />
-            <br />
-            <br />
-            <div style="text-align: center">
-              <button class="menu-button" id="introcontinue" style="font-size: 1.8rem;">Proceed</button>
-            </div>
-          </div>
         </div>
 
         <div id="downloadConfirmation" class="modal-exit" style="display: none">
@@ -2106,6 +2058,7 @@
                                   type="checkbox"
                                   name="Female"
                                   class="checkbox_inp"
+                                  checked
                                 />
                                 <span class="checkbox_mark"></span>
                               </label>
@@ -6360,6 +6313,13 @@
                         </div>
                         <div class="image-cell" onclick="toggleActive(this)">
                           <img
+                            src="src/Ears/Icon_Afro_04_Ears.PNG"
+                            onclick="handleSendCommands({ assetname : 'Afro_04_Ears' })"
+                            alt="Latin_04_Ears"
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
                             src="src/Ears/Icon_Ear_Latin_05.png"
                             onclick="handleSendCommands({ assetname : 'Latin_05_Ears' })"
                             alt="Latin_05_Ears"
@@ -6399,6 +6359,20 @@
                           <img
                             src="src/Ears/Icon_Asian_11_Ears.png"
                             onclick="handleSendCommands({ assetname : 'Asian_11_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Icon_Asian_12_Ears.png"
+                            onclick="handleSendCommands({ assetname : 'Afro_12_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Icon_Afro_11_Ears.PNG"
+                            onclick="handleSendCommands({ assetname : 'Afro_11_Ears' })"
                             alt=""
                           />
                         </div>
@@ -6594,6 +6568,69 @@
                           <img
                             src="src/Ears/icon_Latin_09_Ears.png"
                             onclick="handleSendCommands({ assetname : 'Latin_09_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Amfibian_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Amfibian_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Dog_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Dog_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Goat_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Goat_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/HighElf_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'HighElf_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Mermaid_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Mermaid_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Ox_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Ox_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Pig_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Pig_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Rat_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Rat_Ears' })"
+                            alt=""
+                          />
+                        </div>
+                        <div class="image-cell" onclick="toggleActive(this)">
+                          <img
+                            src="src/Ears/Tiger_Icon.PNG"
+                            onclick="handleSendCommands({ assetname : 'Tiger_Ears' })"
                             alt=""
                           />
                         </div>
@@ -8977,6 +9014,18 @@
                           onclick="toggleActive(this)"
                         >
                           <img
+                            src="src/Outfits/Icon_Alice.PNG"
+                            onclick="setSelectedBody('CyberMale')"
+                            alt=""
+                          />
+                          <p>3</p>
+                        </div>
+                        <div
+                          class="image-cell"
+                          data-gender="female"
+                          onclick="toggleActive(this)"
+                        >
+                          <img
                             src="src/Outfits/F_MS_20SS_D002_Icon.PNG"
                             onclick="setSelectedBody('F_MS_20SS_D002')"
                             alt=""
@@ -9189,7 +9238,7 @@
                         </div>
                         <div
                           class="image-cell"
-                          data-gender="male"
+                          data-gender="female"
                           onclick="toggleActive(this)"
                         >
                           <img
@@ -9262,7 +9311,7 @@
                         </div>
                         <div
                           class="image-cell"
-                          data-gender="male"
+                          data-gender="female"
                           onclick="toggleActive(this)"
                         >
                           <img
@@ -9274,7 +9323,7 @@
                         </div>
                         <div
                           class="image-cell"
-                          data-gender="male"
+                          data-gender="female"
                           onclick="toggleActive(this)"
                         >
                           <img
@@ -9298,7 +9347,7 @@
                         </div>
                         <div
                           class="image-cell"
-                          data-gender="male"
+                          data-gender="female"
                           onclick="toggleActive(this)"
                         >
                           <img
@@ -9322,7 +9371,7 @@
                         </div>
                         <div
                           class="image-cell"
-                          data-gender="male"
+                          data-gender="female"
                           onclick="toggleActive(this)"
                         >
                           <img
@@ -9363,18 +9412,6 @@
                         >
                           <img
                             src="src/Outfits/Layer_1.PNG"
-                            onclick="setSelectedBody('CyberFemale')"
-                            alt=""
-                          />
-                          <p>3</p>
-                        </div>
-                        <div
-                          class="image-cell"
-                          data-gender="female"
-                          onclick="toggleActive(this)"
-                        >
-                          <img
-                            src="src/Outfits/Icon_Thobe.PNG"
                             onclick="setSelectedBody('CyberFemale')"
                             alt=""
                           />
@@ -10734,6 +10771,7 @@
 
         // Show pop-up on button click
         uploadButton.addEventListener("click", () => {
+          removeAllPopUps()
           dhsPopup.style.display = "flex";
         });
 

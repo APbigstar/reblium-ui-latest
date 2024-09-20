@@ -661,15 +661,3 @@ function randomizeJaw() {
 
     console.log("Randomized jaw command sent:", selectedJaw); // Optional: log the asset name
 }
-
-
-
-
-document.addEventListener('DOMContentLoaded', function() {
-    const randomizeButton = document.getElementById('introcontinue');
-    const popupContainer = document.querySelector('.popup-container');
-
-    randomizeButton.addEventListener('click', function() {
-        popupContainer.style.display = 'none'; // This will hide the popup
-    });
-});

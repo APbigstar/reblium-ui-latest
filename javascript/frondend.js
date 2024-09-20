@@ -11,10 +11,13 @@ const sizeContainer = document.getElementById("sizeContainer");
 // Get all elements with the class name 'preset-avatar'
 const presetAvatars = document.querySelectorAll(".preset-avatar");
 
+const icon = document.getElementById("muteButton").firstElementChild;
+const audioRef = document.getElementById("audioRef");
+
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
   // Toggle the 'display' property for dashboard and artist_mode
-  selectedUserAvatarId = '' // Clears the avatar ID display
+  selectedUserAvatarId = ""; // Clears the avatar ID display
   document.getElementById("avatarName").textContent = ""; // Clears the avatar ID display
 
   if (dashboard.style.display !== "none") {
@@ -192,6 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Show artist mode automatically after the dashboard
   showArtistMode();
+  intiAudioRefProps();
 });
 
 // Function to handle the display toggle and button state
@@ -253,8 +257,29 @@ function updateDisplayState(buttonType) {
     chatbot.style.display = "none";
     artistMode.focus(); // Focus the artist_mode div
     console.log(`Active: ${artistMode.id}`);
+    handleSendCommands({ cameraswitch: "Head" });
   }
   handleMute();
+}
+
+function initAudioRefProps() {
+  audioRef.muted = false;
+  audioRef.play(); // Start playing the audio
+  icon.className = "fas fa-volume-up"; // Set initial icon
+}
+
+function handleMute() {
+  if (audioRef.muted) {
+    audioRef.muted = false; // Unmute audio
+    audioRef.play(); // Play the audio if it was muted
+    icon.className = "fas fa-volume-up"; // Update icon to volume up
+    icon.classList.remove("text-red-500", "line-through"); // Remove muted styles
+  } else {
+    audioRef.muted = true; // Mute audio
+    audioRef.pause(); // Pause the audio
+    icon.className = "fas fa-volume-mute"; // Update icon to mute
+    icon.classList.add("text-red-500", "line-through"); // Add muted styles
+  }
 }
 
 // Event listeners for buttons
@@ -262,7 +287,7 @@ document
   .getElementById("conversationButton")
   .addEventListener("click", function () {
     updateDisplayState("conversation");
-    getUserPromps('prompt');
+    getUserPromps("prompt");
   });
 
 document.querySelectorAll(".bottom-image img").forEach((img) => {
@@ -277,7 +302,7 @@ document.getElementById("designButton").addEventListener("click", function () {
 
 document.getElementById("previewButton").addEventListener("click", function () {
   updateDisplayState("preview");
-  getUserPromps('welcome_message');
+  getUserPromps("welcome_message");
 });
 
 // Event listener to handle the click on the menuBar and toggle the sideMenu
