@@ -180,6 +180,7 @@ function showSaveAvatarExit() {
       bodyCreditElement.style.display = "list-item";
     }
   } else {
+    console.log('asdsfadf')
     handleSendCommands({
       saveavatar: parseFloat(selectedUserAvatarId),
     });

@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Show artist mode automatically after the dashboard
   showArtistMode();
-  intiAudioRefProps();
+  initAudioRefProps();
 });
 
 // Function to handle the display toggle and button state
@@ -288,6 +288,7 @@ document
   .addEventListener("click", function () {
     updateDisplayState("conversation");
     getUserPromps("prompt");
+    initAudioRefProps();
   });
 
 document.querySelectorAll(".bottom-image img").forEach((img) => {
@@ -303,6 +304,7 @@ document.getElementById("designButton").addEventListener("click", function () {
 document.getElementById("previewButton").addEventListener("click", function () {
   updateDisplayState("preview");
   getUserPromps("welcome_message");
+  initAudioRefProps();
 });
 
 // Event listener to handle the click on the menuBar and toggle the sideMenu

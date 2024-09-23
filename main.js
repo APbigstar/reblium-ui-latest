@@ -3,7 +3,7 @@ let globalUserEmail = localStorage.getItem("user_email");
 let userCreditAmount = 0;
 let selectedSubscription = null;
 let selectedUserPlanId = null;
-let selectedUserAvatarId = null;
+let selectedUserAvatarId = '';
 let createMode = false;
 
 async function getUserCredits() {
