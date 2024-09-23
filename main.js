@@ -3,8 +3,105 @@ let globalUserEmail = localStorage.getItem("user_email");
 let userCreditAmount = 0;
 let selectedSubscription = null;
 let selectedUserPlanId = null;
-let selectedUserAvatarId = '';
+let selectedUserAvatarId = "";
 let createMode = false;
+
+let newWebRTC;
+let selectedCommand = null;
+let latestLoadAvatarCommand = null;
+let defaultAvatarPrompt = false;
+let avatarResponse = null;
+
+function handleSendCommands(command) {
+  selectedCommand = Object.keys(command)[0];
+  newWebRTC.emitUIInteraction(command);
+  if (command.resetavatar) {
+    latestLoadAvatarCommand = command.resetavatar;
+  }
+  console.log("Sending loadavatar command:", command.resetavatars);
+}
+
+function updateSliderValue() {
+  const slider = document.getElementById("mySlider");
+
+  const sliderValue = parseFloat(slider.value);
+
+  // Call the handleSendCommands function with the command object
+  handleSendCommands(command);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("save-exit").addEventListener("click", function () {
+    const exitPopup = document.getElementById("exitConfirmation");
+    exitPopup.style.display = "none";
+  });
+});
+
+// Async function to load and send avatar data
+async function loadAndSendAvatarData(jsonFilePath) {
+  await waitForVideoLoad(); // Wait for video to load
+
+  // Use the fetch API to load the JSON file
+  try {
+    const response = await fetch(jsonFilePath);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const jsonData = await response.json(); // Parse the JSON response
+
+    // Call your handleSendCommands function with the JSON data
+    handleSendCommands({ resetavatar: JSON.stringify(jsonData) });
+    // handleSendCommands({ cameraswitch: 'Head' });
+
+    // Extracting the persona data from the JSON file
+    const personaInfo = jsonData["Personas"];
+
+    // Display persona data in popup input
+    if (personaInfo) {
+      const personaInput = document.getElementById("personaInput");
+      personaInput.value = personaInfo; // Update the input field with the persona description
+    }
+
+    defaultAvatarPrompt = true;
+  } catch (error) {
+    console.error("Error loading JSON:", error);
+  }
+}
+
+async function loadAndProcessJsonData(filePath) {
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${filePath}`);
+    }
+    const jsonData = await response.json();
+    // Here you can add more processing logic as needed
+  } catch (error) {
+    console.error("Error loading JSON data:", error);
+  }
+}
+
+// Function to handle the reset button click
+function handleResetButtonClick() {
+  if (latestLoadAvatarCommand) {
+    // Send the latest loadavatar command
+    handleSendCommands({ resetavatar: latestLoadAvatarCommand });
+    console.log(
+      "Reset button clicked with the latest loadavatar command:",
+      latestLoadAvatarCommand
+    );
+  } else {
+    console.log("No loadavatar command available to reset.");
+  }
+}
+
+// Event listener for the "reset" button
+document.addEventListener("DOMContentLoaded", function () {
+  document
+    .getElementById("reset")
+    .addEventListener("click", handleResetButtonClick);
+});
+
 
 async function getUserCredits() {
   const checkUserCreditAmount = await fetch(
@@ -55,7 +152,7 @@ async function getSelectedSubscription() {
 
 function handleCreateAvatarMode() {
   toggleDashboardAndArtistMode(true);
-  updateDisplayState('design');
+  updateDisplayState("design");
   createMode = true;
 }
 
@@ -92,7 +189,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         return userData;
       } else {
-        window.location.href = '/'
+        window.location.href = "/";
         throw new Error("Invalid user token");
       }
     } catch (error) {
@@ -541,7 +638,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           avatarDiv.classList.add("selected");
 
           // Ensure these updates are not inside a conditional block that could be skipped
-          selectedUserAvatarId = selectedAvatar.id
+          selectedUserAvatarId = selectedAvatar.id;
           document.getElementById("avatarName").textContent =
             selectedAvatar.Avatar_Name;
 
@@ -604,7 +701,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId: globalUserInfoId })
+          body: JSON.stringify({ userId: globalUserInfoId }),
         }
       );
 

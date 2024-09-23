@@ -66,7 +66,7 @@ function addUserMessage(message) {
 }
 
 function addBotMessage(message) {
-  if (selectedCommand == "usermessege") {
+  if (selectedCommand && selectedCommand == "usermessege") {
     const messageElement = document.createElement("div");
     messageElement.style.marginBottom = "8px";
 
@@ -399,39 +399,14 @@ voiceOptions.forEach((option) => {
   });
 });
 
-function customEncode(input) {
-  let output = "";
-  let bits = 0;
-  let bitsLength = 0;
-  for (let i = 0; i < input.length; i++) {
-    bits = (bits << 8) | input.charCodeAt(i);
-    bitsLength += 8;
-    while (bitsLength >= 6) {
-      bitsLength -= 6;
-      output += CHAR_SET[(bits >> bitsLength) & 63];
-    }
+function encryptData(avatarId, userId) {
+  const data = `${avatarId}|${userId}`; // Use pipe as delimiter
+  let result = '';
+  for (let i = 0; i < data.length; i++) {
+    const charCode = data.charCodeAt(i) ^ ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length);
+    result += String.fromCharCode(charCode);
   }
-  if (bitsLength > 0) {
-    output += CHAR_SET[(bits << (6 - bitsLength)) & 63];
-  }
-  return output;
-}
-
-function encryptAvatarId(avatarId) {
-  if (typeof avatarId !== "string") {
-    avatarId = String(avatarId);
-  }
-
-  let encrypted = "";
-  for (let i = 0; i < avatarId.length; i++) {
-    const avatarChar = avatarId.charCodeAt(i);
-    const keyChar = ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length);
-    const encryptedChar = avatarChar ^ keyChar;
-    encrypted += String.fromCharCode(encryptedChar);
-  }
-
-  const result = customEncode(encrypted);
-  return result;
+  return btoa(result).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -443,9 +418,8 @@ document.addEventListener("DOMContentLoaded", function () {
   shareButton.addEventListener("click", function () {
     removeAllPopUps()
     sharePopup.style.display = "flex";
-    shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?avatar=${encryptAvatarId(
-      selectedUserAvatarId
-    )}`; // Preset or fetch link
+    const encrypted = encryptData(selectedUserAvatarId, globalUserInfoId);
+    shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?data=${encrypted}`; 
   });
 
   // Close popup
@@ -472,15 +446,6 @@ document.getElementById("Signup").addEventListener("click", function () {
   }
 });
 
-// New listener for the tier div
-// document.getElementById("tier").addEventListener("click", function () {
-//   var img = document.getElementById("signupImage");
-//   if (img.style.display === "none") {
-//     img.style.display = "block"; // Show the image
-//   } else {
-//     img.style.display = "none"; // Optionally hide if you want to toggle by button too
-//   }
-// });
 
 // Listener for the image itself
 document.getElementById("signupImage").addEventListener("click", function () {
@@ -496,7 +461,6 @@ async function getUserPromps(type) {
         `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
       );
       const { success, data } = await response.json();
-      console.log(data);
       if (!success) {
         if (type == "prompt") {
           personaInput.value = "";
@@ -513,7 +477,7 @@ async function getUserPromps(type) {
         } else {
           const welcomeMessage = data.welcome_message;
           setTimeout(() => {
-            console.log("Call Command");
+            console.log(welcomeMessage, 'Call Welcome Message')
             handleSendCommands({ texttospeech: welcomeMessage });
           }, 1000);
         }

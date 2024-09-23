@@ -64,6 +64,8 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script src="./javascript/env.js"></script>
 
+    <script src="main.js"></script>
+
     <title>Reblium Avatar System</title>
     <!-- Hotjar Tracking Code for https://reblium.netlify.app/ -->
     <script>
@@ -83,119 +85,6 @@
     </script>
   </head>
   <body>
-    <script>
-      let latestLoadAvatarCommand = null;
-      let defaultAvatarPrompt = false;
-      let avatarResponse = null;
-      let selectedCommand = null;
-
-      let newWebRTC;
-      function handleSendCommands(command) {
-        console.log(command)
-
-        selectedCommand = Object.keys(command)[0];
-
-        newWebRTC.emitUIInteraction(command);
-
-        // Check if the command includes a loadavatar command and store it
-        if (command.resetavatar) {
-          latestLoadAvatarCommand = command.resetavatar;
-        }
-
-        // Log the loadavatar command sent (replace with actual implementation)
-        console.log("Sending loadavatar command:", command.resetavatars);
-      }
-
-      // Function to update the slider value and call handleSendCommands
-      function updateSliderValue() {
-        const slider = document.getElementById("mySlider");
-
-        const sliderValue = parseFloat(slider.value);
-
-        // Call the handleSendCommands function with the command object
-        handleSendCommands(command);
-      }
-
-      // function handleButtonClick() {
-      //   // Call the second function to reload the page
-      //   location.reload();
-      // }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("save-exit")
-          .addEventListener("click", function () {
-            const exitPopup = document.getElementById("exitConfirmation");
-            exitPopup.style.display = "none";
-          });
-      });
-
-      // Async function to load and send avatar data
-      async function loadAndSendAvatarData(jsonFilePath) {
-        await waitForVideoLoad(); // Wait for video to load
-
-        // Use the fetch API to load the JSON file
-        try {
-          const response = await fetch(jsonFilePath);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const jsonData = await response.json(); // Parse the JSON response
-
-          // Call your handleSendCommands function with the JSON data
-          handleSendCommands({ resetavatar: JSON.stringify(jsonData) });
-          // handleSendCommands({ cameraswitch: 'Head' });
-
-          // Extracting the persona data from the JSON file
-          const personaInfo = jsonData["Personas"];
-
-          // Display persona data in popup input
-          if (personaInfo) {
-            const personaInput = document.getElementById("personaInput");
-            personaInput.value = personaInfo; // Update the input field with the persona description
-          }
-
-          defaultAvatarPrompt = true;
-        } catch (error) {
-          console.error("Error loading JSON:", error);
-        }
-      }
-
-      async function loadAndProcessJsonData(filePath) {
-        try {
-          const response = await fetch(filePath);
-          if (!response.ok) {
-            throw new Error(`Failed to fetch ${filePath}`);
-          }
-          const jsonData = await response.json();
-          // Here you can add more processing logic as needed
-        } catch (error) {
-          console.error("Error loading JSON data:", error);
-        }
-      }
-
-      // Function to handle the reset button click
-      function handleResetButtonClick() {
-        if (latestLoadAvatarCommand) {
-          // Send the latest loadavatar command
-          handleSendCommands({ resetavatar: latestLoadAvatarCommand });
-          console.log(
-            "Reset button clicked with the latest loadavatar command:",
-            latestLoadAvatarCommand
-          );
-        } else {
-          console.log("No loadavatar command available to reset.");
-        }
-      }
-
-      // Event listener for the "reset" button
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("reset")
-          .addEventListener("click", handleResetButtonClick);
-      });
-    </script>
-
     <nav class="navbar">
       <img
         src="/src/reblium_logo.png"
@@ -1332,7 +1221,11 @@
     </div>
 
     <!-- Language Selection Pop-up -->
-    <div id="languagePopup" class="languagePopup assitant-popup" style="display: none">
+    <div
+      id="languagePopup"
+      class="languagePopup assitant-popup"
+      style="display: none"
+    >
       <form id="languageForm">
         <span id="languageClose" class="close-button">&times;</span>
         <h3>Select a Language</h3>
@@ -1414,7 +1307,11 @@
     </div>
 
     <!-- Voice Settings Pop-up -->
-    <div id="voicePopup" class="voicePopup assitant-popup" style="display: none">
+    <div
+      id="voicePopup"
+      class="voicePopup assitant-popup"
+      style="display: none"
+    >
       <form id="voiceForm">
         <span id="voiceClose" class="close-button">&times;</span>
         <h3>Choose a Voice</h3>
@@ -1428,7 +1325,11 @@
     </div>
 
     <!-- Share Pop-up -->
-    <div id="sharePopup" class="sharePopup assitant-popup" style="display: none">
+    <div
+      id="sharePopup"
+      class="sharePopup assitant-popup"
+      style="display: none"
+    >
       <form id="shareForm">
         <span id="shareClose" class="close-button">&times;</span>
         <h3>Publish</h3>
@@ -1446,7 +1347,11 @@
     </div>
 
     <!-- Persona Pop-up -->
-    <div id="personaPopup" class="personaPopup assitant-popup" style="display: none">
+    <div
+      id="personaPopup"
+      class="personaPopup assitant-popup"
+      style="display: none"
+    >
       <form class="personaForm">
         <span
           id="personaClose"
@@ -1740,8 +1645,15 @@
               <i class="fas fa-volume-mute" style="color: #ef4444"></i>
             </div>
             <div>
-              <div id="close-chat" class="close-chat flex items-center justify-center gap-3">
-                <i id="clear-chat-history-icon" class="fa fa-trash" aria-hidden="true"></i>
+              <div
+                id="close-chat"
+                class="close-chat flex items-center justify-center gap-3"
+              >
+                <i
+                  id="clear-chat-history-icon"
+                  class="fa fa-trash"
+                  aria-hidden="true"
+                ></i>
                 <!-- <span id="toggle-icon" style="color: black">+</span> -->
                 <!-- Assuming Font Awesome icons -->
               </div>
@@ -1832,7 +1744,6 @@
           <button
             class="menu-button"
             id="ChatopenPopup"
-            onclick="handleSendCommands({ saveavatar: selectedUserAvatarId })"
           >
             <i class="fas fa-save save-ico"></i>Save Avatar
           </button>
@@ -2076,7 +1987,6 @@
                                 type="checkbox"
                                 name="Asian"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -2089,7 +1999,6 @@
                                 type="checkbox"
                                 name="Latin"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -2104,7 +2013,6 @@
                                 type="checkbox"
                                 name="Indian"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -2117,7 +2025,6 @@
                                 type="checkbox"
                                 name="Arabic"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -2132,7 +2039,6 @@
                                 type="checkbox"
                                 name="Caucasian"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -2147,7 +2053,6 @@
                                 type="checkbox"
                                 name="Indigenous"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -2160,7 +2065,6 @@
                                 type="checkbox"
                                 name="Afro"
                                 class="checkbox_inp"
-                                checked
                               />
                               <span class="checkbox_mark"></span>
                             </label>
@@ -8934,7 +8838,6 @@
                   <div class="content-container" style="display: block">
                     <div class="fullbody-container">
                       <div class="image-row">
-                        
                         <div
                           class="image-cell"
                           data-gender="male"
@@ -10771,7 +10674,7 @@
 
         // Show pop-up on button click
         uploadButton.addEventListener("click", () => {
-          removeAllPopUps()
+          removeAllPopUps();
           dhsPopup.style.display = "flex";
         });
 
@@ -10851,8 +10754,6 @@
         });
       });
     </script>
-    <script src="main.js"></script>
-
     <script src="javascript/chatbot_dashboard.js"></script>
 
     <script src="javascript/credit.js"></script>
@@ -10861,8 +10762,6 @@
 
     <script src="javascript/frondend.js"></script>
     <script src="javascript/store.js"></script>
-
-    <script src="javascript/arc_functions.js"></script>
 
     <script src="javascript/arc_module.js" type="module"></script>
 

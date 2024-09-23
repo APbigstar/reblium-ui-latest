@@ -131,7 +131,7 @@ router.get('/getUserAvatar/:id', async (req, res) => {
     console.error('Error retrieving avatar:', error);
     res.status(500).json({ error: 'Error processing the request', details: error });
   } finally {
-    await connection.end();
+    await connection.release();
   }
 });
 

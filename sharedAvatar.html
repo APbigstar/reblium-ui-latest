@@ -63,6 +63,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./javascript/env.js"></script>
 
+    <script src="main.js"></script>
+
     <style>
       .modal-overlay {
         position: fixed;
@@ -533,11 +535,7 @@
         <audio id="audioRef"></audio>
 
         <div class="fixed-container">
-          <div id="previewButton" class="button active">Preview</div>
-          <div id="conversationButton" class="button inactive">
-            Conversation
-          </div>
-          <div id="designButton" class="button inactive">Design</div>
+          <div id="previewButton" class="button active invisible">Preview</div>
         </div>
       </div>
       <div id="chatbot" style="display: none">
@@ -746,7 +744,11 @@
             </div>
             <div>
               <div id="close-chat" class="close-chat">
-                <i id="clear-chat-history-icon" class="fa fa-trash" aria-hidden="true"></i>
+                <i
+                  id="clear-chat-history-icon"
+                  class="fa fa-trash"
+                  aria-hidden="true"
+                ></i>
               </div>
             </div>
           </div>
@@ -766,7 +768,7 @@
               <div class="input-wrapper">
                 <input
                   id="user-input"
-                  onfocus="clearThis(this)"
+                  onfocus="this.value=''"
                   type="text"
                   placeholder="Type a message..."
                   class="user-input-field"
@@ -834,8 +836,6 @@
     </div>
 
     <script>
-      let defaultAvatarPrompt = false;
-
       const closeModalBtn = document.getElementById("closeSignUpModal");
 
       const signUpLoginBtn = document.getElementById("signUpLogin");
@@ -844,14 +844,14 @@
       const signUpFormBtn = document.getElementById("signUpFormBtn");
       const signUpFormSection = document.getElementById("signUpFormSection");
 
-      let latestLoadAvatarCommand = null;
-      let newWebRTC;
+      async function initializeEverything() {
+        await waitForVideoLoad();
+        await fetchAndDisplayAvatar();
+        initPreviewMode();
+      }
 
       document.addEventListener("DOMContentLoaded", function () {
-        waitForVideoLoad().then(() => {});
-        initAudioRefProps();
-        initPreviewMode();
-        fetchAndDisplayAvatar();
+        initializeEverything();
       });
 
       setInterval(() => {
@@ -946,7 +946,7 @@
       ); // Check every second
 
       // Function to return a promise that resolves when the video is loaded
-      function waitForVideoLoad() {
+      async function waitForVideoLoad() {
         if (videoLoaded) {
           return Promise.resolve();
         } else {
@@ -958,59 +958,39 @@
         }
       }
 
-      function handleSendCommands(command) {
-        console.log(command);
+      function decryptData(encryptedData) {
+        // Reverse the base64url encoding
+        const base64 = encryptedData.replace(/-/g, "+").replace(/_/g, "/");
+        const paddedBase64 = base64.padEnd(
+          base64.length + ((4 - (base64.length % 4)) % 4),
+          "="
+        );
 
-        newWebRTC.emitUIInteraction(command);
-
-        // Check if the command includes a loadavatar command and store it
-        if (command.resetavatar) {
-          latestLoadAvatarCommand = command.resetavatar;
+        let decrypted = atob(paddedBase64);
+        let result = "";
+        for (let i = 0; i < decrypted.length; i++) {
+          const charCode =
+            decrypted.charCodeAt(i) ^
+            ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length);
+          result += String.fromCharCode(charCode);
         }
 
-        // Log the loadavatar command sent (replace with actual implementation)
-        console.log("Sending loadavatar command:", command.resetavatars);
-      }
-
-      function customDecode(input) {
-        let output = "";
-        let bits = 0;
-        let bitsLength = 0;
-        for (let i = 0; i < input.length; i++) {
-          bits = (bits << 6) | CHAR_SET.indexOf(input[i]);
-          bitsLength += 6;
-          if (bitsLength >= 8) {
-            bitsLength -= 8;
-            output += String.fromCharCode((bits >> bitsLength) & 255);
-          }
-        }
-        return output;
-      }
-
-      function decryptAvatarId(encryptedAvatarId) {
-        const decoded = customDecode(encryptedAvatarId);
-
-        let decrypted = "";
-        for (let i = 0; i < decoded.length; i++) {
-          const decodedChar = decoded.charCodeAt(i);
-          const keyChar = ENCRYPTION_KEY.charCodeAt(i % ENCRYPTION_KEY.length);
-          const decryptedChar = decodedChar ^ keyChar;
-          decrypted += String.fromCharCode(decryptedChar);
-        }
-
-        return decrypted;
+        // Split the decrypted string back into avatarId and userId
+        const [avatarId, userId] = result.split("|");
+        return { avatarId, userId };
       }
 
       async function fetchAndDisplayAvatar() {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const avatarId = urlParams.get("avatar");
+        const encryptedData = urlParams.get("data");
+
+        const { avatarId, userId } = decryptData(encryptedData);
+
         if (avatarId) {
           try {
             const response = await fetch(
-              `/.netlify/functions/avatar/getUserAvatar/${decryptAvatarId(
-                avatarId
-              )}`
+              `/.netlify/functions/avatar/getUserAvatar/${avatarId}`
             );
             const data = await response.json();
             const { avatarData } = data;
@@ -1026,11 +1006,64 @@
         } else {
           window.location.href = "/";
         }
+
+        if (avatarId && userId) {
+          try {
+            const response = await fetch(
+              `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${userId}&avatar_id=${avatarId}`
+            );
+            const { success, data } = await response.json();
+            if (!success) {
+              handleSendCommands({
+                texttospeech:
+                  "Hi, I am a Rebelium assistant. How can I help you?",
+              });
+            } else {
+              const welcomeMessage = data.welcome_message;
+              handleSendCommands({ texttospeech: welcomeMessage });
+            }
+          } catch (error) {
+            console.error("Error fetching user prompt data:", error);
+            return null;
+          }
+        }
       }
 
       function initPreviewMode() {
-        updateDisplayState("preview");
-        getUserPromps("welcome_message");
+        const chatbot = document.getElementById("chatbot");
+        const previewButton = document.getElementById("previewButton");
+        const elementsToShow = document.querySelectorAll("#chatbot > *");
+        const logo = document.getElementById("chatbotLogo");
+        const chatContainer = document.getElementById("chat-container");
+        const languagesFlags = document.getElementById("languagesFlags");
+        const webcamContainer = document.getElementById("webcam-container");
+
+        // Reset all elements to be shown
+        elementsToShow.forEach((element) => {
+          element.style.display = "block";
+        });
+
+        // Manage display based on selected button
+        elementsToShow.forEach((element) => {
+          if (
+            element !== logo &&
+            element !== chatContainer &&
+            element !== languagesFlags
+          ) {
+            element.style.display = "none";
+          }
+        });
+        webcamContainer.style.display = "block";
+        languagesFlags.style.display = "grid";
+        languagesFlags.style.gridTemplateColumns = "repeat(2, 1fr)";
+
+        chatbot.style.display = "block";
+        chatbot.focus();
+        handleSendCommands({ cameraswitch: "Head" });
+
+        audioRef.muted = false;
+        audioRef.play();
+        icon.className = "fas fa-volume-up";
       }
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -1100,11 +1133,7 @@
 
     <script src="javascript/chatbot_dashboard.js"></script>
 
-    <script src="main.js"></script>
-
     <script src="javascript/frondend.js"></script>
-
-    <script src="javascript/arc_functions.js"></script>
 
     <script src="javascript/arc_module.js" type="module"></script>
 
