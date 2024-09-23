@@ -109,7 +109,7 @@ router.get("/getUserAvatars", async (req, res) => {
     console.error('Error executing database query:', error);
     res.status(500).json({ error: 'Error processing the request' });
   } finally {
-    connection.end();
+    connection.release();
   }
 });
 

@@ -60,9 +60,9 @@ function initializeWebRTCClient() {
         onclose: () => {
             console.log('WebSocket Connection closed');
             setTimeout(initializeWebRTCClient, 5000); 
+        }
     });
 }
-
 // Heartbeat function to keep the WebSocket connection alive
 function startHeartbeat() {
     const heartbeatInterval = 30000; // Send a heartbeat every 30 seconds
