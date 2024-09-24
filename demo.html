@@ -9640,52 +9640,6 @@
         });
       }
 
-      // Function that detects when the pixelstreaming video is loaded
-      let videoLoaded = false;
-      let randomizationPromise;
-
-      function detectVideoLoadedAndExecuteFunctions() {
-        const videoContainer = document.getElementById("videoContainer");
-        if (!videoContainer) {
-          console.log("Video container not found");
-          return;
-        }
-
-        const videoElement = videoContainer.querySelector("video");
-        if (!videoElement) {
-          console.log("Video element not found");
-          return;
-        }
-
-        if (videoElement.readyState >= 3 && !videoLoaded) {
-          if (randomizationPromise) {
-            randomizationPromise.resolve();
-          }
-
-          videoLoaded = true;
-          clearInterval(checkInterval);
-          handleSendCommands({ autocamera: "Yes" });
-        }
-      }
-      // Define an interval to periodically check for video loading
-      const checkInterval = setInterval(
-        detectVideoLoadedAndExecuteFunctions,
-        1000
-      ); // Check every second
-
-      // Function to return a promise that resolves when the video is loaded
-      function waitForVideoLoad() {
-        if (videoLoaded) {
-          return Promise.resolve();
-        } else {
-          randomizationPromise = {}; // Create a new promise object
-          randomizationPromise.promise = new Promise((resolve) => {
-            randomizationPromise.resolve = resolve;
-          });
-          return randomizationPromise.promise;
-        }
-      }
-
       document.addEventListener("DOMContentLoaded", function () {
         const randomizeForm = document.getElementById("randomizeForm");
         const randomizeButton = document.getElementById("randomizeButton");

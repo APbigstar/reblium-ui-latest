@@ -12,6 +12,7 @@ let latestLoadAvatarCommand = null;
 let defaultAvatarPrompt = false;
 let avatarResponse = null;
 let videoLoaded = false;
+let randomizationPromise;
 
 // Function to return a promise that resolves when the video is loaded
 function waitForVideoLoad() {
@@ -25,6 +26,32 @@ function waitForVideoLoad() {
     return randomizationPromise.promise;
   }
 }
+
+function detectVideoLoadedAndExecuteFunctions() {
+  const videoContainer = document.getElementById("videoContainer");
+  if (!videoContainer) {
+    console.log("Video container not found");
+    return;
+  }
+
+  const videoElement = videoContainer.querySelector("video");
+  if (!videoElement) {
+    console.log("Video element not found");
+    return;
+  }
+
+  if (videoElement.readyState >= 3 && !videoLoaded) {
+    if (randomizationPromise) {
+      randomizationPromise.resolve();
+    }
+
+    videoLoaded = true;
+    clearInterval(checkInterval);
+    handleSendCommands({ autocamera: "Yes" });
+  }
+}
+// Define an interval to periodically check for video loading
+const checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 1000);
 
 function handleSendCommands(command) {
   selectedCommand = Object.keys(command)[0];
@@ -115,7 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .getElementById("reset")
     .addEventListener("click", handleResetButtonClick);
 });
-
 
 async function getUserCredits() {
   const checkUserCreditAmount = await fetch(

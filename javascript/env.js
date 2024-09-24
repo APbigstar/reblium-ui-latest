@@ -9,4 +9,3 @@ const BACKEND_URL='https://test-reblium.netlify.app'
 
 const ENCRYPTION_KEY='ecryptkey243'
 const CHAR_SET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-

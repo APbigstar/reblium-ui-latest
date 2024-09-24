@@ -10235,38 +10235,6 @@
         };
       });
 
-      // Function that detects when the pixelstreaming video is loaded
-      let randomizationPromise;
-
-      function detectVideoLoadedAndExecuteFunctions() {
-        const videoContainer = document.getElementById("videoContainer");
-        if (!videoContainer) {
-          console.log("Video container not found");
-          return;
-        }
-
-        const videoElement = videoContainer.querySelector("video");
-        if (!videoElement) {
-          console.log("Video element not found");
-          return;
-        }
-
-        if (videoElement.readyState >= 3 && !videoLoaded) {
-          if (randomizationPromise) {
-            randomizationPromise.resolve();
-          }
-
-          videoLoaded = true;
-          clearInterval(checkInterval);
-          handleSendCommands({ autocamera: "Yes" });
-        }
-      }
-      // Define an interval to periodically check for video loading
-      const checkInterval = setInterval(
-        detectVideoLoadedAndExecuteFunctions,
-        1000
-      ); // Check every second
-
       document.addEventListener("DOMContentLoaded", function () {
         const randomizeForm = document.getElementById("randomizeForm");
         const randomizeButton = document.getElementById("randomizeButton");
