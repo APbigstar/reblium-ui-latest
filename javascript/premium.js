@@ -150,7 +150,7 @@ async function setCurrentPremium() {
     currentSelectedPlanShow.style.display = "block";
     premiumButton.textContent = "Cancel";
     freePlanButton.style.display = "none";
-    tilerElement.textContent = `Reblium: Premium`;
+    tilerElement.textContent = `Premium`;
     premiumPlanType.textContent = "Premium Plan";
   } else {
     premiumButton.addEventListener("click", () =>
@@ -159,7 +159,7 @@ async function setCurrentPremium() {
     currentSelectedPlanShow.style.display = "none";
     premiumButton.textContent = "Start now";
     freePlanButton.style.display = "block";
-    tilerElement.textContent = `Reblium: Free`;
+    tilerElement.textContent = `Free`;
     premiumPlanType.textContent = "Free Plan";
     document.getElementById("plan_created_date_p").textContent = "No Plan";
   }

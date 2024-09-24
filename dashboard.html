@@ -1742,10 +1742,7 @@
           <button class="menu-button" id="shareButton">
             <i class="fas fa-share"></i>Publish
           </button>
-          <button
-            class="menu-button"
-            id="ChatopenPopup"
-          >
+          <button class="menu-button" id="ChatopenPopup">
             <i class="fas fa-save save-ico"></i>Save Avatar
           </button>
 
@@ -1769,7 +1766,12 @@
           >
             Generator
           </button>
-
+          <button
+            class="transparent-button-active"
+            onclick="toggleMenu('sculpt') + handleSendCommands({ cameraswitch: 'Head' })"
+          >
+            Face
+          </button>
           <button
             class="transparent-button-active"
             onclick="toggleMenu('skin') + handleSendCommands({ cameraswitch: 'Head' })"
@@ -1788,12 +1790,7 @@
           >
             Hair
           </button>
-          <button
-            class="transparent-button-active"
-            onclick="toggleMenu('sculpt') + handleSendCommands({ cameraswitch: 'Head' })"
-          >
-            Sculpt
-          </button>
+
           <button
             class="transparent-button-active"
             onclick="toggleMenu('wardrobe') + handleSendCommands({ cameraswitch: 'Head' })"
