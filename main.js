@@ -11,6 +11,20 @@ let selectedCommand = null;
 let latestLoadAvatarCommand = null;
 let defaultAvatarPrompt = false;
 let avatarResponse = null;
+let videoLoaded = false;
+
+// Function to return a promise that resolves when the video is loaded
+function waitForVideoLoad() {
+  if (videoLoaded) {
+    return Promise.resolve();
+  } else {
+    randomizationPromise = {}; // Create a new promise object
+    randomizationPromise.promise = new Promise((resolve) => {
+      randomizationPromise.resolve = resolve;
+    });
+    return randomizationPromise.promise;
+  }
+}
 
 function handleSendCommands(command) {
   selectedCommand = Object.keys(command)[0];

@@ -10236,7 +10236,6 @@
       });
 
       // Function that detects when the pixelstreaming video is loaded
-      let videoLoaded = false;
       let randomizationPromise;
 
       function detectVideoLoadedAndExecuteFunctions() {
@@ -10267,32 +10266,6 @@
         detectVideoLoadedAndExecuteFunctions,
         1000
       ); // Check every second
-
-      // Function to return a promise that resolves when the video is loaded
-      function waitForVideoLoad() {
-        if (videoLoaded) {
-          return Promise.resolve();
-        } else {
-          randomizationPromise = {}; // Create a new promise object
-          randomizationPromise.promise = new Promise((resolve) => {
-            randomizationPromise.resolve = resolve;
-          });
-          return randomizationPromise.promise;
-        }
-      }
-
-      let backgroundAssets = [
-        "Back1",
-        "Back2",
-        "Back3",
-        "Back4",
-        "Back5",
-        "Back6",
-        "Back7",
-        "Back8",
-        "Back9",
-        "Back10",
-      ];
 
       document.addEventListener("DOMContentLoaded", function () {
         const randomizeForm = document.getElementById("randomizeForm");
@@ -10376,17 +10349,6 @@
         });
       });
 
-      // Define the list of asset names
-      const assetNames = [
-        "Studio_Softbox",
-        "Studio_makeUp",
-        "Studio_reblium",
-        "Studio_2_Tone",
-        "Old",
-        "Studio_Dramatic",
-        "Studio_CyberRed",
-      ];
-
       // Initialize the current asset index
       let currentAssetIndex = 0;
 
@@ -10408,16 +10370,6 @@
       //   }
       // });
 
-      // animation // remove some of the animatons
-      const animationNames = [
-        "Idle",
-        "Catwalk_Female",
-        "am_Stand_Idle_Greet_04_Nod",
-        "Catwalk_Male",
-        "Idle_Subtle",
-        "am_Stand_Idle_Greet_08_WaveComeHere",
-        "F_ROM",
-      ];
       let currentAnimationIndex = 0;
 
       function toggleAnimationName(direction) {
