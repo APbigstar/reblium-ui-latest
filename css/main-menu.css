@@ -2078,9 +2078,9 @@ input[type="number"] {
   left: 45%;
   top: 50%;
   transform: translate(-50%, -50%) rotate(0deg);
-  background-image: url("../src/reblium_logo.png");
+  /* background-image: url("../src/reblium_logo.png");
   background-size: cover;
-  background-position: center;
+  background-position: center; */
   /*animation: rotation 2s linear infinite;*/
 }
 

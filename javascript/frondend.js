@@ -257,7 +257,8 @@ function updateDisplayState(buttonType) {
     chatbot.style.display = "none";
     artistMode.focus(); // Focus the artist_mode div
     console.log(`Active: ${artistMode.id}`);
-    handleSendCommands({ cameraswitch: "Head" });
+    // handleSendCommands({ cameraswitch: "Head" });
+    // handleSendCommands({ camup: "" });
   }
   handleMute();
 }
@@ -383,7 +384,6 @@ menuContent.addEventListener("click", function (event) {
 
 // Function to toggle the display of sub-menus based on the menuId
 function toggleMenu(menuId) {
-  console.log(menuId);
   const subMenu = document.getElementById(`${menuId}SubMenu`);
   const subMenuIdSelector = subMenu.id ? `#${subMenu.id}` : "";
   const otherSubMenus = document.querySelectorAll(
@@ -484,6 +484,7 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       // Get the corresponding sub-menu element
       const subMenu = this.nextElementSibling;
+      console.log(subMenu)
       // Toggle the sub-menu display
       toggleSubMenu(subMenu);
     });
@@ -495,9 +496,11 @@ function toggleSubMenu(subMenu) {
   // Toggle the display property of the sub-menu
   subMenu.style.display = subMenu.style.display === "none" ? "block" : "none";
 
+  console.log(subMenu.id)
+
   // Hide other sub-menus
   const otherSubMenus = document.querySelectorAll(
-    ".sub-menu:not(" + subMenu.id + ")"
+    `.sub-menu:not(#${subMenu.id})`
   );
   otherSubMenus.forEach(function (menu) {
     menu.style.display = "none";

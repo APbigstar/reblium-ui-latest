@@ -54,6 +54,7 @@ function detectVideoLoadedAndExecuteFunctions() {
 const checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 1000);
 
 function handleSendCommands(command) {
+  console.log(command)
   selectedCommand = Object.keys(command)[0];
   newWebRTC.emitUIInteraction(command);
   if (command.resetavatar) {

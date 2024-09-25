@@ -1757,55 +1757,62 @@
         tabindex="0"
       >
         <div class="loader-overlay">
-          <div class="loader"></div>
+          <div class="loader">
+            <img
+              class="w-full h-full mb-8"
+              src="./src/reblium_logo.png"
+              alt="logn"
+            />
+            <p class="text-white">Lining up...</p>
+          </div>
         </div>
         <div id="buttonsContainer" class="avatar-menu">
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('random'); handleSendCommands({ cameraswitch: 'Head' });"
+            onclick="toggleMenu('random');"
           >
             Generator
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('sculpt') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('sculpt')"
           >
             Face
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('skin') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('skin')"
           >
             Skin
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('makeup') + handleSendCommands({ cameraswitch: 'Head' }) "
+            onclick="toggleMenu('makeup') "
           >
             Makeup
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('hair') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('hair')"
           >
             Hair
           </button>
 
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('wardrobe') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('wardrobe')"
           >
             Wardrobe
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('accessories') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('accessories')"
           >
             Accessories
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('background') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('background')"
           >
             Background
           </button>
