@@ -261,7 +261,6 @@ function updateDisplayState(buttonType) {
 }
 
 function initAudioRefProps() {
-  console.log('aa')
   audioRef.muted = false;
   audioRef.play();
   icon.className = "fas fa-volume-up";

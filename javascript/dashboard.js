@@ -420,7 +420,7 @@ async function setCurrentPremium() {
     premiumButton.textContent = "Cancel";
     freePlanButton.style.display = "none";
     tilerElement.textContent =
-      globalUserInfoId === DEV_ACCOUNT_ID ? "Death" : `Premium`;
+      globalUserInfoId === DEV_ACCOUNT_ID ? "Dev" : `Premium`;
     premiumPlanType.textContent =
       globalUserInfoId === DEV_ACCOUNT_ID ? "Dev Plan" : "Premium Plan";
   } else {
@@ -433,7 +433,7 @@ async function setCurrentPremium() {
     freePlanButton.style.display =
       globalUserInfoId === DEV_ACCOUNT_ID ? "none" : "block";
     tilerElement.textContent =
-      globalUserInfoId === DEV_ACCOUNT_ID ? "Death" : `Free`;
+      globalUserInfoId === DEV_ACCOUNT_ID ? "Dev" : `Free`;
     premiumPlanType.textContent =
       globalUserInfoId === DEV_ACCOUNT_ID ? "Dev Plan" : "Free Plan";
     document.getElementById("plan_created_date_p").textContent =
