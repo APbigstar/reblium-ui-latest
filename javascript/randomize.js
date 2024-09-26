@@ -130,6 +130,7 @@ function randomizeHair() {
     
     // Call a function to send the command with the selected hair asset
     handleSendCommands({ assetname: selectedHairAsset });
+    selectedHair = selectedHairAsset;
 
     console.log("Randomized hair asset command sent:", selectedHairAsset); // Optional: log the asset name
 }

@@ -776,8 +776,6 @@ async function updateAvatarName(id, newName) {
   }
 }
 
-
-
 function showDeleteModal(selectedAvatarId) {
   // Load the HTML template for the pop-up
   const deleteConfirmationHtml = `
@@ -814,6 +812,41 @@ function showDeleteModal(selectedAvatarId) {
     deleteConfirmation.remove(); // Remove the pop-up from the DOM
     await deleteAvatar(selectedAvatarId); // Call the function to delete the avatar
   });
+}
+
+async function updateAvatarSection(user_info_id) {
+  try {
+    const avatars = await fetchAvatarData(user_info_id);
+
+    await displayAvatarNames(avatars);
+    // displayAvatarImageData(avatars); // Call the new function
+  } catch (error) {
+    console.error("Error updating avatar section:", error);
+  }
+}
+
+async function deleteAvatar(selectedAvatarId) {
+  try {
+    const response = await fetch(
+      `/.netlify/functions/avatar/deleteAvatar/${selectedAvatarId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: globalUserInfoId }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete avatar.");
+    }
+
+    // Update the avatar section after successful deletion
+    await updateAvatarSection(user_info_id);
+  } catch (error) {
+    console.error("Error deleting avatar:", error);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -860,42 +893,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     .addEventListener("click", exportAvatarHead);
 
   // Refactor Fetching and Displaying Avatars:
-  async function updateAvatarSection(user_info_id) {
-    try {
-      const avatars = await fetchAvatarData(user_info_id);
-
-      await displayAvatarNames(avatars);
-      // displayAvatarImageData(avatars); // Call the new function
-    } catch (error) {
-      console.error("Error updating avatar section:", error);
-    }
-  }
-
-  
-
-  async function deleteAvatar(selectedAvatarId) {
-    try {
-      const response = await fetch(
-        `/.netlify/functions/avatar/deleteAvatar/${selectedAvatarId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: globalUserInfoId }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete avatar.");
-      }
-
-      // Update the avatar section after successful deletion
-      await updateAvatarSection(user_info_id);
-    } catch (error) {
-      console.error("Error deleting avatar:", error);
-    }
-  }
 
   // Function to add a new avatar name to the database and send a command
   async function addAvatarToDatabase(username, user_info_id) {
@@ -987,8 +984,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   window.uploadLogo = uploadLogo;
-
-  
 
   // This function gets the tier name based on the user id
   // async function fetchTierName(user_info_id) {
