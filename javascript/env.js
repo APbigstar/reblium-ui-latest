@@ -9,3 +9,8 @@ const BACKEND_URL='https://test-reblium.netlify.app'
 
 const ENCRYPTION_KEY='ecryptkey243'
 const CHAR_SET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+const MONTHLY_PREMIUM_SUBSCRIPTION_ID = 3;
+const YEARLY_PREMIUM_SUBSCRIPTION_ID = 4;
+
+const DEV_ACCOUNT_ID = 234;

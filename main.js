@@ -153,14 +153,14 @@ async function getUserCredits() {
 
   if (creditData.amount) {
     userCreditAmount = creditData.amount;
-    document.getElementById("exportCredits").textContent = userCreditAmount;
+    document.getElementById("exportCredits").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
     document.getElementById("detail_page_credit_amount").textContent =
-      userCreditAmount;
+    globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
     if (creditData.createdAt) {
       let createdDate = new Date(creditData.createdAt);
       createdDate.setMonth(createdDate.getMonth() + 1);
       let oneMonthLater = createdDate.toISOString().slice(0, 10);
-      document.getElementById("plan_created_date_p").innerHTML =
+      document.getElementById("plan_created_date_p").innerHTML = globalUserInfoId === DEV_ACCOUNT_ID ? '' :
         `You're next billing cycle starts on ` +
         `<span style="font-size: 1.2rem; color: rgb(34 211 238);">` +
         oneMonthLater +
@@ -170,10 +170,10 @@ async function getUserCredits() {
     }
   } else {
     userCreditAmount = 0;
-    document.getElementById("exportCredits").textContent = userCreditAmount;
+    document.getElementById("exportCredits").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
     document.getElementById("detail_page_credit_amount").textContent =
-      userCreditAmount;
-    document.getElementById("plan_created_date_p").textContent = "No Plan";
+    globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
+    document.getElementById("plan_created_date_p").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? '' :"No Plan";
   }
 }
 

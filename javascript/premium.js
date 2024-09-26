@@ -139,29 +139,40 @@ async function setCurrentPremium() {
   const tilerElement = document.getElementById("tier");
   const premiumPlanType = document.getElementById("detail_premium_plan_type");
 
+  const planChangeBtn = document.getElementById('plan_change_btn')
+  const planCancelBtn = document.getElementById('plan_cancel_btn')
+
   // Remove any existing event listeners
   premiumButton.removeEventListener("click", cancelPremiumPriceSection);
   premiumButton.removeEventListener("click", () =>
     showPremiumPriceSection("premium")
   );
 
-  if (selectedSubscription == 3 || selectedSubscription == 4) {
+  if (selectedSubscription == MONTHLY_PREMIUM_SUBSCRIPTION_ID || selectedSubscription == YEARLY_PREMIUM_SUBSCRIPTION_ID) {
     premiumButton.addEventListener("click", cancelPremiumPriceSection);
     currentSelectedPlanShow.style.display = "block";
+
+    premiumButton.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : 'inline-block'
+    currentSelectedPlanShow.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : 'block'
+    planChangeBtn.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : 'inline-block'
+    planCancelBtn.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : 'inline-block'
+
     premiumButton.textContent = "Cancel";
     freePlanButton.style.display = "none";
-    tilerElement.textContent = `Premium`;
-    premiumPlanType.textContent = "Premium Plan";
+    tilerElement.textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Death' : `Premium`;
+    premiumPlanType.textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Dev Plan' : "Premium Plan";
   } else {
     premiumButton.addEventListener("click", () =>
       showPremiumPriceSection("premium")
     );
     currentSelectedPlanShow.style.display = "none";
-    premiumButton.textContent = "Start now";
-    freePlanButton.style.display = "block";
-    tilerElement.textContent = `Free`;
-    premiumPlanType.textContent = "Free Plan";
-    document.getElementById("plan_created_date_p").textContent = "No Plan";
+    premiumButton.textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : "Start now";
+    freePlanButton.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : "block";
+    tilerElement.textContent =  globalUserInfoId === DEV_ACCOUNT_ID ? 'Death' : `Free`;
+    premiumPlanType.textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Dev Plan' : "Free Plan";
+    document.getElementById("plan_created_date_p").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? '' :"No Plan";
+    planChangeBtn.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : 'inline-block'
+    planCancelBtn.style.display = globalUserInfoId === DEV_ACCOUNT_ID ? 'none' : 'inline-block'
   }
 }
 
