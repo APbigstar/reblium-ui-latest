@@ -279,6 +279,7 @@ function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("tokenExpiration");
   localStorage.removeItem("user_info_id");
+  localStorage.removeItem("user_email");
   redirectToLogin();
 }
 
