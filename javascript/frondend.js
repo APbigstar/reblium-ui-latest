@@ -16,7 +16,7 @@ const audioRef = document.getElementById("audioRef");
 
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
-  initAudioRefProps()
+  initAudioRefProps();
   // Toggle the 'display' property for dashboard and artist_mode
   selectedUserAvatarId = ""; // Clears the avatar ID display
   document.getElementById("avatarName").textContent = ""; // Clears the avatar ID display
@@ -187,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Function to handle the display toggle and button state
 function updateDisplayState(buttonType) {
-
   removeAllPopUps();
 
   const chatbot = document.getElementById("chatbot");
@@ -932,12 +931,9 @@ function imageToText() {
 
 // Get the button and the popup elements
 
-
 const popup = document.getElementById("popup");
 const closeButton = popup.querySelector(".close-button");
 const confirmButton = popup.querySelector("#confirmButton"); // Get the Confirm button element
-
-
 
 // Add event listener to the close button
 closeButton.addEventListener("click", function () {
@@ -955,8 +951,20 @@ confirmButton.addEventListener("click", function (event) {
 // Function to show the exit confirmation modal
 function showExitConfirmation() {
   const exitConfirmation = document.getElementById("exitConfirmation");
+  const usernameInput = document.getElementById("username");
   exitConfirmation.style.display = "block";
   createMode = false;
+  usernameInput.value = "";
+  selectedHair = "";
+  selectedBody = "";
+  const hairCreditElement = document.getElementsByClassName(
+    "hair_credit_element"
+  )[0];
+  const bodyCreditElement = document.getElementsByClassName(
+    "body_credit_element"
+  )[0];
+  hairCreditElement.style.display = "none";
+  bodyCreditElement.style.display = "list-item";
 }
 
 // Function to hide the exit confirmation modal

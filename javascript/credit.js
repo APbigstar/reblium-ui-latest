@@ -159,34 +159,41 @@ function setSelectedCreditAmount(amount) {
   totalCreditAmountEle.textContent = creditData[amount] + " credits";
 }
 
-function showSaveAvatarExit() {
-  chargedCreditAmount = 0;
-  if (selectedHair || selectedBody) {
-    const avatarSaveModal = document.getElementById("saveAvatarConfirmation");
-    avatarSaveModal.style.display = "block";
+function showingCreditList() {
+  const avatarSaveModal = document.getElementById("saveAvatarConfirmation");
+  avatarSaveModal.style.display = "block";
 
-    const hairCreditElement = document.getElementsByClassName(
-      "hair_credit_element"
-    )[0];
-    if (selectedHair) {
-      hairCreditElement.style.display = "list-item";
-    }
-    const bodyCreditElement = document.getElementsByClassName(
-      "body_credit_element"
-    )[0];
-    if (selectedBody) {
-      bodyCreditElement.style.display = "list-item";
+  const hairCreditElement = document.getElementsByClassName(
+    "hair_credit_element"
+  )[0];
+  if (selectedHair) {
+    hairCreditElement.style.display = "list-item";
+  }
+  const bodyCreditElement = document.getElementsByClassName(
+    "body_credit_element"
+  )[0];
+  if (selectedBody) {
+    bodyCreditElement.style.display = "list-item";
+  }
+}
+
+function showSaveAvatarExit() {
+  if (createMode) {
+    if (!selectedUserAvatarId) {
+      console.log("Avatar ID is empty. Opening the pop-up.");
+      popup.style.display = "block"; // Show the pop-up only if avatarId is empty
     }
   } else {
-    console.log('asdsfadf')
-    handleSendCommands({
-      saveavatar: parseFloat(selectedUserAvatarId),
-    });
+    chargedCreditAmount = 0;
+    if (selectedHair || selectedBody) {
+      showingCreditList();
+    } else {
+      console.log("asdsfadf");
+      handleSendCommands({
+        saveavatar: parseFloat(selectedUserAvatarId),
+      });
+    }
   }
-  // const totalCreditElement = document.getElementsByClassName('total_credit_element')[0];
-  // if (selectedHair || selectedBody) {
-  //   totalCreditElement.style.display = "block";
-  // }
 }
 
 function cancelSaveAvatarExit() {
@@ -257,9 +264,20 @@ async function handleSaveCustomizedAvatar() {
   if (selectedHair) chargedCreditAmount += 2;
   if (Number(userCreditAmount) >= Number(chargedCreditAmount)) {
     await updateCreditAmount();
+    if (createMode) {
+      const usernameInput = document.getElementById("username");
+      const popup = document.getElementById("popup");
+      popup.style.display = 'none'
+      const isAdded = await addAvatarToDatabase(usernameInput.value);
+      if (isAdded) {
+        selectedHair = '';
+        selectedBody = ''
+        setTimeout(async () => {
+          await updateAvatarSection(globalUserInfoId);
+        }, 5000);
+      }
+    }
   } else {
     showBuyCredits();
   }
 }
-
-

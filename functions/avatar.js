@@ -43,7 +43,7 @@ router.post("/addAvatar", async (req, res) => {
       .json({ error: "Error processing the request", details: error });
   } finally {
     // Close the database connection
-    connection.end();
+    connection.release();
   }
 });
 

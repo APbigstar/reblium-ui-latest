@@ -513,8 +513,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       await getSelectedSubscription();
       await setCurrentPremium();
 
-      loadLogo();
-
       // Fetch and display the avatars for the user with matching user_info_id
       const avatars = await fetchAvatarData(user_info_id);
       await displayAvatarNames(avatars);

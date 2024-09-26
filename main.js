@@ -510,32 +510,6 @@ function handleCreateAvatarMode() {
   createMode = true;
 }
 
-function loadLogo() {
-  // const user_info_id = window.localStorage.getItem("user_info_id"); // Assuming user_info_id is stored in localStorage
-  const user_info_id = globalUserInfoId;
-  const chatbotLogo = document.getElementById("chatbotLogo");
-
-  if (!user_info_id) {
-    console.error("User info ID is not available.");
-    return; // Exit if no user_info_id is found
-  }
-
-  console.log("Call Log Loading Function.");
-  // fetch(`/.netlify/functions/getUserLogo?user_info_id=${user_info_id}`)
-  //   .then((response) => {
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch logo");
-  //     }
-  //     return response.text(); // Expecting a Base64 encoded string
-  //   })
-  //   .then((base64Data) => {
-  //     chatbotLogo.src = base64Data; // Set the image src to the Base64 string
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error loading logo:", error);
-  //   });
-}
-
 async function displayAvatarNames(avatars) {
   const avatarsContainer = document.getElementById("avatars-container");
 
@@ -849,11 +823,50 @@ async function deleteAvatar(selectedAvatarId) {
   }
 }
 
+async function addAvatarToDatabase(username) {
+  try {
+    const response = await fetch(`/.netlify/functions/avatar/addAvatar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        avatarName: username,
+        user_info_id: globalUserInfoId,
+      }),
+    });
+
+    // Check if the response status is OK (2xx) before trying to parse JSON
+    if (!response.ok) {
+      const errorMessage = await response.text(); // Get the error message from the response
+      console.error("Error adding avatar name:", errorMessage);
+      return false;
+    }
+
+    const data = await response.json();
+    console.log(
+      "Avatar name added successfully:",
+      username,
+      "with ID:",
+      data.saveavatar
+    );
+
+    // Send the 'saveavatar' command with the newly obtained avatar ID
+    handleSendCommands({ saveavatar: data.saveavatar });
+
+    selectedUserAvatarId = data.saveavatar;
+
+    return true; // Return true to indicate success
+  } catch (error) {
+    console.error("Network or server error:", error);
+    return false;
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   const confirmButton = document.getElementById("confirmButton");
   const usernameInput = document.getElementById("username");
   const popup = document.getElementById("popup");
-  let user_info_id;
 
   // Function to handle Export Avatar
   async function exportAvatar() {
@@ -892,65 +905,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     .getElementById("exportAvatarHeadButton")
     .addEventListener("click", exportAvatarHead);
 
-  // Refactor Fetching and Displaying Avatars:
-
-  // Function to add a new avatar name to the database and send a command
-  async function addAvatarToDatabase(username, user_info_id) {
-    try {
-      const response = await fetch(`/.netlify/functions/avatar/addAvatar`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ avatarName: username, user_info_id }),
-      });
-
-      // Check if the response status is OK (2xx) before trying to parse JSON
-      if (!response.ok) {
-        const errorMessage = await response.text(); // Get the error message from the response
-        console.error("Error adding avatar name:", errorMessage);
-        return false;
-      }
-
-      const data = await response.json();
-      console.log(
-        "Avatar name added successfully:",
-        username,
-        "with ID:",
-        data.saveavatar
-      );
-
-      // Send the 'saveavatar' command with the newly obtained avatar ID
-      handleSendCommands({ saveavatar: data.saveavatar });
-
-      selectedUserAvatarId = data.saveavatar;
-
-      return true; // Return true to indicate success
-    } catch (error) {
-      console.error("Network or server error:", error);
-      return false;
-    }
-  }
-
-  // Add event listener to the confirm button
   confirmButton.addEventListener("click", async function (event) {
-    event.preventDefault(); // Prevent form submission
-
-    // Get the username from the input field
-    const username = usernameInput.value;
-
-    // Add the new avatar name to the database with the corresponding user_info_id
-    const isAdded = await addAvatarToDatabase(username, user_info_id); // Pass user_info_id
-
-    if (isAdded) {
-      // Delay fetching and updating avatar section by 5 seconds
-      setTimeout(async () => {
-        await updateAvatarSection(user_info_id);
-        console.log("Avatar name added to user account:", username);
-      }, 5000);
+    if (selectedHair || selectedBody) {
+      showingCreditList();
+    } else {
+      event.preventDefault();
+      const username = usernameInput.value;
+      const isAdded = await addAvatarToDatabase(username);
+      if (isAdded) {
+        setTimeout(async () => {
+          await updateAvatarSection(globalUserInfoId);
+          console.log("Avatar name added to user account:", username);
+        }, 5000);
+      }
     }
-
-    // Close the pop-up
     popup.style.display = "none";
   });
 

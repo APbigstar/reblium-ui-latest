@@ -1747,7 +1747,7 @@
           <button class="menu-button" id="shareButton">
             <i class="fas fa-share"></i>Publish
           </button>
-          <button class="menu-button" id="ChatopenPopup">
+          <button class="menu-button" onclick="showSaveAvatarExit()">
             <i class="fas fa-save save-ico"></i>Save Avatar
           </button>
 
@@ -10204,15 +10204,6 @@
         });
 
       openPopup.addEventListener("click", function () {
-        console.log("Open popup button clicked");
-        if (!selectedUserAvatarId) {
-          console.log("Avatar ID is empty. Opening the pop-up.");
-          popup.style.display = "block"; // Show the pop-up only if avatarId is empty
-        }
-      });
-
-      // Add event listener to the "New Avatar" button
-      ChatopenPopup.addEventListener("click", function () {
         console.log("Open popup button clicked");
         if (!selectedUserAvatarId) {
           console.log("Avatar ID is empty. Opening the pop-up.");
