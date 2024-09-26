@@ -16,6 +16,7 @@ const audioRef = document.getElementById("audioRef");
 
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
+  initAudioRefProps()
   // Toggle the 'display' property for dashboard and artist_mode
   selectedUserAvatarId = ""; // Clears the avatar ID display
   document.getElementById("avatarName").textContent = ""; // Clears the avatar ID display
@@ -36,6 +37,11 @@ function toggleDashboardAndArtistMode() {
     watermarkContainer.style.display = "none";
     chatbot.style.display = "none";
   }
+}
+
+function showingDiscoverSection() {
+  toggleDashboardAndArtistMode();
+  updateDisplayState("conversation");
 }
 
 // Add the click event listener to each preset-avatar element
@@ -255,6 +261,7 @@ function updateDisplayState(buttonType) {
 }
 
 function initAudioRefProps() {
+  console.log('aa')
   audioRef.muted = false;
   audioRef.play();
   icon.className = "fas fa-volume-up";
