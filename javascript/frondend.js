@@ -176,30 +176,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  const dashboard = document.getElementById("dashboard");
-  const chatbot = document.getElementById("chatbot");
-  const artistMode = document.getElementById("artist_mode");
-
-  // Function to show artist mode after dashboard
-  function showArtistMode() {
-    dashboard.style.display = "block";
-    artistMode.style.display = "none";
-    chatbot.style.display = "none";
-
-    // Set the design button as active since we start with artist mode
-    document.getElementById("designButton").classList.add("active");
-    document.getElementById("designButton").classList.remove("inactive");
-    document.getElementById("conversationButton").classList.add("inactive");
-    document.getElementById("conversationButton").classList.remove("active");
-  }
-
-  // Show artist mode automatically after the dashboard
-  showArtistMode();
   initAudioRefProps();
 });
 
 // Function to handle the display toggle and button state
 function updateDisplayState(buttonType) {
+
+  removeAllPopUps();
+
   const chatbot = document.getElementById("chatbot");
   const artistMode = document.getElementById("artist_mode");
   const conversationButton = document.getElementById("conversationButton");
@@ -257,8 +241,15 @@ function updateDisplayState(buttonType) {
     chatbot.style.display = "none";
     artistMode.focus(); // Focus the artist_mode div
     console.log(`Active: ${artistMode.id}`);
-    // handleSendCommands({ cameraswitch: "Head" });
-    // handleSendCommands({ camup: "" });
+    handleSendCommands({
+      cameraswitch: "Head",
+    });
+    handleSendCommands({ camup: "" });
+    handleSendCommands({ camup: "" });
+    handleSendCommands({ camup: "" });
+    handleSendCommands({ camup: "" });
+    handleSendCommands({ camup: "" });
+    handleSendCommands({ camup: "" });
   }
   handleMute();
 }
@@ -385,9 +376,8 @@ menuContent.addEventListener("click", function (event) {
 // Function to toggle the display of sub-menus based on the menuId
 function toggleMenu(menuId) {
   const subMenu = document.getElementById(`${menuId}SubMenu`);
-  const subMenuIdSelector = subMenu.id ? `#${subMenu.id}` : "";
   const otherSubMenus = document.querySelectorAll(
-    `.sub-menu:not(${subMenuIdSelector})`
+    ".sub-menu:not(#" + menuId + "SubMenu)"
   );
 
   // Hide other sub-menus
@@ -484,7 +474,7 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       // Get the corresponding sub-menu element
       const subMenu = this.nextElementSibling;
-      console.log(subMenu)
+      console.log(subMenu);
       // Toggle the sub-menu display
       toggleSubMenu(subMenu);
     });
@@ -496,11 +486,9 @@ function toggleSubMenu(subMenu) {
   // Toggle the display property of the sub-menu
   subMenu.style.display = subMenu.style.display === "none" ? "block" : "none";
 
-  console.log(subMenu.id)
-
   // Hide other sub-menus
   const otherSubMenus = document.querySelectorAll(
-    `.sub-menu:not(#${subMenu.id})`
+    ".sub-menu:not(" + subMenu.id + ")"
   );
   otherSubMenus.forEach(function (menu) {
     menu.style.display = "none";
@@ -925,18 +913,6 @@ function updateCameraPosition(deltaX, deltaY) {
   // This depends on your specific camera setup and 3D environment
 }
 
-// Function to close the payment modal and clear the iframe source for security
-function closePaymentModal() {
-  const modal = document.getElementById("paymentModal");
-  modal.style.display = "none";
-  document.getElementById("paymentFrame").src = ""; // Clears the iframe source to ensure privacy and security
-}
-
-// Attaching the event listener to the close button right after defining the function
-document
-  .getElementById("closePaymentModal")
-  .addEventListener("click", closePaymentModal);
-
 // Iterate over all img elements and add click event listeners
 const images = document.querySelectorAll("img");
 images.forEach((img) => {
@@ -949,30 +925,13 @@ function imageToText() {
 }
 
 // Get the button and the popup elements
-const openPopup = document.getElementById("openPopup");
-const ChatopenPopup = document.getElementById("ChatopenPopup");
+
 
 const popup = document.getElementById("popup");
 const closeButton = popup.querySelector(".close-button");
 const confirmButton = popup.querySelector("#confirmButton"); // Get the Confirm button element
 
-// Add event listener to the "New Avatar" button
-openPopup.addEventListener("click", function () {
-  console.log("Open popup button clicked");
-  if (!selectedUserAvatarId) {
-    console.log("Avatar ID is empty. Opening the pop-up.");
-    popup.style.display = "block"; // Show the pop-up only if avatarId is empty
-  }
-});
 
-// Add event listener to the "New Avatar" button
-ChatopenPopup.addEventListener("click", function () {
-  console.log("Open popup button clicked");
-  if (!selectedUserAvatarId) {
-    console.log("Avatar ID is empty. Opening the pop-up.");
-    popup.style.display = "block"; // Show the pop-up only if avatarId is empty
-  }
-});
 
 // Add event listener to the close button
 closeButton.addEventListener("click", function () {

@@ -1,6 +1,11 @@
 
 // Randomize the sliders in skin section
-function randomizeSliders() {
+function randomizeSliders(event) {
+
+    if (event && event.preventDefault) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
     const assets = {
       "Age": {
@@ -74,9 +79,6 @@ function randomizeSliders() {
     sliderIds.forEach(id => {
         const slider = document.querySelector('#' + id).parentNode.parentNode.querySelector('.slider');
         if (slider) {
-
-            event.preventDefault();
-            event.stopPropagation();
 
             // Calculate a random value within the slider's range
             const min = parseFloat(slider.min);

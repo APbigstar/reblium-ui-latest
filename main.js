@@ -14,6 +14,394 @@ let avatarResponse = null;
 let videoLoaded = false;
 let randomizationPromise;
 
+let selectedHair = "";
+let selectedBody = "";
+
+let hasRandomized = false;
+
+function setSelectedHair(assetName) {
+  selectedHair = assetName;
+  handleSendCommands({ assetname: assetName });
+}
+
+function setSelectedBody(assetName) {
+  selectedBody = assetName;
+  handleSendCommands({ assetname: assetName });
+}
+
+function checkDisplayStatus(element, status) {
+  // If element is a string (i.e., an ID), get the actual element
+  if (typeof element === "string") {
+    element = document.getElementById(element);
+  }
+
+  // Check if the element exists
+  if (!element) {
+    console.error("Element not found");
+    return false;
+  }
+
+  // Get the computed style of the element
+  const style = window.getComputedStyle(element);
+
+  // Return true if the display matches the status, false otherwise
+  return style.display === status;
+}
+
+function filterItemsByGender(gender) {
+  event.preventDefault();
+  event.stopPropagation();
+  // Retrieve all image cells
+  const imageCells = document.querySelectorAll(".image-cell");
+
+  // Loop through all cells to apply the filter
+  imageCells.forEach((cell) => {
+    // Check the data-gender attribute of each cell
+    if (cell.dataset.gender === gender || cell.dataset.gender === undefined) {
+      // If the cell matches the selected gender or is unisex/neutral, display it
+      cell.style.display = "";
+    } else {
+      // If the cell does not match, hide it
+      cell.style.display = "none";
+    }
+  });
+}
+
+function handleRandomization() {
+  if (videoLoaded) {
+    // Existing code for collecting checkbox and slider values...
+    const checkboxes = randomizeForm.querySelectorAll('input[type="checkbox"]');
+    const checkboxValues = [];
+    checkboxes.forEach((checkbox) => {
+      checkboxValues.push(`${checkbox.name}*${checkbox.checked ? 1 : 0}`);
+    });
+
+    const slider = document.getElementById("mySlider");
+    const sliderValue = parseFloat(slider.value);
+    const ageRange = `Agemin*${sliderValue}, Agemax*${sliderValue}`;
+
+    const result = [...checkboxValues, ageRange].join(", ");
+    handleSendCommands({ randomize: result });
+    handleSendCommands({ assetname: "Studio_makeUp" });
+
+    // New code to randomize background
+    const randomBackgroundIndex = Math.floor(
+      Math.random() * backgroundAssets.length
+    );
+    const selectedBackground = backgroundAssets[randomBackgroundIndex];
+    handleSendCommands({ assetname: selectedBackground });
+    console.log("Randomized background command sent:", selectedBackground);
+    hasRandomized = true;
+  } else {
+    console.log("Video is not loaded yet. Please wait for it to load.");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const randomizeButton = document.getElementById("randomizeButton");
+
+  // Function to handle randomization
+
+  // Event listener for the "Randomize" button click
+  randomizeButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    handleRandomization();
+    randomizeSliders();
+  });
+  // Define the event listener function
+  function handleSpaceKey(event) {
+    if (event.key === " ") {
+      // Check if the pop-up is displayed
+      const popup = document.getElementById("popup");
+      if (!popup || popup.style.display === "none") {
+        // Execute the randomization function only if the pop-up is not displayed
+        handleRandomization();
+      }
+    }
+  }
+
+  // document.addEventListener('keydown', handleSpaceKey);
+});
+
+// Initialize the current asset index
+let currentAssetIndex = 0;
+
+function toggleAssetName() {
+  // Increment the current index
+  currentAssetIndex = (currentAssetIndex + 1) % assetNames.length;
+
+  // Get the new asset name
+  const newAssetName = assetNames[currentAssetIndex];
+
+  // Call the function to send the command with the new asset name
+  handleSendCommands({ assetname: newAssetName });
+}
+
+let currentAnimationIndex = 0;
+
+function toggleAnimationName(direction) {
+  // Calculate the new index based on the direction
+  currentAnimationIndex =
+    (currentAnimationIndex + direction + animationNames.length) %
+    animationNames.length;
+
+  // Get the new animation name
+  const newAnimationName = animationNames[currentAnimationIndex];
+
+  // Call the function to send the command with the new animation name
+  handleSendCommands({ assetname: newAnimationName });
+}
+
+let isPlaying = true; // Assuming it starts as "playing"
+
+// Function to toggle between play and pause buttons
+function togglePlayback() {
+  // Get references to the play and pause buttons
+  const playButton = document.getElementById("playButton");
+  const pauseButton = document.getElementById("pauseButton");
+
+  // Toggle the display style of the buttons
+  if (playButton.style.display === "none") {
+    // If playButton is hidden, show it, and hide pauseButton
+    playButton.style.display = "inline-block";
+    pauseButton.style.display = "none";
+
+    handleSendCommands({ player: "Play" });
+    handleSendCommands({ assetname: "Catwalk_Female" });
+  } else {
+    // If playButton is visible, hide it, and show pauseButton
+    playButton.style.display = "none";
+    pauseButton.style.display = "inline-block";
+
+    handleSendCommands({ player: "Pause" });
+  }
+}
+
+function toggleImages() {
+  var image1 = document.getElementById("image1");
+  var image2 = document.getElementById("image2");
+
+  if (image1.style.display === "block") {
+    image1.style.display = "none";
+    image2.style.display = "block";
+  } else {
+    image1.style.display = "block";
+    image2.style.display = "none";
+  }
+}
+
+function toggleAutoCamera() {
+  var lockIcon = document.getElementById("lockIcon");
+
+  // Check which icon is currently displayed
+  if (lockIcon.classList.contains("fa-lock-open")) {
+    // It's currently unlocked, so lock it
+    lockIcon.classList.remove("fa-lock-open");
+    lockIcon.classList.add("fa-lock");
+
+    // Sending command to lock camera
+    handleSendCommands({ autocamera: "No" });
+  } else {
+    // It's currently locked, so unlock it
+    lockIcon.classList.remove("fa-lock");
+    lockIcon.classList.add("fa-lock-open");
+
+    // Sending command to unlock camera
+    handleSendCommands({ autocamera: "Yes" });
+  }
+}
+
+function toggleFullScreen() {
+  var fullScreenIcon = document.getElementById("fullScreenIcon");
+
+  // Check if the document is currently in fullscreen mode
+  if (!document.fullscreenElement) {
+    // Enter fullscreen mode
+    document.documentElement.requestFullscreen().catch((err) => {
+      console.log(
+        `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+      );
+    });
+
+    // Change the icon to minimize
+    fullScreenIcon.classList.remove("fa-maximize");
+    fullScreenIcon.classList.add("fa-minimize");
+  } else {
+    // Exit fullscreen mode
+    document.exitFullscreen();
+
+    // Change the icon back to maximize
+    fullScreenIcon.classList.remove("fa-minimize");
+    fullScreenIcon.classList.add("fa-maximize");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Lazy load images
+  const lazyImages = document.querySelectorAll(".lazyload");
+  lazyImages.forEach((img) => {
+    img.src = img.getAttribute("data-src");
+    img.onload = () => {
+      img.removeAttribute("data-src");
+    };
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const chatbotLogo = document.getElementById("chatbotLogo");
+
+  // Prevent default behavior for drag events
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    chatbotLogo.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Add visual feedback when dragging over the image
+  ["dragenter", "dragover"].forEach((eventName) => {
+    chatbotLogo.addEventListener(eventName, () => {
+      chatbotLogo.classList.add("drag-over");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    chatbotLogo.addEventListener(eventName, () => {
+      chatbotLogo.classList.remove("drag-over");
+    });
+  });
+
+  // Handle the drop event
+  chatbotLogo.addEventListener("drop", handleDrop, false);
+
+  function handleDrop(e) {
+    preventDefaults(e);
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          // Update the src of img with the Data URL for immediate feedback
+          chatbotLogo.src = event.target.result;
+
+          // Call uploadLogo to handle the upload process, passing Base64 data
+          if (typeof uploadLogo === "function") {
+            uploadLogo(event.target.result)
+              .then(() => {
+                console.log("Image uploaded successfully.");
+              })
+              .catch((error) => {
+                console.error("Failed to upload image:", error);
+              });
+          } else {
+            console.error("uploadLogo function is not available.");
+          }
+        };
+        reader.readAsDataURL(file); // Convert the file to Data URL which is Base64 encoded
+      } else {
+        alert("Please drop an image file.");
+      }
+    }
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const uploadButton = document.getElementById("UploadButton");
+  const dhsPopup = document.getElementById("dhsPopup");
+  const dhsClose = document.getElementById("dhsClose");
+  const dhsDropzone = document.getElementById("dhsDropzone");
+  const dhsConfirmButton = document.getElementById("dhsConfirmButton");
+  const uploadStatus = document.getElementById("uploadStatus");
+  let uploadedDhsJson = null;
+
+  // Show pop-up on button click
+  uploadButton.addEventListener("click", () => {
+    removeAllPopUps();
+    dhsPopup.style.display = "flex";
+  });
+
+  // Close pop-up
+  dhsClose.addEventListener("click", () => {
+    dhsPopup.style.display = "none";
+  });
+
+  // Prevent default drag behaviors
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    dhsDropzone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Highlight drop area when dragging over it
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dhsDropzone.addEventListener(
+      eventName,
+      () => dhsDropzone.classList.add("highlight"),
+      false
+    );
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    dhsDropzone.addEventListener(
+      eventName,
+      () => dhsDropzone.classList.remove("highlight"),
+      false
+    );
+  });
+
+  // Handle file drop
+  dhsDropzone.addEventListener("drop", handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.name.endsWith(".DHS")) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          try {
+            uploadedDhsJson = JSON.parse(event.target.result); // Parse JSON from file
+            uploadStatus.style.display = "block"; // Show success message
+            uploadStatus.textContent = "File uploaded successfully!";
+          } catch (error) {
+            alert(
+              "Error parsing DHS file. Please make sure it is a valid JSON file."
+            );
+            console.error("Error parsing DHS file:", error);
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        alert("Please upload a .DHS file.");
+      }
+    }
+  }
+
+  // Handle upload confirmation
+  dhsConfirmButton.addEventListener("click", () => {
+    if (uploadedDhsJson) {
+      handleSendCommands({
+        resetavatar: JSON.stringify(uploadedDhsJson),
+      });
+      dhsPopup.style.display = "none";
+    } else {
+      alert("Please upload a .DHS file first.");
+    }
+  });
+});
+
 // Function to return a promise that resolves when the video is loaded
 function waitForVideoLoad() {
   if (videoLoaded) {
@@ -54,7 +442,7 @@ function detectVideoLoadedAndExecuteFunctions() {
 const checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 1000);
 
 function handleSendCommands(command) {
-  console.log(command)
+  console.log(command);
   selectedCommand = Object.keys(command)[0];
   newWebRTC.emitUIInteraction(command);
   if (command.resetavatar) {
@@ -71,13 +459,6 @@ function updateSliderValue() {
   // Call the handleSendCommands function with the command object
   handleSendCommands(command);
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("save-exit").addEventListener("click", function () {
-    const exitPopup = document.getElementById("exitConfirmation");
-    exitPopup.style.display = "none";
-  });
-});
 
 // Async function to load and send avatar data
 async function loadAndSendAvatarData(jsonFilePath) {
@@ -123,153 +504,323 @@ async function loadAndProcessJsonData(filePath) {
   }
 }
 
-// Function to handle the reset button click
-function handleResetButtonClick() {
-  if (latestLoadAvatarCommand) {
-    // Send the latest loadavatar command
-    handleSendCommands({ resetavatar: latestLoadAvatarCommand });
-    console.log(
-      "Reset button clicked with the latest loadavatar command:",
-      latestLoadAvatarCommand
-    );
-  } else {
-    console.log("No loadavatar command available to reset.");
-  }
-}
-
-// Event listener for the "reset" button
-document.addEventListener("DOMContentLoaded", function () {
-  document
-    .getElementById("reset")
-    .addEventListener("click", handleResetButtonClick);
-});
-
-async function getUserCredits() {
-  const checkUserCreditAmount = await fetch(
-    `/.netlify/functions/credit/getUserCreditAmount?user_id=${globalUserInfoId}`
-  );
-
-  const creditData = await checkUserCreditAmount.json();
-
-  if (creditData.amount) {
-    userCreditAmount = creditData.amount;
-    document.getElementById("exportCredits").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
-    document.getElementById("detail_page_credit_amount").textContent =
-    globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
-    if (creditData.createdAt) {
-      let createdDate = new Date(creditData.createdAt);
-      createdDate.setMonth(createdDate.getMonth() + 1);
-      let oneMonthLater = createdDate.toISOString().slice(0, 10);
-      document.getElementById("plan_created_date_p").innerHTML = globalUserInfoId === DEV_ACCOUNT_ID ? '' :
-        `You're next billing cycle starts on ` +
-        `<span style="font-size: 1.2rem; color: rgb(34 211 238);">` +
-        oneMonthLater +
-        `</span>`;
-    } else {
-      document.getElementById("plan_created_date_p").textContent = "No Plan";
-    }
-  } else {
-    userCreditAmount = 0;
-    document.getElementById("exportCredits").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
-    document.getElementById("detail_page_credit_amount").textContent =
-    globalUserInfoId === DEV_ACCOUNT_ID ? 'Unlimited' : userCreditAmount;
-    document.getElementById("plan_created_date_p").textContent = globalUserInfoId === DEV_ACCOUNT_ID ? '' :"No Plan";
-  }
-}
-
-async function getSelectedSubscription() {
-  const checkCurrentUserSubscription = await fetch(
-    `/.netlify/functions/premium/getSelectedSubscription?user_id=${globalUserInfoId}`
-  );
-  const subscriptionData = await checkCurrentUserSubscription.json();
-  if (subscriptionData.plan) {
-    selectedSubscription = subscriptionData.plan;
-    selectedUserPlanId = subscriptionData.userPlanId;
-  } else {
-    selectedSubscription = null;
-    selectedUserPlanId = null;
-  }
-}
-
 function handleCreateAvatarMode() {
   toggleDashboardAndArtistMode(true);
   updateDisplayState("design");
   createMode = true;
 }
 
+function loadLogo() {
+  // const user_info_id = window.localStorage.getItem("user_info_id"); // Assuming user_info_id is stored in localStorage
+  const user_info_id = globalUserInfoId;
+  const chatbotLogo = document.getElementById("chatbotLogo");
+
+  if (!user_info_id) {
+    console.error("User info ID is not available.");
+    return; // Exit if no user_info_id is found
+  }
+
+  console.log("Call Log Loading Function.");
+  // fetch(`/.netlify/functions/getUserLogo?user_info_id=${user_info_id}`)
+  //   .then((response) => {
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch logo");
+  //     }
+  //     return response.text(); // Expecting a Base64 encoded string
+  //   })
+  //   .then((base64Data) => {
+  //     chatbotLogo.src = base64Data; // Set the image src to the Base64 string
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error loading logo:", error);
+  //   });
+}
+
+async function displayAvatarNames(avatars) {
+  const avatarsContainer = document.getElementById("avatars-container");
+
+  avatarsContainer.innerHTML = ""; // Clear the avatars container before adding new data
+
+  // Reverse the order of avatars
+  avatars.reverse();
+
+  for (const avatar of avatars) {
+    const avatarDiv = document.createElement("div");
+    avatarDiv.className = "preset-avatar";
+
+    const avatarImg = document.createElement("img");
+    avatarImg.src = avatar.Avatar_Image
+      ? `data:image/jpeg;base64,${avatar.Avatar_Image}`
+      : "src/Default_Avatar_Icon.png";
+    avatarImg.alt = `Avatar ${avatar.id}`;
+
+    const avatarName = document.createElement("span");
+    avatarName.className = "avatar-name";
+    avatarName.textContent = avatar.Avatar_Name;
+    avatarName.setAttribute("contenteditable", false);
+
+    avatarDiv.appendChild(avatarImg);
+    avatarDiv.appendChild(avatarName);
+
+    // if (selectedSubscription == null) {
+    //   const watermarkContainer = document.createElement("div");
+    //   watermarkContainer.id = "watermarkContainer";
+
+    //   // Create canvas elements for watermarks
+    //   for (let i = 0; i < 5; i++) {
+    //     const canvas = document.createElement("canvas");
+    //     canvas.width = 100; // Set an appropriate width
+    //     canvas.height = 50; // Set an appropriate height
+    //     canvas.className = "avatar_watermark_item";
+    //     canvas.style.userSelect = 'none'
+    //     canvas.style.pointerEvents = 'none'
+
+    //     const ctx = canvas.getContext("2d");
+    //     ctx.font = "1.2rem Arial";
+    //     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';// #888 with 50% opacity
+    //     ctx.textAlign = "center";
+    //     ctx.textBaseline = "middle";
+    //     ctx.fillText("Reblium", canvas.width / 2, canvas.height / 2);
+
+    //     watermarkContainer.appendChild(canvas);
+    //   }
+
+    //   avatarDiv.appendChild(watermarkContainer);
+    // }
+
+    const avatarButtons = document.createElement("div");
+    avatarButtons.className = "avatar-buttons";
+
+    const editButton = document.createElement("button");
+    editButton.id = "editButton";
+    editButton.innerHTML = '<i class="fas fa-edit"></i> Edit';
+    editButton.addEventListener("click", () => {
+      toggleDashboardAndArtistMode(true); // Show artist_mode
+      updateDisplayState("design");
+      createMode = false;
+      selectedUserAvatarId = avatar.id;
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.innerHTML = '<i class="fas fa-trash"></i> Delete';
+    deleteButton.addEventListener("click", () => {
+      showDeleteModal(avatar.id);
+    });
+
+    avatarButtons.appendChild(editButton);
+    avatarButtons.appendChild(deleteButton);
+    avatarDiv.appendChild(avatarButtons);
+
+    avatarsContainer.appendChild(avatarDiv);
+
+    // Double-click event to enable editing
+    avatarName.addEventListener("dblclick", () => {
+      avatarName.setAttribute("contenteditable", true);
+      avatarName.focus();
+    });
+
+    // Function to handle saving and disabling editing
+    const saveAndDisableEditing = async () => {
+      avatarName.setAttribute("contenteditable", false);
+      const newName = avatarName.textContent.trim();
+      if (newName !== avatar.Avatar_Name) {
+        avatar.Avatar_Name = newName;
+        await updateAvatarName(avatar.id, newName);
+      }
+    };
+
+    // Blur event to save changes and disable editing
+    avatarName.addEventListener("blur", saveAndDisableEditing);
+
+    // Key down event to handle Enter and spacebar explicitly
+    avatarName.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent the default Enter key behavior (newline)
+        saveAndDisableEditing();
+      } else if (event.key === " ") {
+        event.preventDefault();
+      }
+    });
+
+    const shareButton = document.createElement("button");
+    shareButton.innerHTML = '<i class="fas fa-share"></i> Share';
+    shareButton.addEventListener("click", () => {
+      // Get the Base64 image string from the selected avatar object
+      const base64Image = avatar.Avatar_Image; // Replace with the property name containing the Base64 string
+
+      // Convert the Base64 string to a Blob
+      const byteCharacters = atob(base64Image);
+      const byteArrays = [];
+
+      for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+        const slice = byteCharacters.slice(offset, offset + 512);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+
+      const blob = new Blob(byteArrays, { type: "image/jpeg" });
+
+      // Create a URL for the Blob
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Create a link element for downloading
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "persona_image.jpg"; // Set the desired download filename
+
+      // Trigger a click event on the link to initiate the download
+      link.click();
+
+      // Clean up the URL object after download
+      URL.revokeObjectURL(blobUrl);
+    });
+
+    // Create a teaching button with a custom class
+    const renameButton = document.createElement("button");
+    renameButton.innerHTML = '<i class="fas fa-edit"></i> Rename';
+    // Assuming 'avatarName' is the element that displays the avatar's name
+    renameButton.addEventListener("click", () => {
+      if (avatarName.getAttribute("contenteditable") === "true") {
+        avatarName.setAttribute("contenteditable", false);
+        avatarName.blur(); // Manually trigger the blur if already editable
+      } else {
+        avatarName.setAttribute("contenteditable", true);
+        avatarName.focus(); // Focus the element to start editing immediately
+      }
+    });
+
+    // Create a play button with a custom class
+    // const chatButton = document.createElement('button');
+    // chatButton.innerHTML = '<i class="fas fa-play"></i> Chat';
+    // renameButton.className = 'custom-button';
+
+    // Append the new buttons to the avatarButtons container
+    avatarButtons.appendChild(editButton);
+    avatarButtons.appendChild(deleteButton);
+    // avatarButtons.appendChild(shareButton);
+    avatarButtons.appendChild(renameButton);
+    // avatarButtons.appendChild(chatButton);
+
+    avatarDiv.appendChild(avatarButtons);
+
+    // Add the event listener for both click and double-click on an avatar
+    avatarDiv.addEventListener("click", async () => {
+      await waitForVideoLoad(); // Ensures the video or related content is fully loaded
+
+      const selectedAvatarId = avatar.id;
+
+      const selectedAvatar = avatars.find((av) => av.id === selectedAvatarId);
+      if (selectedAvatar) {
+        const avatarJsonData = selectedAvatar.Avatar;
+
+        const previouslySelectedAvatar =
+          document.querySelector(".avatar.selected");
+        if (previouslySelectedAvatar) {
+          previouslySelectedAvatar.classList.remove("selected");
+        }
+
+        // Extract and log the Personas information
+        if (avatarJsonData && avatarJsonData.Personas) {
+          // Display the Personas information in the input field
+          document.getElementById("personaInput").value =
+            avatarJsonData.Personas;
+        } else {
+          console.log(
+            `No Personas information found for Avatar ID ${selectedAvatarId}.`
+          );
+        }
+
+        avatarDiv.classList.add("selected");
+
+        // Ensure these updates are not inside a conditional block that could be skipped
+        selectedUserAvatarId = selectedAvatar.id;
+        document.getElementById("avatarName").textContent =
+          selectedAvatar.Avatar_Name;
+
+        // Call the handleSendCommands function with the avatarJsonData
+        handleSendCommands({ resetavatar: JSON.stringify(avatarJsonData) });
+        // handleSendCommands({ cameraswitch: 'Head' });
+      } else {
+        console.log(`Selected avatar ID ${selectedAvatarId} not found.`);
+      }
+    });
+
+    avatarsContainer.appendChild(avatarDiv);
+  }
+}
+
+async function updateAvatarName(id, newName) {
+  try {
+    const response = await fetch("/.netlify/functions/updateAvatarName", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, Avatar_Name: newName }),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log("Avatar name updated successfully:", result);
+    } else {
+      console.error("Error updating avatar name:", result.error);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+
+
+function showDeleteModal(selectedAvatarId) {
+  // Load the HTML template for the pop-up
+  const deleteConfirmationHtml = `
+  <div id="deleteConfirmation" class="modal-delete">
+    <div class="modal-content-delete">
+      <h3>Are you sure you want to delete this avatar?</h3>
+      <div class="modal-buttons-delete">
+        <button id="cancelDeleteButton" class="cancel-delete">Cancel</button>
+        <button id="confirmDeleteButton" class="delete-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+`;
+  // Append the HTML template to the document body
+  document.body.insertAdjacentHTML("beforeend", deleteConfirmationHtml);
+
+  // Get references to the pop-up and buttons
+  const deleteConfirmation = document.getElementById("deleteConfirmation");
+  const cancelButton = document.getElementById("cancelDeleteButton");
+  const confirmButton = document.getElementById("confirmDeleteButton");
+
+  // Show the pop-up
+  deleteConfirmation.style.display = "block";
+
+  // Add event listener to the "Cancel" button to hide the pop-up
+  cancelButton.addEventListener("click", () => {
+    deleteConfirmation.style.display = "none";
+    deleteConfirmation.remove(); // Remove the pop-up from the DOM
+  });
+
+  // Add event listener to the "Confirm Delete" button to delete the avatar
+  confirmButton.addEventListener("click", async () => {
+    deleteConfirmation.style.display = "none";
+    deleteConfirmation.remove(); // Remove the pop-up from the DOM
+    await deleteAvatar(selectedAvatarId); // Call the function to delete the avatar
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   const confirmButton = document.getElementById("confirmButton");
   const usernameInput = document.getElementById("username");
   const popup = document.getElementById("popup");
-  const avatarsContainer = document.getElementById("avatars-container");
   let user_info_id;
-
-  // Function to fetch user data from the XSolla API using the user token
-  async function fetchUserData(userToken) {
-    try {
-      const response = await fetch("/.netlify/functions/auth/validate-token", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-
-        // Display the user's email in your HTML
-        document.getElementById("userEmail").textContent = userData.email;
-
-        if (userData.picture) {
-          // Display the user image if it exists in the response
-          document.getElementById("userImage").src = userData.picture;
-        } else {
-          document.getElementById("userImage").src =
-            "https://static-00.iconduck.com/assets.00/avatar-default-symbolic-icon-479x512-n8sg74wg.png";
-        }
-
-        return userData;
-      } else {
-        window.location.href = "/";
-        throw new Error("Invalid user token");
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  function storeToken(token) {
-    const tokenData = JSON.parse(atob(token.split(".")[1]));
-    const expirationTime = tokenData.exp * 1000; // Convert to milliseconds
-    localStorage.setItem("token", token);
-    localStorage.setItem("tokenExpiration", expirationTime);
-  }
-
-  function setUpTokenExpirationCheck() {
-    setInterval(checkTokenExpiration, 60000);
-  }
-
-  function checkTokenExpiration() {
-    const expirationTime = localStorage.getItem("tokenExpiration");
-    if (expirationTime && Date.now() > parseInt(expirationTime)) {
-      console.log("Token has expired");
-      logout();
-    }
-  }
-
-  function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpiration");
-    localStorage.removeItem("user_info_id");
-    redirectToLogin();
-  }
-
-  function redirectToLogin() {
-    window.location.href = "/";
-  }
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const userToken = urlParams.get("token");
 
   // Function to handle Export Avatar
   async function exportAvatar() {
@@ -298,14 +849,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  async function generateAvatar() {
-    try {
-      console.log("Export Avatar Head completed");
-    } catch (error) {
-      console.error("Error exporting avatar head:", error);
-    }
-  }
-
   document
     .getElementById("exportAvatarButton")
     .addEventListener("click", exportAvatar);
@@ -315,9 +858,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   document
     .getElementById("exportAvatarHeadButton")
     .addEventListener("click", exportAvatarHead);
-  document
-    .getElementById("randomizeButton")
-    .addEventListener("click", generateAvatar);
 
   // Refactor Fetching and Displaying Avatars:
   async function updateAvatarSection(user_info_id) {
@@ -331,407 +871,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  async function fetchBlendshapeData(user_info_id) {
-    // try {
-    //   const response = await fetch(
-    //     `/.netlify/functions/getBlendshape?user_info_id=${user_info_id}`
-    //   );
-    //   if (!response.ok) {
-    //     throw new Error("Network response was not ok");
-    //   }
-    //   const blendshapeData = await response.json();
-    //   handleSendCommands({ loadUserblendshapes: blendshapeData });
-
-    //   return blendshapeData;
-    // } catch (error) {
-    //   console.error("Error fetching blendshape data:", error);
-    //   return null;
-    // }
-
-    console.log("Call Blend Shape Function");
-  }
-
-  // Function to fetch avatar data from the backend API for a specific user_info_id
-  async function fetchAvatarData(user_info_id) {
-    try {
-      const response = await fetch(
-        `/.netlify/functions/avatar/getUserAvatars?user_info_id=${user_info_id}`
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching avatar data:", error);
-      return [];
-    }
-  }
-
-  async function fetchPersonalizedAvatars(user_info_id) {
-    try {
-      const url = `/.netlify/functions/getPersonalizedAvatars?user_info_id=${user_info_id}`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const personalizedAvatars = await response.json();
-
-      // const container = document.getElementById("personalizedAvatarButton"); // Assuming this is the container for all avatars
-
-      // // Ensure the container exists
-      // if (!container) {
-      //   console.error("Avatar display container not found.");
-      //   return;
-      // }
-
-      // Clear previous content
-      // container.innerHTML = "";
-
-      // Iterate over each personalized avatar and create an img element
-      personalizedAvatars.forEach((avatar) => {
-        const img = document.createElement("img");
-        img.src = `data:image/jpeg;base64,${avatar.Avatar_Image}`;
-        img.alt = avatar.Avatar_Name || "Personalized Avatar";
-        img.style.cursor = "pointer"; // Make it visually clear the images are clickable
-        img.classList.add("avatar-image"); // Add a class for styling
-
-        // Set onclick event to log only this avatar's data
-        img.onclick = () => {
-          console.log("Avatar clicked:", avatar.Avatar);
-        };
-
-        container.appendChild(img);
-      });
-    } catch (error) {
-      console.error("Error fetching personalized avatars:", error);
-    }
-  }
-
-  // Display the skeleton loading animation
-  function showSkeletonLoader() {
-    avatarsContainer.innerHTML = ""; // Clear the container
-
-    for (let i = 0; i < 8; i++) {
-      const skeletonAvatar = document.createElement("div");
-      skeletonAvatar.className = "skeleton";
-
-      const skeletonImage = document.createElement("div");
-      skeletonImage.className = "skeleton-image";
-
-      const skeletonText1 = document.createElement("div");
-      skeletonText1.className = "skeleton-text";
-
-      skeletonAvatar.appendChild(skeletonImage);
-      skeletonAvatar.appendChild(skeletonText1);
-
-      avatarsContainer.appendChild(skeletonAvatar);
-    }
-  }
-
-  // Hide the skeleton loader and display the avatars
-  async function hideSkeletonLoader() {
-    avatarsContainer.innerHTML = ""; // Clear the container
-    // Call your displayAvatarNames function here to populate the container with avatars
-    // await displayAvatarNames(avatarsData); // Replace with your actual avatars data
-  }
-
-  // Simulate loading avatars (replace this with your actual data fetching logic)
-  function loadAvatars() {
-    showSkeletonLoader();
-
-    // Simulate an API call or data loading delay
-    setTimeout(() => {
-      // Replace the following with your actual data loading logic
-      // const avatarsData = fetchAvatars(); // Example fetchAvatars function
-
-      // Once avatarsData is available, hide the skeleton loader and display avatars
-      hideSkeletonLoader();
-    }, 2000); // Adjust the delay as needed
-  }
-
-  // Call loadAvatars function to start loading avatars
-  loadAvatars();
-
-  // // Call the function when the site is loaded
-  // document.addEventListener('DOMContentLoaded', function () {
-  //   const sliderValues = getAllSliderValuesAndNames();
-  // });
-
-  async function updateAvatarName(id, newName) {
-    try {
-      const response = await fetch("/.netlify/functions/updateAvatarName", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id, Avatar_Name: newName }),
-      });
-
-      const result = await response.json();
-      if (response.ok) {
-        console.log("Avatar name updated successfully:", result);
-      } else {
-        console.error("Error updating avatar name:", result.error);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
-  async function displayAvatarNames(avatars) {
-    avatarsContainer.innerHTML = ""; // Clear the avatars container before adding new data
-
-    // Reverse the order of avatars
-    avatars.reverse();
-
-    for (const avatar of avatars) {
-      const avatarDiv = document.createElement("div");
-      avatarDiv.className = "preset-avatar";
-
-      const avatarImg = document.createElement("img");
-      avatarImg.src = avatar.Avatar_Image
-        ? `data:image/jpeg;base64,${avatar.Avatar_Image}`
-        : "src/Default_Avatar_Icon.png";
-      avatarImg.alt = `Avatar ${avatar.id}`;
-
-      const avatarName = document.createElement("span");
-      avatarName.className = "avatar-name";
-      avatarName.textContent = avatar.Avatar_Name;
-      avatarName.setAttribute("contenteditable", false);
-
-      avatarDiv.appendChild(avatarImg);
-      avatarDiv.appendChild(avatarName);
-
-      // if (selectedSubscription == null) {
-      //   const watermarkContainer = document.createElement("div");
-      //   watermarkContainer.id = "watermarkContainer";
-
-      //   // Create canvas elements for watermarks
-      //   for (let i = 0; i < 5; i++) {
-      //     const canvas = document.createElement("canvas");
-      //     canvas.width = 100; // Set an appropriate width
-      //     canvas.height = 50; // Set an appropriate height
-      //     canvas.className = "avatar_watermark_item";
-      //     canvas.style.userSelect = 'none'
-      //     canvas.style.pointerEvents = 'none'
-
-      //     const ctx = canvas.getContext("2d");
-      //     ctx.font = "1.2rem Arial";
-      //     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';// #888 with 50% opacity
-      //     ctx.textAlign = "center";
-      //     ctx.textBaseline = "middle";
-      //     ctx.fillText("Reblium", canvas.width / 2, canvas.height / 2);
-
-      //     watermarkContainer.appendChild(canvas);
-      //   }
-
-      //   avatarDiv.appendChild(watermarkContainer);
-      // }
-
-      const avatarButtons = document.createElement("div");
-      avatarButtons.className = "avatar-buttons";
-
-      const editButton = document.createElement("button");
-      editButton.id = "editButton";
-      editButton.innerHTML = '<i class="fas fa-edit"></i> Edit';
-      editButton.addEventListener("click", () => {
-        toggleDashboardAndArtistMode(true); // Show artist_mode
-        updateDisplayState("design");
-        createMode = false;
-        selectedUserAvatarId = avatar.id;
-      });
-
-      const deleteButton = document.createElement("button");
-      deleteButton.innerHTML = '<i class="fas fa-trash"></i> Delete';
-      deleteButton.addEventListener("click", () => {
-        showDeleteModal(avatar.id);
-      });
-
-      avatarButtons.appendChild(editButton);
-      avatarButtons.appendChild(deleteButton);
-      avatarDiv.appendChild(avatarButtons);
-
-      avatarsContainer.appendChild(avatarDiv);
-
-      // Double-click event to enable editing
-      avatarName.addEventListener("dblclick", () => {
-        avatarName.setAttribute("contenteditable", true);
-        avatarName.focus();
-      });
-
-      // Function to handle saving and disabling editing
-      const saveAndDisableEditing = async () => {
-        avatarName.setAttribute("contenteditable", false);
-        const newName = avatarName.textContent.trim();
-        if (newName !== avatar.Avatar_Name) {
-          avatar.Avatar_Name = newName;
-          await updateAvatarName(avatar.id, newName);
-        }
-      };
-
-      // Blur event to save changes and disable editing
-      avatarName.addEventListener("blur", saveAndDisableEditing);
-
-      // Key down event to handle Enter and spacebar explicitly
-      avatarName.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault(); // Prevent the default Enter key behavior (newline)
-          saveAndDisableEditing();
-        } else if (event.key === " ") {
-          event.preventDefault();
-        }
-      });
-
-      const shareButton = document.createElement("button");
-      shareButton.innerHTML = '<i class="fas fa-share"></i> Share';
-      shareButton.addEventListener("click", () => {
-        // Get the Base64 image string from the selected avatar object
-        const base64Image = avatar.Avatar_Image; // Replace with the property name containing the Base64 string
-
-        // Convert the Base64 string to a Blob
-        const byteCharacters = atob(base64Image);
-        const byteArrays = [];
-
-        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-          const slice = byteCharacters.slice(offset, offset + 512);
-
-          const byteNumbers = new Array(slice.length);
-          for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-          }
-
-          const byteArray = new Uint8Array(byteNumbers);
-          byteArrays.push(byteArray);
-        }
-
-        const blob = new Blob(byteArrays, { type: "image/jpeg" });
-
-        // Create a URL for the Blob
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Create a link element for downloading
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.download = "persona_image.jpg"; // Set the desired download filename
-
-        // Trigger a click event on the link to initiate the download
-        link.click();
-
-        // Clean up the URL object after download
-        URL.revokeObjectURL(blobUrl);
-      });
-
-      // Create a teaching button with a custom class
-      const renameButton = document.createElement("button");
-      renameButton.innerHTML = '<i class="fas fa-edit"></i> Rename';
-      // Assuming 'avatarName' is the element that displays the avatar's name
-      renameButton.addEventListener("click", () => {
-        if (avatarName.getAttribute("contenteditable") === "true") {
-          avatarName.setAttribute("contenteditable", false);
-          avatarName.blur(); // Manually trigger the blur if already editable
-        } else {
-          avatarName.setAttribute("contenteditable", true);
-          avatarName.focus(); // Focus the element to start editing immediately
-        }
-      });
-
-      // Create a play button with a custom class
-      // const chatButton = document.createElement('button');
-      // chatButton.innerHTML = '<i class="fas fa-play"></i> Chat';
-      // renameButton.className = 'custom-button';
-
-      // Append the new buttons to the avatarButtons container
-      avatarButtons.appendChild(editButton);
-      avatarButtons.appendChild(deleteButton);
-      // avatarButtons.appendChild(shareButton);
-      avatarButtons.appendChild(renameButton);
-      // avatarButtons.appendChild(chatButton);
-
-      avatarDiv.appendChild(avatarButtons);
-
-      // Add the event listener for both click and double-click on an avatar
-      avatarDiv.addEventListener("click", async () => {
-        await waitForVideoLoad(); // Ensures the video or related content is fully loaded
-
-        const selectedAvatarId = avatar.id;
-
-        const selectedAvatar = avatars.find((av) => av.id === selectedAvatarId);
-        if (selectedAvatar) {
-          const avatarJsonData = selectedAvatar.Avatar;
-
-          const previouslySelectedAvatar =
-            document.querySelector(".avatar.selected");
-          if (previouslySelectedAvatar) {
-            previouslySelectedAvatar.classList.remove("selected");
-          }
-
-          // Extract and log the Personas information
-          if (avatarJsonData && avatarJsonData.Personas) {
-            // Display the Personas information in the input field
-            document.getElementById("personaInput").value =
-              avatarJsonData.Personas;
-          } else {
-            console.log(
-              `No Personas information found for Avatar ID ${selectedAvatarId}.`
-            );
-          }
-
-          avatarDiv.classList.add("selected");
-
-          // Ensure these updates are not inside a conditional block that could be skipped
-          selectedUserAvatarId = selectedAvatar.id;
-          document.getElementById("avatarName").textContent =
-            selectedAvatar.Avatar_Name;
-
-          // Call the handleSendCommands function with the avatarJsonData
-          handleSendCommands({ resetavatar: JSON.stringify(avatarJsonData) });
-          // handleSendCommands({ cameraswitch: 'Head' });
-        } else {
-          console.log(`Selected avatar ID ${selectedAvatarId} not found.`);
-        }
-      });
-
-      avatarsContainer.appendChild(avatarDiv);
-    }
-  }
-
-  function showDeleteModal(selectedAvatarId) {
-    // Load the HTML template for the pop-up
-    const deleteConfirmationHtml = `
-    <div id="deleteConfirmation" class="modal-delete">
-      <div class="modal-content-delete">
-        <h3>Are you sure you want to delete this avatar?</h3>
-        <div class="modal-buttons-delete">
-          <button id="cancelDeleteButton" class="cancel-delete">Cancel</button>
-          <button id="confirmDeleteButton" class="delete-delete">Delete</button>
-        </div>
-      </div>
-    </div>
-  `;
-    // Append the HTML template to the document body
-    document.body.insertAdjacentHTML("beforeend", deleteConfirmationHtml);
-
-    // Get references to the pop-up and buttons
-    const deleteConfirmation = document.getElementById("deleteConfirmation");
-    const cancelButton = document.getElementById("cancelDeleteButton");
-    const confirmButton = document.getElementById("confirmDeleteButton");
-
-    // Show the pop-up
-    deleteConfirmation.style.display = "block";
-
-    // Add event listener to the "Cancel" button to hide the pop-up
-    cancelButton.addEventListener("click", () => {
-      deleteConfirmation.style.display = "none";
-      deleteConfirmation.remove(); // Remove the pop-up from the DOM
-    });
-
-    // Add event listener to the "Confirm Delete" button to delete the avatar
-    confirmButton.addEventListener("click", async () => {
-      deleteConfirmation.style.display = "none";
-      deleteConfirmation.remove(); // Remove the pop-up from the DOM
-      await deleteAvatar(selectedAvatarId); // Call the function to delete the avatar
-    });
-  }
+  
 
   async function deleteAvatar(selectedAvatarId) {
     try {
@@ -848,31 +988,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   window.uploadLogo = uploadLogo;
 
-  function loadLogo() {
-    // const user_info_id = window.localStorage.getItem("user_info_id"); // Assuming user_info_id is stored in localStorage
-    const user_info_id = globalUserInfoId;
-    const chatbotLogo = document.getElementById("chatbotLogo");
-
-    if (!user_info_id) {
-      console.error("User info ID is not available.");
-      return; // Exit if no user_info_id is found
-    }
-
-    console.log("Call Log Loading Function.");
-    // fetch(`/.netlify/functions/getUserLogo?user_info_id=${user_info_id}`)
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Failed to fetch logo");
-    //     }
-    //     return response.text(); // Expecting a Base64 encoded string
-    //   })
-    //   .then((base64Data) => {
-    //     chatbotLogo.src = base64Data; // Set the image src to the Base64 string
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error loading logo:", error);
-    //   });
-  }
+  
 
   // This function gets the tier name based on the user id
   // async function fetchTierName(user_info_id) {
@@ -894,60 +1010,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   //       "Error fetching tier information.";
   //   }
   // }
-
-  // // Call the function with user_info_id when needed
-  document.getElementById("save-exit").addEventListener("click", () => {
-    updateAvatarSection(user_info_id);
-  });
-
-  // Function to initialize the page and fetch/display avatar data
-  async function initPage() {
-    try {
-      // Get the user token from the URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const userToken = urlParams.get("token");
-
-      if (!userToken) {
-        console.error("User token not found in URL.");
-        // Redirect to login page if no token is present
-        window.location.href = "/";
-        return;
-      }
-
-      storeToken(userToken);
-      setUpTokenExpirationCheck();
-
-      const userData = await fetchUserData(userToken);
-
-      if (userData) {
-        user_info_id = userData.id;
-        globalUserInfoId = userData.id;
-        window.localStorage.setItem("user_info_id", user_info_id);
-      }
-
-      const blendshapeData = await fetchBlendshapeData(user_info_id);
-      if (blendshapeData) {
-        handleSendCommands({ resetavatar: JSON.stringify(blendshapeData) });
-      }
-
-      await fetchPersonalizedAvatars(user_info_id);
-      // await fetchTierName(user_info_id);
-      await getUserCredits();
-      await getSelectedSubscription();
-      await setCurrentPremium();
-
-      loadLogo();
-
-      // Fetch and display the avatars for the user with matching user_info_id
-      const avatars = await fetchAvatarData(user_info_id);
-      await displayAvatarNames(avatars);
-    } catch (error) {
-      console.error("Error initializing page:", error);
-    }
-  }
-
-  // Call the initPage function when the DOM is ready
-  await initPage();
 });
 
 function showNotification(

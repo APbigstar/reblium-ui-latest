@@ -881,25 +881,6 @@
         modalOverlay.style.display = "none";
       }
 
-      function checkDisplayStatus(element, status) {
-        // If element is a string (i.e., an ID), get the actual element
-        if (typeof element === "string") {
-          element = document.getElementById(element);
-        }
-
-        // Check if the element exists
-        if (!element) {
-          console.error("Element not found");
-          return false;
-        }
-
-        // Get the computed style of the element
-        const style = window.getComputedStyle(element);
-
-        // Return true if the display matches the status, false otherwise
-        return style.display === status;
-      }
-
       function showSignUpModal() {
         if (
           checkDisplayStatus(modalOverlay, "flex") &&
@@ -1021,68 +1002,7 @@
         icon.className = "fas fa-volume-up";
       }
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const chatbotLogo = document.getElementById("chatbotLogo");
-        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-          chatbotLogo.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-
-        // Add visual feedback when dragging over the image
-        ["dragenter", "dragover"].forEach((eventName) => {
-          chatbotLogo.addEventListener(eventName, () => {
-            chatbotLogo.classList.add("drag-over");
-          });
-        });
-
-        ["dragleave", "drop"].forEach((eventName) => {
-          chatbotLogo.addEventListener(eventName, () => {
-            chatbotLogo.classList.remove("drag-over");
-          });
-        });
-
-        // Handle the drop event
-        chatbotLogo.addEventListener("drop", handleDrop, false);
-
-        function handleDrop(e) {
-          preventDefaults(e);
-          const dt = e.dataTransfer;
-          const files = dt.files;
-
-          if (files.length > 0) {
-            const file = files[0];
-
-            if (file.type.startsWith("image/")) {
-              const reader = new FileReader();
-              reader.onload = function (event) {
-                // Update the src of img with the Data URL for immediate feedback
-                chatbotLogo.src = event.target.result;
-
-                // Call uploadLogo to handle the upload process, passing Base64 data
-                if (typeof uploadLogo === "function") {
-                  uploadLogo(event.target.result)
-                    .then(() => {
-                      console.log("Image uploaded successfully.");
-                    })
-                    .catch((error) => {
-                      console.error("Failed to upload image:", error);
-                    });
-                } else {
-                  console.error("uploadLogo function is not available.");
-                }
-              };
-              reader.readAsDataURL(file); // Convert the file to Data URL which is Base64 encoded
-            } else {
-              alert("Please drop an image file.");
-            }
-          }
-        }
-      });
-    </script>
+  </script>
 
     <script src="javascript/signup.js"></script>
 

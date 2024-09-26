@@ -456,35 +456,37 @@ async function getUserPromps(type) {
   let personaInput = document.getElementById("personaInput");
   let welcomeMessage = document.getElementById("welcomeMessage");
   if (!defaultAvatarPrompt) {
-    try {
-      const response = await fetch(
-        `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
-      );
-      const { success, data } = await response.json();
-      if (!success) {
-        if (type == "prompt") {
-          personaInput.value = "";
-          console.log("Not Found User Prompt");
+    if (globalUserInfoId && selectedUserAvatarId) {
+      try {
+        const response = await fetch(
+          `/.netlify/functions/UserPrompts/getUserPrompts?user_id=${globalUserInfoId}&avatar_id=${selectedUserAvatarId}`
+        );
+        const { success, data } = await response.json();
+        if (!success) {
+          if (type == "prompt") {
+            personaInput.value = "";
+            console.log("Not Found User Prompt");
+          } else {
+            handleSendCommands({
+              texttospeech: "Hi, I am a Rebelium assistant. How can I help you?",
+            });
+          }
         } else {
-          handleSendCommands({
-            texttospeech: "Hi, I am a Rebelium assistant. How can I help you?",
-          });
+          if (type == "prompt") {
+            personaInput.value = data.prompts;
+            welcomeMessage.value = data.welcome_message;
+          } else {
+            const welcomeMessage = data.welcome_message;
+            setTimeout(() => {
+              console.log(welcomeMessage, 'Call Welcome Message')
+              handleSendCommands({ texttospeech: welcomeMessage });
+            }, 1000);
+          }
         }
-      } else {
-        if (type == "prompt") {
-          personaInput.value = data.prompts;
-          welcomeMessage.value = data.welcome_message;
-        } else {
-          const welcomeMessage = data.welcome_message;
-          setTimeout(() => {
-            console.log(welcomeMessage, 'Call Welcome Message')
-            handleSendCommands({ texttospeech: welcomeMessage });
-          }, 1000);
-        }
+      } catch (error) {
+        console.error("Error fetching user prompt data:", error);
+        return null;
       }
-    } catch (error) {
-      console.error("Error fetching user prompt data:", error);
-      return null;
     }
   }
 }

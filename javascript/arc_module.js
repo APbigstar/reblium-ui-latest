@@ -48,12 +48,6 @@ function initializeWebRTCClient() {
       reconnect();
     },
   });
-
-  // Add an event listener for the 'error' event on the WebSocket instance
-  newWebRTC.ws.addEventListener("error", (error) => {
-    console.error("WebSocket encountered an error:", error);
-    reconnect();
-  });
 }
 
 // Helper function to start a heartbeat mechanism

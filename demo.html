@@ -560,7 +560,7 @@
     />
 
     <!-- API Key Pop-up -->
-    <div id="apiPopup" class="apiPopup" style="display: none">
+    <div id="apiPopup" class="apiPopup assitant-popup" style="display: none">
       <form id="apiKeyForm">
         <span id="apiClose" class="close-button">&times;</span>
         <h3>Enter Your ChatGPT Key</h3>
@@ -576,7 +576,7 @@
     </div>
 
     <!-- Language Selection Pop-up -->
-    <div id="languagePopup" class="languagePopup" style="display: none">
+    <div id="languagePopup" class="languagePopup assitant-popup" style="display: none">
       <form id="languageForm">
         <span id="languageClose" class="close-button">&times;</span>
         <h3>Select a Language</h3>
@@ -658,7 +658,7 @@
     </div>
 
     <!-- Voice Settings Pop-up -->
-    <div id="voicePopup" class="voicePopup" style="display: none">
+    <div id="voicePopup" class="voicePopup assitant-popup" style="display: none">
       <form id="voiceForm">
         <span id="voiceClose" class="close-button">&times;</span>
         <h3>Choose a Voice</h3>
@@ -672,7 +672,7 @@
     </div>
 
     <!-- Share Pop-up -->
-    <div id="sharePopup" class="sharePopup" style="display: none">
+    <div id="sharePopup" class="sharePopup assitant-popup" style="display: none">
       <form id="shareForm">
         <span id="shareClose" class="close-button">&times;</span>
         <h3>Publish</h3>
@@ -689,7 +689,7 @@
       </form>
     </div>
 
-    <div id="personaPopup" class="personaPopup" style="display: none">
+    <div id="personaPopup" class="personaPopup assitant-popup" style="display: none">
       <form class="personaForm">
         <span
           id="personaClose"
@@ -723,7 +723,7 @@
     </div>
 
     <!-- Pop-up for DHS file upload -->
-    <div id="dhsPopup" class="dhs-popup" style="display: none">
+    <div id="dhsPopup" class="dhs-popup assitant-popup" style="display: none">
       <form id="dhsForm">
         <span id="dhsClose" class="dhs-close-button">&times;</span>
         <h3>Upload Your DHS File</h3>
@@ -977,8 +977,11 @@
             </div>
             <div>
               <div id="close-chat" class="close-chat">
-                <span id="toggle-icon" style="color: black">+</span>
-                <!-- Assuming Font Awesome icons -->
+                <i
+                  id="clear-chat-history-icon"
+                  class="fa fa-trash"
+                  aria-hidden="true"
+                ></i>
               </div>
             </div>
           </div>
@@ -998,7 +1001,7 @@
               <div class="input-wrapper">
                 <input
                   id="user-input"
-                  onfocus="clearThis(this)"
+                  onfocus="this.value=''"
                   type="text"
                   placeholder="Type a message..."
                   class="user-input-field"
@@ -1074,50 +1077,50 @@
         <div id="buttonsContainer" class="avatar-menu">
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('random'); handleSendCommands({ cameraswitch: 'Head' });"
+            onclick="toggleMenu('random')"
           >
             Generator
           </button>
 
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('skin') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('skin')"
           >
             Skin
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('makeup') + handleSendCommands({ cameraswitch: 'Head' }) "
+            onclick="toggleMenu('makeup')"
           >
             Makeup
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('hair') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('hair')"
           >
             Hair
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('sculpt') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('sculpt')"
           >
             Sculpt
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('wardrobe') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('wardrobe')"
           >
             Wardrobe
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('accessories') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('accessories')"
           >
             Accessories
           </button>
           <button
             class="transparent-button-active"
-            onclick="toggleMenu('background') + handleSendCommands({ cameraswitch: 'Head' })"
+            onclick="toggleMenu('background')"
           >
             Background
           </button>
@@ -9538,15 +9541,6 @@
         showSignUpModal();
       }, 60000);
 
-      document
-        .getElementById("femaleBtn")
-        .addEventListener("click", function () {
-          filterItemsByGender("female");
-        });
-      document.getElementById("maleBtn").addEventListener("click", function () {
-        filterItemsByGender("male");
-      });
-
       signUpFormBtn.addEventListener("click", () => {
         signUpFormSection.style.display = "block";
         signupOption.style.display = "none";
@@ -9574,25 +9568,6 @@
         modalOverlay.style.display = "none";
       }
 
-      function checkDisplayStatus(element, status) {
-        // If element is a string (i.e., an ID), get the actual element
-        if (typeof element === "string") {
-          element = document.getElementById(element);
-        }
-
-        // Check if the element exists
-        if (!element) {
-          console.error("Element not found");
-          return false;
-        }
-
-        // Get the computed style of the element
-        const style = window.getComputedStyle(element);
-
-        // Return true if the display matches the status, false otherwise
-        return style.display === status;
-      }
-
       function showSignUpModal() {
         if (
           (checkDisplayStatus(modalOverlay, "flex") &&
@@ -9609,104 +9584,7 @@
         }
       }
 
-      function setSelectedHair(assetName) {
-        handleSendCommands({ assetname: assetName });
-      }
-
-      function setSelectedBody(assetName) {
-        handleSendCommands({ assetname: assetName });
-      }
-
-      // Function to filter and display items based on the selected gender
-      function filterItemsByGender(gender) {
-        event.preventDefault();
-        event.stopPropagation();
-        // Retrieve all image cells
-        const imageCells = document.querySelectorAll(".image-cell");
-
-        // Loop through all cells to apply the filter
-        imageCells.forEach((cell) => {
-          // Check the data-gender attribute of each cell
-          if (
-            cell.dataset.gender === gender ||
-            cell.dataset.gender === undefined
-          ) {
-            // If the cell matches the selected gender or is unisex/neutral, display it
-            cell.style.display = "";
-          } else {
-            // If the cell does not match, hide it
-            cell.style.display = "none";
-          }
-        });
-      }
-
       document.addEventListener("DOMContentLoaded", function () {
-        const randomizeForm = document.getElementById("randomizeForm");
-        const randomizeButton = document.getElementById("randomizeButton");
-        let hasRandomized = false; // Flag to track if randomization has occurred
-
-        // Function to handle randomization
-        function handleRandomization() {
-          if (videoLoaded) {
-            // Existing code for collecting checkbox and slider values...
-            const checkboxes = randomizeForm.querySelectorAll(
-              'input[type="checkbox"]'
-            );
-            const checkboxValues = [];
-            checkboxes.forEach((checkbox) => {
-              checkboxValues.push(
-                `${checkbox.name}*${checkbox.checked ? 1 : 0}`
-              );
-            });
-
-            const slider = document.getElementById("mySlider");
-            const sliderValue = parseFloat(slider.value);
-            const ageRange = `Agemin*${sliderValue}, Agemax*${sliderValue}`;
-
-            const result = [...checkboxValues, ageRange].join(", ");
-            handleSendCommands({ randomize: result });
-            handleSendCommands({ assetname: "Studio_makeUp" });
-
-            // New code to randomize background
-            const randomBackgroundIndex = Math.floor(
-              Math.random() * backgroundAssets.length
-            );
-            const selectedBackground = backgroundAssets[randomBackgroundIndex];
-            handleSendCommands({ assetname: selectedBackground });
-            console.log(
-              "Randomized background command sent:",
-              selectedBackground
-            );
-
-            hasRandomized = true; // Set flag to true after randomization
-          } else {
-            console.log("Video is not loaded yet. Please wait for it to load.");
-          }
-        }
-
-        // Event listener for the "Randomize" button click
-        randomizeButton.addEventListener("click", function (event) {
-          event.preventDefault();
-          handleRandomization();
-          randomizeSliders();
-        });
-
-        // Define the event listener function for space key
-        function handleSpaceKey(event) {
-          if (event.key === " ") {
-            // Check if the pop-up is displayed
-            const popup = document.getElementById("popup");
-            if (!popup || popup.style.display === "none") {
-              // Execute the randomization function only if the pop-up is not displayed
-              handleRandomization();
-            }
-          }
-        }
-
-        // Add event listener for space key
-        document.addEventListener("keydown", handleSpaceKey);
-
-        // Function to wait for video to load and then trigger randomization
         function waitForVideoAndRandomize() {
           return new Promise((resolve) => {
             function checkVideoLoaded() {
@@ -9724,276 +9602,8 @@
           });
         }
 
-        // Wait for video to load and then trigger randomization
         waitForVideoAndRandomize().then(() => {
           console.log("Initial randomization completed");
-        });
-      }); // Define the list of asset names
-
-      // Initialize the current asset index
-      let currentAssetIndex = 0;
-
-      function toggleAssetName() {
-        // Increment the current index
-        currentAssetIndex = (currentAssetIndex + 1) % assetNames.length;
-
-        // Get the new asset name
-        const newAssetName = assetNames[currentAssetIndex];
-
-        // Call the function to send the command with the new asset name
-        handleSendCommands({ assetname: newAssetName });
-      }
-
-      let currentAnimationIndex = 0;
-
-      function toggleAnimationName(direction) {
-        // Calculate the new index based on the direction
-        currentAnimationIndex =
-          (currentAnimationIndex + direction + animationNames.length) %
-          animationNames.length;
-
-        // Get the new animation name
-        const newAnimationName = animationNames[currentAnimationIndex];
-
-        // Call the function to send the command with the new animation name
-        handleSendCommands({ assetname: newAnimationName });
-      }
-
-      let isPlaying = true;
-
-      function togglePlayback() {
-        // Get references to the play and pause buttons
-        const playButton = document.getElementById("playButton");
-        const pauseButton = document.getElementById("pauseButton");
-
-        // Toggle the display style of the buttons
-        if (playButton.style.display === "none") {
-          // If playButton is hidden, show it, and hide pauseButton
-          playButton.style.display = "inline-block";
-          pauseButton.style.display = "none";
-
-          handleSendCommands({ player: "Play" });
-          handleSendCommands({ assetname: "Catwalk_Female" });
-        } else {
-          // If playButton is visible, hide it, and show pauseButton
-          playButton.style.display = "none";
-          pauseButton.style.display = "inline-block";
-
-          handleSendCommands({ player: "Pause" });
-        }
-      }
-
-      function toggleImages() {
-        var image1 = document.getElementById("image1");
-        var image2 = document.getElementById("image2");
-
-        if (image1.style.display === "block") {
-          image1.style.display = "none";
-          image2.style.display = "block";
-        } else {
-          image1.style.display = "block";
-          image2.style.display = "none";
-        }
-      }
-
-      function toggleAutoCamera() {
-        var lockIcon = document.getElementById("lockIcon");
-
-        // Check which icon is currently displayed
-        if (lockIcon.classList.contains("fa-lock-open")) {
-          // It's currently unlocked, so lock it
-          lockIcon.classList.remove("fa-lock-open");
-          lockIcon.classList.add("fa-lock");
-
-          // Sending command to lock camera
-          handleSendCommands({ autocamera: "No" });
-        } else {
-          // It's currently locked, so unlock it
-          lockIcon.classList.remove("fa-lock");
-          lockIcon.classList.add("fa-lock-open");
-
-          // Sending command to unlock camera
-          handleSendCommands({ autocamera: "Yes" });
-        }
-      }
-
-      function toggleFullScreen() {
-        var fullScreenIcon = document.getElementById("fullScreenIcon");
-
-        // Check if the document is currently in fullscreen mode
-        if (!document.fullscreenElement) {
-          // Enter fullscreen mode
-          document.documentElement.requestFullscreen().catch((err) => {
-            console.log(
-              `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
-            );
-          });
-
-          // Change the icon to minimize
-          fullScreenIcon.classList.remove("fa-maximize");
-          fullScreenIcon.classList.add("fa-minimize");
-        } else {
-          // Exit fullscreen mode
-          document.exitFullscreen();
-
-          // Change the icon back to maximize
-          fullScreenIcon.classList.remove("fa-minimize");
-          fullScreenIcon.classList.add("fa-maximize");
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const chatbotLogo = document.getElementById("chatbotLogo");
-
-        // Prevent default behavior for drag events
-        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-          chatbotLogo.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-
-        // Add visual feedback when dragging over the image
-        ["dragenter", "dragover"].forEach((eventName) => {
-          chatbotLogo.addEventListener(eventName, () => {
-            chatbotLogo.classList.add("drag-over");
-          });
-        });
-
-        ["dragleave", "drop"].forEach((eventName) => {
-          chatbotLogo.addEventListener(eventName, () => {
-            chatbotLogo.classList.remove("drag-over");
-          });
-        });
-
-        // Handle the drop event
-        chatbotLogo.addEventListener("drop", handleDrop, false);
-
-        function handleDrop(e) {
-          preventDefaults(e);
-          const dt = e.dataTransfer;
-          const files = dt.files;
-
-          if (files.length > 0) {
-            const file = files[0];
-
-            if (file.type.startsWith("image/")) {
-              const reader = new FileReader();
-              reader.onload = function (event) {
-                // Update the src of img with the Data URL for immediate feedback
-                chatbotLogo.src = event.target.result;
-
-                // Call uploadLogo to handle the upload process, passing Base64 data
-                if (typeof uploadLogo === "function") {
-                  uploadLogo(event.target.result)
-                    .then(() => {
-                      console.log("Image uploaded successfully.");
-                    })
-                    .catch((error) => {
-                      console.error("Failed to upload image:", error);
-                    });
-                } else {
-                  console.error("uploadLogo function is not available.");
-                }
-              };
-              reader.readAsDataURL(file); // Convert the file to Data URL which is Base64 encoded
-            } else {
-              alert("Please drop an image file.");
-            }
-          }
-        }
-      });
-
-      document.addEventListener("DOMContentLoaded", () => {
-        const uploadButton = document.getElementById("UploadButton");
-        const dhsPopup = document.getElementById("dhsPopup");
-        const dhsClose = document.getElementById("dhsClose");
-        const dhsDropzone = document.getElementById("dhsDropzone");
-        const dhsConfirmButton = document.getElementById("dhsConfirmButton");
-        const uploadStatus = document.getElementById("uploadStatus");
-        let uploadedDhsJson = null;
-
-        // Show pop-up on button click
-        uploadButton.addEventListener("click", () => {
-          removeAllPopUps();
-          dhsPopup.style.display = "flex";
-        });
-
-        // Close pop-up
-        dhsClose.addEventListener("click", () => {
-          dhsPopup.style.display = "none";
-        });
-
-        // Prevent default drag behaviors
-        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-          dhsDropzone.addEventListener(eventName, preventDefaults, false);
-        });
-
-        function preventDefaults(e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-
-        // Highlight drop area when dragging over it
-        ["dragenter", "dragover"].forEach((eventName) => {
-          dhsDropzone.addEventListener(
-            eventName,
-            () => dhsDropzone.classList.add("highlight"),
-            false
-          );
-        });
-
-        ["dragleave", "drop"].forEach((eventName) => {
-          dhsDropzone.addEventListener(
-            eventName,
-            () => dhsDropzone.classList.remove("highlight"),
-            false
-          );
-        });
-
-        // Handle file drop
-        dhsDropzone.addEventListener("drop", handleDrop, false);
-
-        function handleDrop(e) {
-          const dt = e.dataTransfer;
-          const files = dt.files;
-
-          if (files.length > 0) {
-            const file = files[0];
-
-            if (file.name.endsWith(".DHS")) {
-              const reader = new FileReader();
-              reader.onload = function (event) {
-                try {
-                  uploadedDhsJson = JSON.parse(event.target.result); // Parse JSON from file
-                  uploadStatus.style.display = "block"; // Show success message
-                  uploadStatus.textContent = "File uploaded successfully!";
-                } catch (error) {
-                  alert(
-                    "Error parsing DHS file. Please make sure it is a valid JSON file."
-                  );
-                  console.error("Error parsing DHS file:", error);
-                }
-              };
-              reader.readAsText(file);
-            } else {
-              alert("Please upload a .DHS file.");
-            }
-          }
-        }
-
-        // Handle upload confirmation
-        dhsConfirmButton.addEventListener("click", () => {
-          if (uploadedDhsJson) {
-            handleSendCommands({
-              resetavatar: JSON.stringify(uploadedDhsJson),
-            });
-            dhsPopup.style.display = "none";
-          } else {
-            alert("Please upload a .DHS file first.");
-          }
         });
       });
     </script>

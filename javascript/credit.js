@@ -1,5 +1,3 @@
-let selectedHair = "";
-let selectedBody = "";
 let chargedCreditAmount = 0;
 let selectedCreditAmount = 0;
 
@@ -264,12 +262,4 @@ async function handleSaveCustomizedAvatar() {
   }
 }
 
-function setSelectedHair(assetName) {
-  selectedHair = assetName;
-  handleSendCommands({ assetname: assetName });
-}
 
-function setSelectedBody(assetName) {
-  selectedBody = assetName;
-  handleSendCommands({ assetname: assetName });
-}
