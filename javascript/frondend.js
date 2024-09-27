@@ -252,9 +252,6 @@ function updateDisplayState(buttonType) {
     handleSendCommands({ camup: "" });
     handleSendCommands({ camup: "" });
     handleSendCommands({ camup: "" });
-    handleSendCommands({ camup: "" });
-    handleSendCommands({ camup: "" });
-    handleSendCommands({ camup: "" });
   }
   handleMute();
 }
