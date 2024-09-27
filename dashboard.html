@@ -10175,10 +10175,13 @@
     <script>
       document
         .getElementById("femaleBtn")
-        .addEventListener("click", function () {
+        .addEventListener("click", function (event) {
+          event.preventDefault();
           filterItemsByGender("female");
         });
-      document.getElementById("maleBtn").addEventListener("click", function () {
+      document.getElementById("maleBtn")
+      .addEventListener("click", function (event) {
+        event.preventDefault();
         filterItemsByGender("male");
       });
       document

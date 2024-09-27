@@ -11,13 +11,22 @@ let selectedCommand = null;
 let latestLoadAvatarCommand = null;
 let defaultAvatarPrompt = false;
 let avatarResponse = null;
+
 let videoLoaded = false;
-let randomizationPromise;
+let videoLoadedPromise = new Promise((resolve) => {
+  window.resolveVideoLoaded = resolve;
+});
 
 let selectedHair = "";
 let selectedBody = "";
 
 let hasRandomized = false;
+
+// Initialize the current asset index
+let currentAssetIndex = 0;
+let currentAnimationIndex = 0;
+let isPlaying = true; // Assuming it starts as "playing"
+let countCallFunctions = 0;
 
 function setSelectedHair(assetName) {
   selectedHair = assetName;
@@ -49,9 +58,6 @@ function checkDisplayStatus(element, status) {
 }
 
 function filterItemsByGender(gender) {
-  event.preventDefault();
-  event.stopPropagation();
-  // Retrieve all image cells
   const imageCells = document.querySelectorAll(".image-cell");
 
   // Loop through all cells to apply the filter
@@ -97,35 +103,6 @@ function handleRandomization() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const randomizeButton = document.getElementById("randomizeButton");
-
-  // Function to handle randomization
-
-  // Event listener for the "Randomize" button click
-  randomizeButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    handleRandomization();
-    randomizeSliders();
-  });
-  // Define the event listener function
-  function handleSpaceKey(event) {
-    if (event.key === " ") {
-      // Check if the pop-up is displayed
-      const popup = document.getElementById("popup");
-      if (!popup || popup.style.display === "none") {
-        // Execute the randomization function only if the pop-up is not displayed
-        handleRandomization();
-      }
-    }
-  }
-
-  // document.addEventListener('keydown', handleSpaceKey);
-});
-
-// Initialize the current asset index
-let currentAssetIndex = 0;
-
 function toggleAssetName() {
   // Increment the current index
   currentAssetIndex = (currentAssetIndex + 1) % assetNames.length;
@@ -136,8 +113,6 @@ function toggleAssetName() {
   // Call the function to send the command with the new asset name
   handleSendCommands({ assetname: newAssetName });
 }
-
-let currentAnimationIndex = 0;
 
 function toggleAnimationName(direction) {
   // Calculate the new index based on the direction
@@ -152,9 +127,6 @@ function toggleAnimationName(direction) {
   handleSendCommands({ assetname: newAnimationName });
 }
 
-let isPlaying = true; // Assuming it starts as "playing"
-
-// Function to toggle between play and pause buttons
 function togglePlayback() {
   // Get references to the play and pause buttons
   const playButton = document.getElementById("playButton");
@@ -236,183 +208,8 @@ function toggleFullScreen() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Lazy load images
-  const lazyImages = document.querySelectorAll(".lazyload");
-  lazyImages.forEach((img) => {
-    img.src = img.getAttribute("data-src");
-    img.onload = () => {
-      img.removeAttribute("data-src");
-    };
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const chatbotLogo = document.getElementById("chatbotLogo");
-
-  // Prevent default behavior for drag events
-  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-    chatbotLogo.addEventListener(eventName, preventDefaults, false);
-  });
-
-  function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  // Add visual feedback when dragging over the image
-  ["dragenter", "dragover"].forEach((eventName) => {
-    chatbotLogo.addEventListener(eventName, () => {
-      chatbotLogo.classList.add("drag-over");
-    });
-  });
-
-  ["dragleave", "drop"].forEach((eventName) => {
-    chatbotLogo.addEventListener(eventName, () => {
-      chatbotLogo.classList.remove("drag-over");
-    });
-  });
-
-  // Handle the drop event
-  chatbotLogo.addEventListener("drop", handleDrop, false);
-
-  function handleDrop(e) {
-    preventDefaults(e);
-    const dt = e.dataTransfer;
-    const files = dt.files;
-
-    if (files.length > 0) {
-      const file = files[0];
-
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          // Update the src of img with the Data URL for immediate feedback
-          chatbotLogo.src = event.target.result;
-
-          // Call uploadLogo to handle the upload process, passing Base64 data
-          if (typeof uploadLogo === "function") {
-            uploadLogo(event.target.result)
-              .then(() => {
-                console.log("Image uploaded successfully.");
-              })
-              .catch((error) => {
-                console.error("Failed to upload image:", error);
-              });
-          } else {
-            console.error("uploadLogo function is not available.");
-          }
-        };
-        reader.readAsDataURL(file); // Convert the file to Data URL which is Base64 encoded
-      } else {
-        alert("Please drop an image file.");
-      }
-    }
-  }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const uploadButton = document.getElementById("UploadButton");
-  const dhsPopup = document.getElementById("dhsPopup");
-  const dhsClose = document.getElementById("dhsClose");
-  const dhsDropzone = document.getElementById("dhsDropzone");
-  const dhsConfirmButton = document.getElementById("dhsConfirmButton");
-  const uploadStatus = document.getElementById("uploadStatus");
-  let uploadedDhsJson = null;
-
-  // Show pop-up on button click
-  uploadButton.addEventListener("click", () => {
-    removeAllPopUps();
-    dhsPopup.style.display = "flex";
-  });
-
-  // Close pop-up
-  dhsClose.addEventListener("click", () => {
-    dhsPopup.style.display = "none";
-  });
-
-  // Prevent default drag behaviors
-  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-    dhsDropzone.addEventListener(eventName, preventDefaults, false);
-  });
-
-  function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  // Highlight drop area when dragging over it
-  ["dragenter", "dragover"].forEach((eventName) => {
-    dhsDropzone.addEventListener(
-      eventName,
-      () => dhsDropzone.classList.add("highlight"),
-      false
-    );
-  });
-
-  ["dragleave", "drop"].forEach((eventName) => {
-    dhsDropzone.addEventListener(
-      eventName,
-      () => dhsDropzone.classList.remove("highlight"),
-      false
-    );
-  });
-
-  // Handle file drop
-  dhsDropzone.addEventListener("drop", handleDrop, false);
-
-  function handleDrop(e) {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-
-    if (files.length > 0) {
-      const file = files[0];
-
-      if (file.name.endsWith(".DHS")) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          try {
-            uploadedDhsJson = JSON.parse(event.target.result); // Parse JSON from file
-            uploadStatus.style.display = "block"; // Show success message
-            uploadStatus.textContent = "File uploaded successfully!";
-          } catch (error) {
-            alert(
-              "Error parsing DHS file. Please make sure it is a valid JSON file."
-            );
-            console.error("Error parsing DHS file:", error);
-          }
-        };
-        reader.readAsText(file);
-      } else {
-        alert("Please upload a .DHS file.");
-      }
-    }
-  }
-
-  // Handle upload confirmation
-  dhsConfirmButton.addEventListener("click", () => {
-    if (uploadedDhsJson) {
-      handleSendCommands({
-        resetavatar: JSON.stringify(uploadedDhsJson),
-      });
-      dhsPopup.style.display = "none";
-    } else {
-      alert("Please upload a .DHS file first.");
-    }
-  });
-});
-
-// Function to return a promise that resolves when the video is loaded
 function waitForVideoLoad() {
-  if (videoLoaded) {
-    return Promise.resolve();
-  } else {
-    randomizationPromise = {}; // Create a new promise object
-    randomizationPromise.promise = new Promise((resolve) => {
-      randomizationPromise.resolve = resolve;
-    });
-    return randomizationPromise.promise;
-  }
+  return videoLoadedPromise;
 }
 
 function detectVideoLoadedAndExecuteFunctions() {
@@ -429,11 +226,8 @@ function detectVideoLoadedAndExecuteFunctions() {
   }
 
   if (videoElement.readyState >= 3 && !videoLoaded) {
-    if (randomizationPromise) {
-      randomizationPromise.resolve();
-    }
-
     videoLoaded = true;
+    window.resolveVideoLoaded();
     clearInterval(checkInterval);
     handleSendCommands({ autocamera: "Yes" });
   }
@@ -441,7 +235,12 @@ function detectVideoLoadedAndExecuteFunctions() {
 // Define an interval to periodically check for video loading
 const checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 1000);
 
+window.isVideoLoaded = () => videoLoaded;
+
 function handleSendCommands(command) {
+  console.trace();
+  countCallFunctions++;
+  console.log("countCallFunctions: ", countCallFunctions);
   console.log(command);
   selectedCommand = Object.keys(command)[0];
   newWebRTC.emitUIInteraction(command);
@@ -450,16 +249,6 @@ function handleSendCommands(command) {
   }
   console.log("Sending loadavatar command:", command.resetavatars);
 }
-
-function updateSliderValue() {
-  const slider = document.getElementById("mySlider");
-
-  const sliderValue = parseFloat(slider.value);
-
-  // Call the handleSendCommands function with the command object
-  handleSendCommands(command);
-}
-
 // Async function to load and send avatar data
 async function loadAndSendAvatarData(jsonFilePath) {
   await waitForVideoLoad(); // Wait for video to load
@@ -490,6 +279,7 @@ async function loadAndSendAvatarData(jsonFilePath) {
     console.error("Error loading JSON:", error);
   }
 }
+
 
 async function loadAndProcessJsonData(filePath) {
   try {
@@ -863,10 +653,249 @@ async function addAvatarToDatabase(username) {
   }
 }
 
-document.addEventListener("DOMContentLoaded", async function () {
+function showNotification(
+  message,
+  subMessage,
+  type = "success",
+  duration = 5000
+) {
+  const colorClasses = {
+    success: "bg-green-100 border-green-500 text-green-700",
+    error: "bg-red-100 border-red-500 text-red-700",
+    warning: "bg-yellow-100 border-yellow-500 text-yellow-700",
+    info: "bg-blue-100 border-blue-500 text-blue-700",
+  };
+
+  const iconPaths = {
+    success: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+    error:
+      "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
+    warning:
+      "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+    info: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+  };
+
+  const colorClass = colorClasses[type] || colorClasses.success;
+  const iconPath = iconPaths[type] || iconPaths.success;
+
+  const notificationHtml = `
+    <div id="notification" class="fixed top-7 right-4 rounded-lg shadow-lg p-4 flex items-start space-x-4 transition-all duration-300 ease-in-out opacity-0 translate-y-[-1rem] border-l-4 ${colorClass}" style="z-index: 1000;">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}" />
+      </svg>
+      <div class="flex-grow">
+        <p class="font-medium">${message}</p>
+        <p class="text-sm opacity-75">${subMessage}</p>
+      </div>
+      <button onclick="closeNotification()" class="text-current opacity-75 hover:opacity-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  `;
+
+  // Remove existing notification if any
+  const existingNotification = document.getElementById("notification");
+  if (existingNotification) {
+    existingNotification.remove();
+  }
+
+  // Add new notification
+  document.body.insertAdjacentHTML("beforeend", notificationHtml);
+
+  // Show notification with animation
+  setTimeout(() => {
+    const notification = document.getElementById("notification");
+    notification.classList.remove("opacity-0", "translate-y-[-1rem]");
+    notification.classList.add("opacity-100", "translate-y-0");
+  }, 10);
+
+  // Auto-hide notification
+  setTimeout(() => {
+    closeNotification();
+  }, duration);
+}
+
+function closeNotification() {
+  const notification = document.getElementById("notification");
+  if (notification) {
+    notification.classList.remove("opacity-100", "translate-y-0");
+    notification.classList.add("opacity-0", "translate-y-[-1rem]");
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  const randomizeButton = document.getElementById("randomizeButton");
+  const lazyImages = document.querySelectorAll(".lazyload");
+  const chatbotLogo = document.getElementById("chatbotLogo");
+  const uploadButton = document.getElementById("UploadButton");
+  const dhsPopup = document.getElementById("dhsPopup");
+  const dhsClose = document.getElementById("dhsClose");
+  const dhsDropzone = document.getElementById("dhsDropzone");
+  const dhsConfirmButton = document.getElementById("dhsConfirmButton");
+  const uploadStatus = document.getElementById("uploadStatus");
   const confirmButton = document.getElementById("confirmButton");
   const usernameInput = document.getElementById("username");
   const popup = document.getElementById("popup");
+  let uploadedDhsJson = null;
+
+  randomizeButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    handleRandomization();
+    randomizeSliders();
+  });
+
+  lazyImages.forEach((img) => {
+    img.src = img.getAttribute("data-src");
+    img.onload = () => {
+      img.removeAttribute("data-src");
+    };
+  });
+
+  // Prevent default behavior for drag events
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    chatbotLogo.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Add visual feedback when dragging over the image
+  ["dragenter", "dragover"].forEach((eventName) => {
+    chatbotLogo.addEventListener(eventName, () => {
+      chatbotLogo.classList.add("drag-over");
+    });
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    chatbotLogo.addEventListener(eventName, () => {
+      chatbotLogo.classList.remove("drag-over");
+    });
+  });
+
+  // Handle the drop event
+  chatbotLogo.addEventListener("drop", handleDrop, false);
+
+  function handleDrop(e) {
+    preventDefaults(e);
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          // Update the src of img with the Data URL for immediate feedback
+          chatbotLogo.src = event.target.result;
+
+          // Call uploadLogo to handle the upload process, passing Base64 data
+          if (typeof uploadLogo === "function") {
+            uploadLogo(event.target.result)
+              .then(() => {
+                console.log("Image uploaded successfully.");
+              })
+              .catch((error) => {
+                console.error("Failed to upload image:", error);
+              });
+          } else {
+            console.error("uploadLogo function is not available.");
+          }
+        };
+        reader.readAsDataURL(file); // Convert the file to Data URL which is Base64 encoded
+      } else {
+        alert("Please drop an image file.");
+      }
+    }
+  }
+
+  // Show pop-up on button click
+  uploadButton.addEventListener("click", () => {
+    removeAllPopUps();
+    dhsPopup.style.display = "flex";
+  });
+
+  // Close pop-up
+  dhsClose.addEventListener("click", () => {
+    dhsPopup.style.display = "none";
+  });
+
+  // Prevent default drag behaviors
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+    dhsDropzone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Highlight drop area when dragging over it
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dhsDropzone.addEventListener(
+      eventName,
+      () => dhsDropzone.classList.add("highlight"),
+      false
+    );
+  });
+
+  ["dragleave", "drop"].forEach((eventName) => {
+    dhsDropzone.addEventListener(
+      eventName,
+      () => dhsDropzone.classList.remove("highlight"),
+      false
+    );
+  });
+
+  // Handle file drop
+  dhsDropzone.addEventListener("drop", handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+
+    if (files.length > 0) {
+      const file = files[0];
+
+      if (file.name.endsWith(".DHS")) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          try {
+            uploadedDhsJson = JSON.parse(event.target.result); // Parse JSON from file
+            uploadStatus.style.display = "block"; // Show success message
+            uploadStatus.textContent = "File uploaded successfully!";
+          } catch (error) {
+            alert(
+              "Error parsing DHS file. Please make sure it is a valid JSON file."
+            );
+            console.error("Error parsing DHS file:", error);
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        alert("Please upload a .DHS file.");
+      }
+    }
+  }
+
+  // Handle upload confirmation
+  dhsConfirmButton.addEventListener("click", () => {
+    if (uploadedDhsJson) {
+      handleSendCommands({
+        resetavatar: JSON.stringify(uploadedDhsJson),
+      });
+      dhsPopup.style.display = "none";
+    } else {
+      alert("Please upload a .DHS file first.");
+    }
+  });
 
   // Function to handle Export Avatar
   async function exportAvatar() {
@@ -952,100 +981,4 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   window.uploadLogo = uploadLogo;
-
-  // This function gets the tier name based on the user id
-  // async function fetchTierName(user_info_id) {
-  //   try {
-  //     const response = await fetch(
-  //       `/.netlify/functions/user-tier?user_info_id=${user_info_id}`
-  //     );
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       document.getElementById(
-  //         "tier"
-  //       ).textContent = `Reblium: ${data.tier_name}`;
-  //     } else {
-  //       console.error("Failed to fetch tier name:", data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching tier name:", error);
-  //     document.getElementById("tier").textContent =
-  //       "Error fetching tier information.";
-  //   }
-  // }
 });
-
-function showNotification(
-  message,
-  subMessage,
-  type = "success",
-  duration = 5000
-) {
-  const colorClasses = {
-    success: "bg-green-100 border-green-500 text-green-700",
-    error: "bg-red-100 border-red-500 text-red-700",
-    warning: "bg-yellow-100 border-yellow-500 text-yellow-700",
-    info: "bg-blue-100 border-blue-500 text-blue-700",
-  };
-
-  const iconPaths = {
-    success: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
-    error:
-      "M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z",
-    warning:
-      "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
-    info: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
-  };
-
-  const colorClass = colorClasses[type] || colorClasses.success;
-  const iconPath = iconPaths[type] || iconPaths.success;
-
-  const notificationHtml = `
-    <div id="notification" class="fixed top-7 right-4 rounded-lg shadow-lg p-4 flex items-start space-x-4 transition-all duration-300 ease-in-out opacity-0 translate-y-[-1rem] border-l-4 ${colorClass}" style="z-index: 1000;">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${iconPath}" />
-      </svg>
-      <div class="flex-grow">
-        <p class="font-medium">${message}</p>
-        <p class="text-sm opacity-75">${subMessage}</p>
-      </div>
-      <button onclick="closeNotification()" class="text-current opacity-75 hover:opacity-100">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
-      </button>
-    </div>
-  `;
-
-  // Remove existing notification if any
-  const existingNotification = document.getElementById("notification");
-  if (existingNotification) {
-    existingNotification.remove();
-  }
-
-  // Add new notification
-  document.body.insertAdjacentHTML("beforeend", notificationHtml);
-
-  // Show notification with animation
-  setTimeout(() => {
-    const notification = document.getElementById("notification");
-    notification.classList.remove("opacity-0", "translate-y-[-1rem]");
-    notification.classList.add("opacity-100", "translate-y-0");
-  }, 10);
-
-  // Auto-hide notification
-  setTimeout(() => {
-    closeNotification();
-  }, duration);
-}
-
-function closeNotification() {
-  const notification = document.getElementById("notification");
-  if (notification) {
-    notification.classList.remove("opacity-100", "translate-y-0");
-    notification.classList.add("opacity-0", "translate-y-[-1rem]");
-    setTimeout(() => {
-      notification.remove();
-    }, 300);
-  }
-}

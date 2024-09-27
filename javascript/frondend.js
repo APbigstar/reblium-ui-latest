@@ -560,9 +560,6 @@ let currentValue = 0;
 
 // Function to update the slider value and call handleSendCommands
 function updateSliderValue() {
-  // Your existing code to update the slider value goes here
-
-  // Update the asset name based on the current button clicked
   handleSendCommands({
     assetname: currentAsset,
     slidertype: "M_Switch_" + currentAsset + "*" + currentValue,
@@ -600,9 +597,6 @@ let currentrosaceaValue = 0;
 
 // Function to update the rosacea slider value and call handleSendCommands
 function updaterosaceaSliderValue() {
-  // Your existing code to update the slider value goes here
-
-  // Update the rosacea asset name based on the current button clicked
   handleSendCommands({
     assetname: currentrosaceaAsset,
     slidertype: "M_Switch_" + currentrosaceaAsset + "*" + currentrosaceaValue,
@@ -644,9 +638,6 @@ let currentAgeValue = 0;
 
 // Function to update the age slider value and call handleSendCommands
 function updateAgeSliderValue() {
-  // Your existing code to update the slider value goes here
-
-  // Update the age asset name based on the current button clicked
   handleSendCommands({
     assetname: currentAgeAsset,
     slidertype: "M_Switch_" + currentAgeAsset + "*" + currentAgeValue,
@@ -693,9 +684,6 @@ let currentMoleValue = 0;
 
 // Function to update the Mole slider value and call handleSendCommands
 function updateMoleSliderValue() {
-  // Your existing code to update the slider value goes here
-
-  // Update the Mole asset name based on the current button clicked
   handleSendCommands({
     assetname: currentMoleAsset,
     slidertype: "M_Switch_" + currentMoleAsset + "*" + currentMoleValue,
@@ -731,9 +719,6 @@ let currentAcneValue = 0;
 
 // Function to update the Acne slider value and call handleSendCommands
 function updateAcneSliderValue() {
-  // Your existing code to update the slider value goes here
-
-  // Update the Acne asset name based on the current button clicked
   handleSendCommands({
     assetname: currentAcneAsset,
     slidertype: "M_Switch_" + currentAcneAsset + "*" + currentAcneValue,
