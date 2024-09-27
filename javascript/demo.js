@@ -110,7 +110,7 @@ function showSignUpModal() {
 document.addEventListener("DOMContentLoaded", function () {
   waitForVideoLoad().then(() => {
     console.log("Video loaded, calling handleRandomization");
-    handleRandomization();
+    // handleRandomization();
     // randomizeSliders();
   });
 });
