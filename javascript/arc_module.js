@@ -5,6 +5,42 @@ let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 const baseReconnectDelay = 5000; // 5 seconds
 
+async function setRemoteDescription(description) {
+  if (newWebRTC.player && newWebRTC.player.pcClient) {
+    const pc = newWebRTC.player.pcClient;
+    if (pc.signalingState !== "stable") {
+      await new Promise(resolve => {
+        const checkState = () => {
+          if (pc.signalingState === "stable") {
+            resolve();
+          } else {
+            setTimeout(checkState, 100);
+          }
+        };
+        checkState();
+      });
+    }
+    await pc.setRemoteDescription(description);
+  }
+}
+
+async function setRemoteDescriptionWithRetry(description, maxRetries = 3) {
+  let retries = 0;
+  while (retries < maxRetries) {
+    try {
+      await setRemoteDescription(description);
+      return;
+    } catch (error) {
+      console.warn(`Failed to set remote description (attempt ${retries + 1}):`, error);
+      retries++;
+      if (retries >= maxRetries) {
+        throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+  }
+}
+
 function initializeWebRTCClient() {
   newWebRTC = new WebRTCClient({
     address: "wss://signalling-client.ragnarok.arcware.cloud/",
@@ -35,6 +71,15 @@ function initializeWebRTCClient() {
     container: document.getElementById("videoContainer"),
     audioRef: document.getElementById("audioRef"),
     unauthorizedFallback: handleUnauthorized,
+    onWebRtcOffer: async (offer) => {
+      try {
+        await setRemoteDescriptionWithRetry(offer);
+        // Continue with your existing logic after setting the remote description
+      } catch (error) {
+        console.error("Failed to set remote description after retries:", error);
+        handleError(error);
+      }
+    },
   });
 
   // Add event listeners
@@ -106,7 +151,12 @@ function reconnect() {
     const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts);
     reconnectTimer = setTimeout(() => {
       reconnectAttempts++;
-      initializeWebRTCClient();
+      if (newWebRTC && newWebRTC.player && newWebRTC.player.pcClient) {
+        newWebRTC.player.pcClient.close();
+      }
+      setTimeout(() => {
+        initializeWebRTCClient();
+      }, 1000); // Add a 1-second delay before reinitializing
     }, delay);
   } else {
     console.log("Max reconnection attempts reached. Please refresh the page.");
