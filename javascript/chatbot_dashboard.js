@@ -229,9 +229,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const callButton = document.getElementById("call-button");
   const stopCallButton = document.getElementById("stopcall-button");
   const recognition = new webkitSpeechRecognition();
-  const shareButton = document.getElementById("shareButton"); // Correct ID
-  const sharePopup = document.getElementById("sharePopup"); // Ensure this ID exists
-  const shareClose = document.getElementById("shareClose"); // Ensure this ID exists
 
   recognition.continuous = false; // Set to true for continuous listening
   recognition.lang = "en-EN"; // Set your desired language
@@ -333,6 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
       updateVoiceCode();
     });
   });
+
   function toggleButtons() {
     if (callButton.style.display === "none") {
       callButton.style.display = "block";
@@ -421,22 +419,4 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Speech recognition ended.");
     toggleButtons(); // Reset button visibility
   };
-
-  shareButton.addEventListener("click", function () {
-    removeAllPopUps();
-    sharePopup.style.display = "flex";
-    const encrypted = encryptData(selectedUserAvatarId, globalUserInfoId);
-    shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?data=${encrypted}`;
-  });
-
-  shareClose.addEventListener("click", function () {
-    sharePopup.style.display = "none";
-  });
-
-  shareConfirmButton.addEventListener("click", function () {
-    shareLinkInput.select();
-    document.execCommand("copy");
-    alert("Link copied to clipboard!");
-    sharePopup.style.display = "none"; // Optionally close popup after copying
-  });
 });

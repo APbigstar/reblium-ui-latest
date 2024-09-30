@@ -5,12 +5,21 @@ let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 const baseReconnectDelay = 5000; // 5 seconds
 
-// Function to initialize the WebRTC client
 function initializeWebRTCClient() {
   newWebRTC = new WebRTCClient({
     address: "wss://signalling-client.ragnarok.arcware.cloud/",
     shareId: "share-79f09605-3edc-4fa8-b5b9-49a7a3a5f25b",
-    settings: {},
+    settings: {
+      peerConnectionOptions: {
+        iceServers: [
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' },
+          { urls: 'stun:stun2.l.google.com:19302' },
+          { urls: 'stun:stun3.l.google.com:19302' },
+          { urls: 'stun:stun4.l.google.com:19302' },
+        ]
+      }
+    },
     playOverlay: false,
     loader: (val) => {
       val ? showLoader() : hideLoader();
@@ -25,10 +34,24 @@ function initializeWebRTCClient() {
     sizeContainer: document.getElementById("sizeContainer"),
     container: document.getElementById("videoContainer"),
     audioRef: document.getElementById("audioRef"),
-    onerror: handleError,
-    onopen: handleOpen,
-    onclose: handleClose,
+    unauthorizedFallback: handleUnauthorized,
   });
+
+  // Add event listeners
+  newWebRTC.events.addListener("WebsocketClosed", handleClose);
+  newWebRTC.events.addListener("NoStreamAvailable", handleNoStream);
+  newWebRTC.events.addListener("DataChannelClosed", handleDataChannelClosed);
+
+  // Start the connection
+  newWebRTC.socket
+    .init(newWebRTC)
+    .then(() => {
+      console.log("WebSocket Connection established");
+      reconnectAttempts = 0;
+      clearTimeout(reconnectTimer);
+      startHeartbeat();
+    })
+    .catch(handleError);
 }
 
 function handleError(error) {
@@ -36,16 +59,12 @@ function handleError(error) {
   if (error.code === 1011) {
     console.log("Session not found. Attempting to refresh session...");
     refreshSession().then(() => reconnect());
+  } else if (error instanceof DOMException && error.name === 'InvalidStateError') {
+    console.log("Invalid state error. Attempting to reconnect...");
+    reconnect();
   } else {
     reconnect();
   }
-}
-
-function handleOpen() {
-  console.log("WebSocket Connection established");
-  reconnectAttempts = 0;
-  clearTimeout(reconnectTimer);
-  startHeartbeat();
 }
 
 function handleClose(event) {
@@ -61,9 +80,28 @@ function handleClose(event) {
   }
 }
 
+function handleNoStream() {
+  console.log("No stream available. Attempting to reconnect...");
+  reconnect();
+}
+
+function handleDataChannelClosed() {
+  console.log("Data channel closed. Attempting to reconnect...");
+  reconnect();
+}
+
+function handleUnauthorized() {
+  console.log("Unauthorized. Please check your credentials.");
+  // Implement logic to handle unauthorized access (e.g., redirect to login page)
+}
+
 function reconnect() {
   if (reconnectAttempts < maxReconnectAttempts) {
-    console.log(`Attempting to reconnect... (Attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+    console.log(
+      `Attempting to reconnect... (Attempt ${
+        reconnectAttempts + 1
+      }/${maxReconnectAttempts})`
+    );
     clearTimeout(reconnectTimer);
     const delay = baseReconnectDelay * Math.pow(2, reconnectAttempts);
     reconnectTimer = setTimeout(() => {
@@ -78,7 +116,6 @@ function reconnect() {
 
 function refreshSession() {
   // Implement session refresh logic here
-  // This should make a request to your backend to get a new session token
   return new Promise((resolve, reject) => {
     // Simulating an API call
     setTimeout(() => {
@@ -93,8 +130,8 @@ let heartbeatInterval;
 function startHeartbeat() {
   stopHeartbeat(); // Clear any existing interval
   heartbeatInterval = setInterval(() => {
-    if (newWebRTC && newWebRTC.ws && newWebRTC.ws.readyState === WebSocket.OPEN) {
-      newWebRTC.ws.send("heartbeat");
+    if (newWebRTC && newWebRTC.socket && newWebRTC.socket.ready()) {
+      newWebRTC.socket.send(JSON.stringify({ type: "heartbeat" }));
     } else {
       stopHeartbeat();
       console.log("Heartbeat stopped due to closed connection");
@@ -124,10 +161,8 @@ function hideLoader() {
 }
 
 function showRefreshMessage() {
-  // Implement this function to show a message to the user
-  // suggesting they refresh the page
   console.log("Please refresh the page to reconnect.");
-  // You might want to update the UI here to show this message to the user
+  // Implement UI update to show this message to the user
 }
 
 // Start the WebRTC client

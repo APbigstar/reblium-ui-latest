@@ -466,6 +466,9 @@ document.addEventListener("DOMContentLoaded", async function () {
   const dashboard = document.getElementById("dashboard");
   const chatbot = document.getElementById("chatbot");
   const artistMode = document.getElementById("artist_mode");
+  const shareButton = document.getElementById("shareButton"); // Correct ID
+  const sharePopup = document.getElementById("sharePopup"); // Ensure this ID exists
+  const shareClose = document.getElementById("shareClose"); // Ensure this ID exists
 
   const urlParams = new URLSearchParams(window.location.search);
   const userToken = urlParams.get("token");
@@ -475,6 +478,24 @@ document.addEventListener("DOMContentLoaded", async function () {
     event.preventDefault();
     createNewClicked = true; // Set the flag when "create-new" is clicked
     handleRandomization();
+  });
+
+  shareButton.addEventListener("click", function () {
+    removeAllPopUps();
+    sharePopup.style.display = "flex";
+    const encrypted = encryptData(selectedUserAvatarId, globalUserInfoId);
+    shareLinkInput.value = `${FRONTEND_URL}/sharedAvatar?data=${encrypted}`;
+  });
+
+  shareClose.addEventListener("click", function () {
+    sharePopup.style.display = "none";
+  });
+
+  shareConfirmButton.addEventListener("click", function () {
+    shareLinkInput.select();
+    document.execCommand("copy");
+    alert("Link copied to clipboard!");
+    sharePopup.style.display = "none"; // Optionally close popup after copying
   });
 
   waitForVideoLoad().then(() => {
