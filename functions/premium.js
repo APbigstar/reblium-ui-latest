@@ -17,47 +17,6 @@ const router = express.Router();
 
 app.use(express.json());
 
-// Middleware to verify Xsolla token and get user info
-const verifyXsollaToken = async (req, res, next) => {
-  const xsollaToken = req.headers["x-xsolla-token"];
-  const projectId = process.env.PROJECT_ID;
-
-  if (!xsollaToken) {
-    return res
-      .status(401)
-      .json({ success: false, error: "No authentication token provided" });
-  }
-
-  if (!projectId) {
-    console.error("PROJECT_ID is not set in environment variables");
-    return res
-      .status(500)
-      .json({ success: false, error: "Server configuration error" });
-  }
-
-  try {
-    const response = await axios.post(
-      `https://login.xsolla.com/api/users/${projectId}/user/info`,
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${xsollaToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    req.user = response.data;
-    next();
-  } catch (error) {
-    console.error("Error verifying Xsolla token:", error);
-    res
-      .status(401)
-      .json({ success: false, error: "Invalid authentication token" });
-  }
-};
-
-// router.post('/', verifyXsollaToken, async (req, res) => {
 router.post("/confirmPlanPaymentIntent", async (req, res) => {
   const host = process.env.DB_HOST;
   const user = process.env.DB_USER;

@@ -1,7 +1,7 @@
 {
   "name": "reblium-avatar-app",
   "version": "1.0.0",
-  "description": "A web application for managing avatars using XSolla API and a MySQL database.",
+  "description": "A web application for managing avatars using RESTful API and a MySQL database.",
   "author": "Daan Smid",
   "license": "MIT",
   "dependencies": {

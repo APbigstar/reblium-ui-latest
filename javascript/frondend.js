@@ -980,28 +980,6 @@ function cancelDownloadExit() {
   hideDownloadConfirmation();
 }
 
-// // Event listener for the "Export/Download" button
-// document.getElementById('downloadButton').addEventListener('click', showDownloadConfirmation);
-
-// // Get the store button element
-// const storeButton = document.getElementById('storeButton');
-// const popupFrame = document.getElementById('popupFrame');
-
-// // Add click event listener to the store button
-// storeButton.addEventListener('click', () => {
-//   // Set the source URL for the iframe
-//   popupFrame.src = 'https://reblium-1.xsollasitebuilder.com';
-
-//   // Display the iframe as a pop-up
-//   popupFrame.style.display = 'block';
-// });
-
-// // Add click event listener to close the pop-up
-// popupFrame.addEventListener('click', () => {
-//   // Hide the iframe
-//   popupFrame.style.display = 'none';
-// });
-
 // Function to create an avatar element
 function createAvatarElement(avatar) {
   const avatarElement = document.createElement("div");

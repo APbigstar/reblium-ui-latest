@@ -42,7 +42,6 @@ async function handleDeposit() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // "x-xsolla-token": token, // Ensure this line is included
         },
         body: JSON.stringify({
           amount: amount,
@@ -84,7 +83,6 @@ async function handleDeposit() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-xsolla-token": token,
           },
           body: JSON.stringify({
             payment_intent_id: confirmResult.paymentIntent.id,
