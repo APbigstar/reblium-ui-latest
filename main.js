@@ -238,10 +238,6 @@ const checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 1000);
 window.isVideoLoaded = () => videoLoaded;
 
 function handleSendCommands(command) {
-  console.trace();
-  countCallFunctions++;
-  console.log("countCallFunctions: ", countCallFunctions);
-  console.log(command);
   selectedCommand = Object.keys(command)[0];
   newWebRTC.emitUIInteraction(command);
   if (command.resetavatar) {
