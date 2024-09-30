@@ -360,7 +360,11 @@ menuContent.addEventListener("click", function (event) {
   let clickedElement = event.target;
 
   // Check if a button was clicked
-  if (clickedElement.tagName === "BUTTON") {
+  if (
+    clickedElement.tagName === "BUTTON" &&
+    !clickedElement.classList.contains("gender-button")
+  ) {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaa");
     // Hide all content containers
     const contentContainers = document.querySelectorAll(".content-container");
     contentContainers.forEach((container) => {
@@ -405,6 +409,8 @@ function openFirstButton(menuId) {
   const firstButton = document.querySelector(
     `#${menuId}SubMenu button.transparent-button:nth-of-type(1)`
   );
+  console.log(firstButton);
+  console.log(menuId);
   if (menuId == "wardrobe") {
     const female = document.querySelector(
       `#${menuId}SubMenu button.gender-button:nth-of-type(1)`
@@ -476,26 +482,11 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       // Get the corresponding sub-menu element
       const subMenu = this.nextElementSibling;
-      console.log(subMenu);
-      // Toggle the sub-menu display
-      toggleSubMenu(subMenu);
+      subMenu.style.display =
+        subMenu.style.display === "none" ? "block" : "none";
     });
   });
 });
-
-// Function to toggle the display of a sub-menu
-function toggleSubMenu(subMenu) {
-  // Toggle the display property of the sub-menu
-  subMenu.style.display = subMenu.style.display === "none" ? "block" : "none";
-
-  // Hide other sub-menus
-  const otherSubMenus = document.querySelectorAll(
-    ".sub-menu:not(" + subMenu.id + ")"
-  );
-  otherSubMenus.forEach(function (menu) {
-    menu.style.display = "none";
-  });
-}
 
 // drop zone
 function handleDropRight(e) {

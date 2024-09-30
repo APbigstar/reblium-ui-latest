@@ -280,7 +280,6 @@ async function loadAndSendAvatarData(jsonFilePath) {
   }
 }
 
-
 async function loadAndProcessJsonData(filePath) {
   try {
     const response = await fetch(filePath);
@@ -741,7 +740,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const confirmButton = document.getElementById("confirmButton");
   const usernameInput = document.getElementById("username");
   const popup = document.getElementById("popup");
-  let uploadedDhsJson = null;
 
   randomizeButton.addEventListener("click", function (event) {
     event.preventDefault();

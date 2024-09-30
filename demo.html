@@ -150,6 +150,17 @@
     </script>
   </head>
   <body>
+    <nav class="navbar">
+      <img
+        src="/src/reblium_logo.png"
+        class="nav-logo"
+        onclick="showExitConfirmation();"
+        alt="Icon"
+      />
+      <div class="nav-user">
+        <div class="beta-text">Early Access</div>
+      </div>
+    </nav>
     <div
       id="introModalOverlay"
       class="intro-modal-overlay modal-overlay"
@@ -576,7 +587,11 @@
     </div>
 
     <!-- Language Selection Pop-up -->
-    <div id="languagePopup" class="languagePopup assitant-popup" style="display: none">
+    <div
+      id="languagePopup"
+      class="languagePopup assitant-popup"
+      style="display: none"
+    >
       <form id="languageForm">
         <span id="languageClose" class="close-button">&times;</span>
         <h3>Select a Language</h3>
@@ -658,7 +673,11 @@
     </div>
 
     <!-- Voice Settings Pop-up -->
-    <div id="voicePopup" class="voicePopup assitant-popup" style="display: none">
+    <div
+      id="voicePopup"
+      class="voicePopup assitant-popup"
+      style="display: none"
+    >
       <form id="voiceForm">
         <span id="voiceClose" class="close-button">&times;</span>
         <h3>Choose a Voice</h3>
@@ -672,7 +691,11 @@
     </div>
 
     <!-- Share Pop-up -->
-    <div id="sharePopup" class="sharePopup assitant-popup" style="display: none">
+    <div
+      id="sharePopup"
+      class="sharePopup assitant-popup"
+      style="display: none"
+    >
       <form id="shareForm">
         <span id="shareClose" class="close-button">&times;</span>
         <h3>Publish</h3>
@@ -689,7 +712,11 @@
       </form>
     </div>
 
-    <div id="personaPopup" class="personaPopup assitant-popup" style="display: none">
+    <div
+      id="personaPopup"
+      class="personaPopup assitant-popup"
+      style="display: none"
+    >
       <form class="personaForm">
         <span
           id="personaClose"
@@ -767,7 +794,11 @@
           <button id="personaButton" class="transparent-button-active">
             Chat Setting
           </button>
-          <button id="apiButton" class="transparent-button-active">
+          <button
+            id="apiButton"
+            class="transparent-button pointer-events-none"
+            style="cursor: context-menu"
+          >
             ChatGPT Key
           </button>
           <button id="voiceButton" class="transparent-button-active">
@@ -1061,7 +1092,7 @@
         </div>
 
         <div class="bottomMenu" id="bottomMenu">
-          <button class="menu-button" id="shareButton">
+          <button class="menu-button" onclick="showSignUpModal()">
             <i class="fas fa-share"></i>Publish
           </button>
           <button class="menu-button" onclick="showSignUpModal()">
@@ -9474,6 +9505,21 @@
         </div>
       </div>
     </div>
+
+    <script>
+      document
+        .getElementById("femaleBtn")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          filterItemsByGender("female");
+        });
+      document
+        .getElementById("maleBtn")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          filterItemsByGender("male");
+        });
+    </script>
 
     <script src="javascript/signup.js"></script>
     <script src="javascript/chatbot_dashboard.js"></script>
