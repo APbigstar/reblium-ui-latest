@@ -21,6 +21,18 @@ function toggleDashboardAndArtistMode() {
   selectedUserAvatarId = ""; // Clears the avatar ID display
   document.getElementById("avatarName").textContent = ""; // Clears the avatar ID display
 
+  // Get the chatbox element
+  const chatbox = document.getElementById("chatbox");
+  const divs = chatbox.getElementsByTagName("div");
+
+  for (let i = divs.length - 1; i >= 0; i--) {
+    const div = divs[i];
+    // If the div doesn't have the class 'message-container', remove it
+    if (!div.classList.contains("message-container")) {
+      div.parentNode.removeChild(div);
+    }
+  }
+
   if (dashboard.style.display !== "none") {
     dashboard.style.display = "none";
     artistMode.style.display = "block";
@@ -39,9 +51,9 @@ function toggleDashboardAndArtistMode() {
   }
 }
 
-function showingDiscoverSection() {
+function showingTemplateSection(tab) {
   toggleDashboardAndArtistMode();
-  updateDisplayState("conversation");
+  updateDisplayState(tab);
 }
 
 // Add the click event listener to each preset-avatar element
@@ -236,6 +248,13 @@ function updateDisplayState(buttonType) {
   designButton.classList.toggle("active", buttonType === "design");
   designButton.classList.toggle("inactive", buttonType !== "design");
 
+  handleSendCommands({
+    cameraswitch: "Head",
+  });
+  handleSendCommands({ camup: "" });
+  handleSendCommands({ camup: "" });
+  handleSendCommands({ camup: "" });
+
   if (buttonType === "conversation" || buttonType === "preview") {
     chatbot.style.display = "block";
     artistMode.style.display = "none";
@@ -246,14 +265,7 @@ function updateDisplayState(buttonType) {
     chatbot.style.display = "none";
     artistMode.focus(); // Focus the artist_mode div
     console.log(`Active: ${artistMode.id}`);
-    handleSendCommands({
-      cameraswitch: "Head",
-    });
-    handleSendCommands({ camup: "" });
-    handleSendCommands({ camup: "" });
-    handleSendCommands({ camup: "" });
   }
-  handleMute();
 }
 
 function initAudioRefProps() {
