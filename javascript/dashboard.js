@@ -401,5 +401,4 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Show artist mode automatically after the dashboard
   hiddenArtistMode();
-  initAudioRefProps();
 });

@@ -1,3 +1,31 @@
+// import { WebRTCClient } from "https://unpkg.com/@arcware/webrtc-plugin@latest/index_new.umd.js";
+
+// newWebRTC = new WebRTCClient({
+//   address: "wss://signalling-client.ragnarok.arcware.cloud/",
+//   shareId: "share-79f09605-3edc-4fa8-b5b9-49a7a3a5f25b",
+//   settings: {},
+//   playOverlay: false,
+
+//   loader: (val) => {
+//     if (val) {
+//       showLoader(); // Assume this function shows a loading indicator
+//     } else {
+//       hideLoader(); // Assume this function hides the loading indicator
+//     }
+//   },
+
+//   applicationResponse: (response) => {
+//     if (response) {
+//       const message = response.split(":")[1].trim();
+//       addBotMessage(message);
+//     } // Logging the response
+//   },
+
+//   sizeContainer: document.getElementById("sizeContainer"),
+//   container: document.getElementById("videoContainer"),
+//   audioRef: document.getElementById("audioRef"),
+// });
+
 import { WebRTCClient } from "https://unpkg.com/@arcware/webrtc-plugin@latest/index_new.umd.js";
 
 let reconnectTimer;
@@ -87,7 +115,7 @@ function reconnect() {
       if (streamingVideoContent) streamingVideoContent.remove();
       reconnectAttempts++;
       initializeWebRTCClient();
-    }, delay); 
+    }, delay);
   } else {
     console.log("Max reconnection attempts reached. Please refresh the page.");
     showRefreshMessage();
@@ -147,18 +175,3 @@ function showRefreshMessage() {
 
 // Start the WebRTC client
 initializeWebRTCClient();
-
-// Function to manually connect WebSocket when needed
-function connectWebSocket() {
-  if (newWebRTC && newWebRTC.socket) {
-    newWebRTC.socket.init(newWebRTC)
-      .then(() => {
-        console.log("WebSocket Connection established");
-        resetReconnectionAttempts();
-        startHeartbeat();
-      })
-      .catch(handleError);
-  } else {
-    console.error("WebRTC client not initialized");
-  }
-}

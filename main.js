@@ -237,17 +237,36 @@ const checkInterval = setInterval(detectVideoLoadedAndExecuteFunctions, 1000);
 
 window.isVideoLoaded = () => videoLoaded;
 
+function isWebRTCConnected() {
+  return newWebRTC && newWebRTC.socket && newWebRTC.socket.ready();
+}
+
 function handleSendCommands(command) {
-  selectedCommand = Object.keys(command)[0];
-  newWebRTC.emitUIInteraction(command);
-  if (command.resetavatar) {
-    latestLoadAvatarCommand = command.resetavatar;
+  if (!isWebRTCConnected()) {
+    console.warn("WebRTC is not connected. Attempting to reconnect...");
+    reconnect();
+    return false; // Indicate that the command was not sent
   }
-  console.log("Sending loadavatar command:", command.resetavatars);
+
+  selectedCommand = Object.keys(command)[0];
+  console.log(selectedCommand);
+
+  try {
+    newWebRTC.emitUIInteraction(command);
+    if (command.resetavatar) {
+      latestLoadAvatarCommand = command.resetavatar;
+    }
+    console.log("Sending loadavatar command:", command.resetavatars);
+    return true; // Indicate that the command was sent successfully
+  } catch (error) {
+    console.error("Error sending command:", error);
+    return false; // Indicate that the command failed to send
+  }
 }
 // Async function to load and send avatar data
 async function loadAndSendAvatarData(jsonFilePath) {
   await waitForVideoLoad(); // Wait for video to load
+  initAudioRefProps();
 
   // Use the fetch API to load the JSON file
   try {
@@ -724,6 +743,8 @@ function closeNotification() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  initAudioRefProps();
+
   const randomizeButton = document.getElementById("randomizeButton");
   const lazyImages = document.querySelectorAll(".lazyload");
   const chatbotLogo = document.getElementById("chatbotLogo");

@@ -16,8 +16,6 @@ const audioRef = document.getElementById("audioRef");
 
 // Function to handle the click event
 function toggleDashboardAndArtistMode() {
-  initAudioRefProps();
-  // Toggle the 'display' property for dashboard and artist_mode
   selectedUserAvatarId = ""; // Clears the avatar ID display
   document.getElementById("avatarName").textContent = ""; // Clears the avatar ID display
 
@@ -192,13 +190,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-  initAudioRefProps();
-});
-
 // Function to handle the display toggle and button state
 function updateDisplayState(buttonType) {
+  handleMute();
   removeAllPopUps();
 
   const chatbot = document.getElementById("chatbot");
@@ -269,12 +263,12 @@ function updateDisplayState(buttonType) {
 }
 
 function initAudioRefProps() {
-  audioRef.muted = false;
-  audioRef.play();
-  icon.className = "fas fa-volume-up";
+  console.log('Call Init Audio')
+  audioRef.muted = true;
 }
 
 function handleMute() {
+  console.log('Call Handle Mute Audio', audioRef.muted)
   if (audioRef.muted) {
     audioRef.muted = false; // Unmute audio
     audioRef.play(); // Play the audio if it was muted
@@ -288,13 +282,20 @@ function handleMute() {
   }
 }
 
+document.getElementById("previewButton").addEventListener("click", function () {
+  console.log('clicked preview button')
+  initAudioRefProps();
+  updateDisplayState("preview");
+  getUserPromps("welcome_message");
+});
+
 // Event listeners for buttons
 document
   .getElementById("conversationButton")
   .addEventListener("click", function () {
+    initAudioRefProps();
     updateDisplayState("conversation");
     getUserPromps("prompt");
-    initAudioRefProps();
   });
 
 document.querySelectorAll(".bottom-image img").forEach((img) => {
@@ -304,13 +305,8 @@ document.querySelectorAll(".bottom-image img").forEach((img) => {
 });
 
 document.getElementById("designButton").addEventListener("click", function () {
-  updateDisplayState("design");
-});
-
-document.getElementById("previewButton").addEventListener("click", function () {
-  updateDisplayState("preview");
-  getUserPromps("welcome_message");
   initAudioRefProps();
+  updateDisplayState("design");
 });
 
 // Event listener to handle the click on the menuBar and toggle the sideMenu
@@ -318,8 +314,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const menuBar = document.getElementById("menuBar");
   const triangle = document.getElementById("triangle");
   const sideMenu = document.getElementById("sideMenu");
-  const chatInput = document.querySelector(".chatbot");
-  const buttonsContainer = document.getElementById("buttonsContainer");
   let isMenuOpen = true; // Set it to true to have the menu expanded by default
 
   // This block of code will run once the DOM content is loaded

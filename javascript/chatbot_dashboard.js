@@ -318,6 +318,17 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("languagePopup").style.display = "none";
 
       updateVoiceCode();
+
+      recognition.lang = option.getAttribute("data-lang-code");
+      console.log(
+        "Language for speech recognition set to: " + recognition.lang
+      );
+
+      // Update UI to reflect selection
+      document
+        .querySelectorAll(".language-option")
+        .forEach((opt) => opt.classList.remove("selected"));
+        option.classList.add("selected");
     });
   });
 
@@ -340,22 +351,6 @@ document.addEventListener("DOMContentLoaded", function () {
       stopCallButton.style.display = "block";
     }
   }
-
-  document.querySelectorAll(".language-option").forEach((option) => {
-    option.addEventListener("click", function () {
-      // Update the language code based on data attribute
-      recognition.lang = this.getAttribute("data-lang-code");
-      console.log(
-        "Language for speech recognition set to: " + recognition.lang
-      );
-
-      // Update UI to reflect selection
-      document
-        .querySelectorAll(".language-option")
-        .forEach((opt) => opt.classList.remove("selected"));
-      this.classList.add("selected");
-    });
-  });
 
   // Event handler to start speech recognition
   callButton.addEventListener("click", () => {
