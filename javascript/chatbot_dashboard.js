@@ -244,64 +244,6 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  personaButton.addEventListener("click", function () {
-    removeAllPopUps();
-    personaPopup.style.display = "block";
-    getUserPromps("prompt");
-  });
-
-  personaClose.addEventListener("click", function () {
-    personaPopup.style.display = "none";
-  });
-
-  personaConfirmButton.addEventListener("click", async function () {
-    try {
-      const response = await fetch(
-        "/.netlify/functions/UserPrompts/insertUserPrompts",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            prompts: personaInput.value,
-            user_id: globalUserInfoId,
-            avatar_id: selectedUserAvatarId,
-            welcomeMessage: welcomeMessage.value,
-          }),
-        }
-      );
-
-      const { success, message } = await response.json();
-
-      if (success) {
-        showNotification(message, "", "success");
-      } else {
-        showNotification(
-          "Failed to save chat setting.",
-          "Please try again after saving avatar.",
-          "error"
-        );
-      }
-    } catch (error) {
-      console.log("Error: ", error);
-    }
-
-    const inputText = personaInput.value.trim(); // Get the value from the input field
-    if (inputText !== "") {
-      // Send the input text via handleSendCommands function
-      handleSendCommands({ personas: inputText });
-      lastPersonaInput = inputText; // Update the global variable with the latest input
-
-      // Optionally clear the input field and close the popup
-      personaInput.value = "";
-      personaPopup.style.display = "none";
-    } else {
-      // Handle the case where the input is empty
-      alert("Please enter a persona before confirming.");
-    }
-  });
-
   languageOptions.forEach((option) => {
     option.addEventListener("click", () => {
       resetAndSetActive(option);
@@ -416,4 +358,64 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Speech recognition ended.");
     toggleButtons(); // Reset button visibility
   };
+
+  personaButton.addEventListener("click", function () {
+    removeAllPopUps();
+    personaPopup.style.display = "block";
+    getUserPromps("prompt");
+  });
+
+  personaClose.addEventListener("click", function () {
+    personaPopup.style.display = "none";
+  });
+
+  personaConfirmButton.addEventListener("click", async function () {
+    try {
+      const response = await fetch(
+        "/.netlify/functions/UserPrompts/insertUserPrompts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompts: personaInput.value,
+            user_id: globalUserInfoId,
+            avatar_id: selectedUserAvatarId,
+            welcomeMessage: welcomeMessage.value,
+          }),
+        }
+      );
+
+      const { success, message } = await response.json();
+
+      if (success) {
+        showNotification(message, "", "success");
+      } else {
+        showNotification(
+          "Failed to save chat setting.",
+          "Please try again after saving avatar.",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.log("Error: ", error);
+    }
+
+    const inputText = personaInput.value.trim(); // Get the value from the input field
+    if (inputText !== "") {
+      // Send the input text via handleSendCommands function
+      handleSendCommands({ personas: inputText });
+      lastPersonaInput = inputText; // Update the global variable with the latest input
+
+      // Optionally clear the input field and close the popup
+      personaInput.value = "";
+      personaPopup.style.display = "none";
+    } else {
+      // Handle the case where the input is empty
+      alert("Please enter a persona before confirming.");
+    }
+  });
+
+  
 });
