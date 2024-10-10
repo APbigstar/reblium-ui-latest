@@ -5,6 +5,7 @@ let selectedSubscription = null;
 let selectedUserPlanId = null;
 let selectedUserAvatarId = "";
 let createMode = false;
+let avatarMode = false;
 
 let newWebRTC;
 let selectedCommand = null;
@@ -285,6 +286,7 @@ async function loadAndSendAvatarData(jsonFilePath) {
 
     // Display persona data in popup input
     if (personaInfo) {
+      console.log(personaInfo);
       const personaInput = document.getElementById("personaInput");
       personaInput.value = personaInfo; // Update the input field with the persona description
     }
@@ -312,6 +314,7 @@ function handleCreateAvatarMode() {
   toggleDashboardAndArtistMode(true);
   updateDisplayState("design");
   createMode = true;
+  avatarMode = false;
 }
 
 async function displayAvatarNames(avatars) {
@@ -350,6 +353,7 @@ async function displayAvatarNames(avatars) {
       toggleDashboardAndArtistMode(true); // Show artist_mode
       updateDisplayState("design");
       createMode = false;
+      avatarMode = true;
       selectedUserAvatarId = avatar.id;
     });
 
@@ -743,6 +747,30 @@ document.addEventListener("DOMContentLoaded", function () {
     img.onload = () => {
       img.removeAttribute("data-src");
     };
+  });
+
+  document.getElementById("save-exit").addEventListener("click", function () {
+    updateAvatarSection(user_info_id);
+    const exitPopup = document.getElementById("exitConfirmation");
+    const usernameInput = document.getElementById("username");
+
+    exitPopup.style.display = "none";
+
+    createMode = false;
+    avatarMode = false;
+    localStorage.removeItem("welcome_message");
+    localStorage.removeItem("prompt");
+    usernameInput.value = "";
+    selectedHair = "";
+    selectedBody = "";
+    const hairCreditElement = document.getElementsByClassName(
+      "hair_credit_element"
+    )[0];
+    const bodyCreditElement = document.getElementsByClassName(
+      "body_credit_element"
+    )[0];
+    hairCreditElement.style.display = "none";
+    bodyCreditElement.style.display = "none";
   });
 
   // Prevent default behavior for drag events

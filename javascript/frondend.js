@@ -263,12 +263,12 @@ function updateDisplayState(buttonType) {
 }
 
 function initAudioRefProps() {
-  console.log('Call Init Audio')
+  console.log("Call Init Audio");
   audioRef.muted = true;
 }
 
 function handleMute() {
-  console.log('Call Handle Mute Audio', audioRef.muted)
+  console.log("Call Handle Mute Audio", audioRef.muted);
   if (audioRef.muted) {
     audioRef.muted = false; // Unmute audio
     audioRef.play(); // Play the audio if it was muted
@@ -283,10 +283,18 @@ function handleMute() {
 }
 
 document.getElementById("previewButton").addEventListener("click", function () {
-  console.log('clicked preview button')
+  console.log("clicked preview button");
   initAudioRefProps();
   updateDisplayState("preview");
-  getUserPromps("welcome_message");
+  if (createMode && avatarMode) {
+    getUserPromps("welcome_message");
+  } else {
+    setTimeout(() => {
+      handleSendCommands({
+        texttospeech: localStorage.getItem("welcome_message"),
+      });
+    }, 1000);
+  }
 });
 
 // Event listeners for buttons
@@ -295,7 +303,6 @@ document
   .addEventListener("click", function () {
     initAudioRefProps();
     updateDisplayState("conversation");
-    getUserPromps("prompt");
   });
 
 document.querySelectorAll(".bottom-image img").forEach((img) => {
@@ -930,20 +937,8 @@ confirmButton.addEventListener("click", function (event) {
 // Function to show the exit confirmation modal
 function showExitConfirmation() {
   const exitConfirmation = document.getElementById("exitConfirmation");
-  const usernameInput = document.getElementById("username");
   exitConfirmation.style.display = "block";
-  createMode = false;
-  usernameInput.value = "";
-  selectedHair = "";
-  selectedBody = "";
-  const hairCreditElement = document.getElementsByClassName(
-    "hair_credit_element"
-  )[0];
-  const bodyCreditElement = document.getElementsByClassName(
-    "body_credit_element"
-  )[0];
-  hairCreditElement.style.display = "none";
-  bodyCreditElement.style.display = "list-item";
+  removeAllPopUps();
 }
 
 // Function to hide the exit confirmation modal

@@ -110,37 +110,10 @@ function showSignUpModal() {
   }
 }
 
-function savePrompts() {
-  let welcomeMessage = document.getElementById("welcomeMessage");
-  let prompt = document.getElementById("personaInput");
-
-  localStorage.setItem("welcome_message", welcomeMessage.value || "");
-  localStorage.setItem("prompt", prompt.value || "");
-
-  showNotification("Saved your chat setting successfully.", "", "success");
-
-  removeAllPopUps();
-}
-
 document.addEventListener("DOMContentLoaded", function () {
   waitForVideoLoad().then(() => {
     console.log("Video loaded, calling handleRandomization");
     handleRandomization();
     // randomizeSliders();
-  });
-
-  document.getElementById("previewButton").addEventListener("click", () => {
-    setTimeout(() => {
-      handleSendCommands({
-        texttospeech: localStorage.getItem("welcome_message"),
-      });
-    }, 1000);
-  });
-
-  document.getElementById("personaButton").addEventListener("click", () => {
-    let welcomeMessage = document.getElementById("welcomeMessage");
-    let prompt = document.getElementById("personaInput");
-    welcomeMessage.value = localStorage.getItem("welcome_message");
-    prompt.value = localStorage.getItem("prompt");
   });
 });

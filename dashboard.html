@@ -10200,17 +10200,6 @@
           .addEventListener("click", handleResetButtonClick);
       });
 
-      document.getElementById("save-exit").addEventListener("click", () => {
-        updateAvatarSection(user_info_id);
-      });
-
-      document
-        .getElementById("save-exit")
-        .addEventListener("click", function () {
-          const exitPopup = document.getElementById("exitConfirmation");
-          exitPopup.style.display = "none";
-        });
-
       openPopup.addEventListener("click", function () {
         console.log("Open popup button clicked");
         if (!selectedUserAvatarId) {

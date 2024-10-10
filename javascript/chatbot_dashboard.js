@@ -154,6 +154,7 @@ async function getUserPromps(type) {
   let personaInput = document.getElementById("personaInput");
   let welcomeMessage = document.getElementById("welcomeMessage");
   if (!defaultAvatarPrompt) {
+    console.log("Avatar Mode -------------------------------");
     if (globalUserInfoId && selectedUserAvatarId) {
       try {
         const response = await fetch(
@@ -173,9 +174,8 @@ async function getUserPromps(type) {
           }
         } else {
           if (type == "prompt") {
-            console.log(data)
-            personaInput.value = data.prompts || '';
-            welcomeMessage.value = data.welcome_message || '';
+            personaInput.value = data.prompts || "";
+            welcomeMessage.value = data.welcome_message || "";
           } else {
             const welcomeMessage = data.welcome_message;
             setTimeout(() => {
@@ -272,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
       document
         .querySelectorAll(".language-option")
         .forEach((opt) => opt.classList.remove("selected"));
-        option.classList.add("selected");
+      option.classList.add("selected");
     });
   });
 
@@ -362,7 +362,18 @@ document.addEventListener("DOMContentLoaded", function () {
   personaButton.addEventListener("click", function () {
     removeAllPopUps();
     personaPopup.style.display = "block";
-    getUserPromps("prompt");
+    if (createMode || avatarMode) {
+      getUserPromps("prompt");
+    } else {
+      if (localStorage.getItem("welcome_message")) {
+        welcomeMessage.value = localStorage.getItem("welcome_message");
+      } else {
+        welcomeMessage.value = ""
+      }
+      if (localStorage.getItem("prompt")) { 
+        personaInput.value = localStorage.getItem("prompt");
+      }
+    }
   });
 
   personaClose.addEventListener("click", function () {
@@ -371,32 +382,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
   personaConfirmButton.addEventListener("click", async function () {
     try {
-      const response = await fetch(
-        "/.netlify/functions/UserPrompts/insertUserPrompts",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            prompts: personaInput.value,
-            user_id: globalUserInfoId,
-            avatar_id: selectedUserAvatarId,
-            welcomeMessage: welcomeMessage.value,
-          }),
-        }
-      );
-
-      const { success, message } = await response.json();
-
-      if (success) {
-        showNotification(message, "", "success");
-      } else {
-        showNotification(
-          "Failed to save chat setting.",
-          "Please try again after saving avatar.",
-          "error"
+      if (createMode || avatarMode) {
+        const response = await fetch(
+          "/.netlify/functions/UserPrompts/insertUserPrompts",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              prompts: personaInput.value,
+              user_id: globalUserInfoId,
+              avatar_id: selectedUserAvatarId,
+              welcomeMessage: welcomeMessage.value,
+            }),
+          }
         );
+
+        const { success, message } = await response.json();
+
+        if (success) {
+          showNotification(message, "", "success");
+        } else {
+          showNotification(
+            "Failed to save chat setting.",
+            "Please try again after saving avatar.",
+            "error"
+          );
+        }
+      } else {
+        let welcomeMessage = document.getElementById("welcomeMessage");
+        let prompt = document.getElementById("personaInput");
+        localStorage.setItem("welcome_message", welcomeMessage.value || "");
+        localStorage.setItem("prompt", prompt.value || "");
+        showNotification("Saved your chat setting temporally.", "", "success");
+        removeAllPopUps();
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -413,9 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
       personaPopup.style.display = "none";
     } else {
       // Handle the case where the input is empty
-      alert("Please enter a persona before confirming.");
+      // alert("Please enter a persona before confirming.");
     }
   });
-
-  
 });

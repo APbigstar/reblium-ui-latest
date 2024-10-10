@@ -65,6 +65,8 @@ document
         // Store the token in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user_email", data.email);
+        localStorage.removeItem("welcome_message");
+        localStorage.removeItem("prompt");
 
         setTimeout(() => {
           window.location.href = `/dashboard.html?token=${data.token}`;
