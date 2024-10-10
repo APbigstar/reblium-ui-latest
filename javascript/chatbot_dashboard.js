@@ -163,6 +163,7 @@ async function getUserPromps(type) {
         if (!success) {
           if (type == "prompt") {
             personaInput.value = "";
+            welcomeMessage.value = "";
             console.log("Not Found User Prompt");
           } else {
             handleSendCommands({
@@ -172,8 +173,9 @@ async function getUserPromps(type) {
           }
         } else {
           if (type == "prompt") {
-            personaInput.value = data.prompts;
-            welcomeMessage.value = data.welcome_message;
+            console.log(data)
+            personaInput.value = data.prompts || '';
+            welcomeMessage.value = data.welcome_message || '';
           } else {
             const welcomeMessage = data.welcome_message;
             setTimeout(() => {

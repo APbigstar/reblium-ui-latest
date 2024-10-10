@@ -340,32 +340,6 @@ async function displayAvatarNames(avatars) {
     avatarDiv.appendChild(avatarImg);
     avatarDiv.appendChild(avatarName);
 
-    // if (selectedSubscription == null) {
-    //   const watermarkContainer = document.createElement("div");
-    //   watermarkContainer.id = "watermarkContainer";
-
-    //   // Create canvas elements for watermarks
-    //   for (let i = 0; i < 5; i++) {
-    //     const canvas = document.createElement("canvas");
-    //     canvas.width = 100; // Set an appropriate width
-    //     canvas.height = 50; // Set an appropriate height
-    //     canvas.className = "avatar_watermark_item";
-    //     canvas.style.userSelect = 'none'
-    //     canvas.style.pointerEvents = 'none'
-
-    //     const ctx = canvas.getContext("2d");
-    //     ctx.font = "1.2rem Arial";
-    //     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';// #888 with 50% opacity
-    //     ctx.textAlign = "center";
-    //     ctx.textBaseline = "middle";
-    //     ctx.fillText("Reblium", canvas.width / 2, canvas.height / 2);
-
-    //     watermarkContainer.appendChild(canvas);
-    //   }
-
-    //   avatarDiv.appendChild(watermarkContainer);
-    // }
-
     const avatarButtons = document.createElement("div");
     avatarButtons.className = "avatar-buttons";
 
